@@ -1,4 +1,4 @@
-# Detección de Regímenes de Mercado — Mercado Eléctrico Colombiano
+# Detección de Regímenes de Mercado - Mercado Eléctrico Colombiano
 
 Thesis project: unsupervised detection of market regimes in the Colombian electricity spot market using CWT scalograms and VAE-based neural networks.
 
