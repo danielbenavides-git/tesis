@@ -23,7 +23,7 @@ Additional columns: `Id` (always "Sistema"), `Values_code` ("Sistema"), `Date`.
 
 ### Daily files
 
-One row per date. Columns: `Id` ("Sistema"), `Value`, `Date`.
+One row per date with columns: `Id` ("Sistema"), `Value`, `Date`.
 
 | File | MetricId | Rows | Date range | Nulls | Unit | Description |
 |---|---|---|---|---|---|---|
@@ -44,10 +44,10 @@ Each variable maps to a specific stage of the analysis.
 **Regime validation (Interpretation and Validation)**
 Once the VAE latent space is clustered into regimes, the following variables help identify what each regime represents:
 
-- `aportes_energia_diario.csv` and `porcentaje_volumen_util_diario.csv` — direct proxies for hydrological stress. Low inflows and low reservoir levels correlate with El Nino episodes (2002-03, 2009-10, 2015-16, 2023-24) and historically precede price spikes.
-- `generacion_real_horaria.csv` — reveals the generation mix shift. When hydro capacity drops, thermal plants increase output, which raises marginal costs and spot prices.
-- `demanda_real_horaria.csv` and `demanda_sin_diaria.csv` — context for distinguishing price increases driven by supply constraints (regime-relevant) from those driven by demand growth (less relevant).
-- `precio_bolsa_diario_ponderado.csv` — smoothed daily reference for quick time-series plots and correlation analysis.
+- `aportes_energia_diario.csv` and `porcentaje_volumen_util_diario.csv` - direct proxies for hydrological stress. Low inflows and low reservoir levels correlate with El Nino episodes (2002-03, 2009-10, 2015-16, 2023-24) and historically precede price spikes.
+- `generacion_real_horaria.csv` - reveals the generation mix shift. When hydro capacity drops, thermal plants increase output, which raises marginal costs and spot prices.
+- `demanda_real_horaria.csv` and `demanda_sin_diaria.csv` - context for distinguishing price increases driven by supply constraints (regime-relevant) from those driven by demand growth (less relevant).
+- `precio_bolsa_diario_ponderado.csv` - smoothed daily reference for quick time-series plots and correlation analysis.
 
 **Limited coverage**
 - `precio_escasez_superior.csv` covers only 2025-03 onward. Not usable for historical validation. Included for completeness.
