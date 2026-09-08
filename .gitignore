@@ -5,7 +5,7 @@ data/processed/*.csv
 !data/processed/.gitkeep
 
 # Figures
-figures/scalograms
+figures/scalograms/*png
 !figures/scalograms/.gitkeep
 
 # Python
