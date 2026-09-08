@@ -4,6 +4,10 @@ data/processed/*.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
+# Figures
+figures/scalograms
+!figures/scalograms/.gitkeep
+
 # Python
 __pycache__/
 *.pyc
