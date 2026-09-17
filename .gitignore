@@ -1,8 +1,10 @@
 # Data (too large for git)
 data/raw/*.csv
 data/processed/*.csv
+data/cache/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+MNIST/
 
 # Figures
 figures/scalograms/*png
@@ -27,3 +29,8 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+notebooks/data/
+
+# Training artifacts
+models/*/
+!models/*/.gitkeep
