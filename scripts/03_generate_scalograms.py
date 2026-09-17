@@ -35,8 +35,8 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parent.parent
-PROC_DIR = ROOT / "data" / "processed"
-SCALO_DIR = PROC_DIR / "scalograms"
+PROC_DIR = ROOT / "data" / "processed" / "XM"
+SCALO_DIR = ROOT / "data" / "processed" / "scalograms"
 FIG_DIR = ROOT / "figures" / "scalograms"
 
 # ---------------------------------------------------------------------------
@@ -198,6 +198,8 @@ def save_sample_pngs(scalograms: np.ndarray, metadata: pd.DataFrame, n_samples: 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
+    plt.rcParams['font.family'] = 'Arial'
+
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     n_total = len(scalograms)
     indices = np.linspace(0, n_total - 1, n_samples, dtype=int)
@@ -300,3 +302,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Run the following command to generate scalograms:
+# python 03_generate_scalograms.py --save-png 10

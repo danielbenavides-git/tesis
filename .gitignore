@@ -3,7 +3,6 @@ data/raw/*.csv
 data/processed/*.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-scalograms.npy
 
 # Figures
 figures/scalograms/*png
