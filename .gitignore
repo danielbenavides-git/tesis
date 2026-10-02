@@ -5,6 +5,7 @@ data/cache/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 MNIST/
+data/processed/scalograms/*.npy
 
 # Figures
 figures/scalograms/*png
