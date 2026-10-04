@@ -5,10 +5,13 @@ import torch.nn as nn
 from .conv_vae import ConvDecoder, ConvEncoder, kl_loss, reconstruction_loss, reparameterize
 
 
-def smoothness_loss(mu):
-    """Squared change of the latent mean between consecutive days, summed over dims, averaged over transitions."""
+def smoothness_loss(mu, eps=1e-4):
+    """Squared day-to-day change of the latent mean relative to its spread in the batch, averaged over dims.
+    Equals about 1 - lag-1 autocorrelation per dim (0 = perfectly smooth, 1 = no persistence), so it does
+    not drop when the latent space shrinks."""
     diff = mu[:, 1:] - mu[:, :-1]
-    return diff.pow(2).sum(dim=-1).mean()
+    var = mu.reshape(-1, mu.shape[-1]).var(dim=0)
+    return (diff.pow(2).mean(dim=(0, 1)) / (2 * var + eps)).mean()
 
 
 class TemporalVAE(nn.Module):

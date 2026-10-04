@@ -6,9 +6,11 @@
     "daily_demean": true
   },
   "post_cwt": {
-    "method": "min_max",
+    "method": "min_percentile_clip",
     "global_min": 0.0,
-    "global_max": 1.2690001726150513
+    "upper_percentile": 99.5,
+    "upper_value": 0.5129479765892029,
+    "clipped_fraction": 0.00499999195334226
   },
   "wavelet": "cmor1.5-1.0",
   "scales": [

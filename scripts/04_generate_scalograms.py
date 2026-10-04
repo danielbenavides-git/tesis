@@ -5,7 +5,7 @@ Window, wavelet and scales follow Benavides & Luna (2024):
 - Window: 24 hours (one scalogram per day)
 - Wavelet: Complex Morlet (cmor1.5-1.0)
 - Scales: 1 to 128
-- Output: magnitude of CWT coefficients, min-max normalized to [0, 1]
+- Output: magnitude of CWT coefficients, scaled to [0, 1] with the p99.5 value (values above it clipped)
 
 Input is the log real price (run 03_process_external_data.py first). Each day's
 mean is subtracted before the CWT (Torrence & Compo, 1998), so the scalogram
@@ -148,21 +148,29 @@ def compute_scalograms(windows: np.ndarray) -> np.ndarray:
 # Step 5: Post-CWT normalization
 # ---------------------------------------------------------------------------
 
+UPPER_PERCENTILE = 99.5
+
 def normalize_scalograms(scalograms: np.ndarray) -> tuple[np.ndarray, dict]:
-    """Min-max normalize across the entire dataset to [0, 1]."""
+    """Scale to [0, 1] with the global minimum and a high percentile, clipping
+    values above it. Using the maximum lets a few extreme days compress all
+    other images into a narrow dark range."""
 
     global_min = float(scalograms.min())
-    global_max = float(scalograms.max())
-    scalograms = (scalograms - global_min) / (global_max - global_min)
+    upper = float(np.percentile(scalograms, UPPER_PERCENTILE))
+    n_clipped = int((scalograms > upper).sum())
+    scalograms = np.clip((scalograms - global_min) / (upper - global_min), 0.0, 1.0)
 
     params = {
-        "method": "min_max",
+        "method": "min_percentile_clip",
         "global_min": global_min,
-        "global_max": global_max,
+        "upper_percentile": UPPER_PERCENTILE,
+        "upper_value": upper,
+        "clipped_fraction": n_clipped / scalograms.size,
     }
 
-    log.info(f"  Min-max normalization: [{global_min:.6f}, {global_max:.6f}] -> [0, 1]")
-    return scalograms, params
+    log.info(f"  Normalization: [{global_min:.6f}, p{UPPER_PERCENTILE}={upper:.6f}] -> [0, 1]")
+    log.info(f"  Clipped {n_clipped:,} values ({n_clipped / scalograms.size:.3%})")
+    return scalograms.astype(np.float32), params
 
 
 # ---------------------------------------------------------------------------
