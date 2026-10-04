@@ -17,7 +17,9 @@ def loss_curves(history, components=("total", "recon", "kl")):
         alt.Chart(long[long["component"] == comp]).mark_line(point=True).encode(
             x=alt.X("epoch:Q", title="Epoch"),
             y=alt.Y("value:Q", title=None, scale=alt.Scale(zero=False)),
-            color=alt.Color("split:N", title="Split"),
+            color=alt.Color("split:N", title="Split",
+                scale=alt.Scale(domain=["train", "val"], range=["#4c78a8", "#f58518"]),
+                legend=alt.Legend(orient="top")),
             strokeDash=alt.StrokeDash("split:N", legend=None),
         ).properties(width=250, height=200, title=comp)
         for comp in components
