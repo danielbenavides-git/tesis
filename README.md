@@ -14,7 +14,7 @@ documents/          Reference papers
 data/
   raw/              Raw data from XM, DANE and NOAA
   processed/        Cleaned series and scalograms (scalograms/ holds scalograms.npy and metadata)
-scripts/            Data pipeline, run in order (01 download, 02 process, 03 scalograms, 04 external data)
+scripts/            Data pipeline, run in order (01 download, 02 process, 03 external data and deflation, 04 scalograms)
 src/                Model code imported by the notebooks
   data.py           Scalogram loading, chronological split, daily and sequence datasets, context variables
   training.py       Training loop with KL warm-up, run saving
@@ -38,8 +38,11 @@ figures/            Figures per notebook (eda/, vae/, temporal_vae/, baselines/)
 
 ```bash
 pip install -r requirements.txt
-python scripts/03_generate_scalograms.py   # if scalograms.npy is missing
+python scripts/03_process_external_data.py   # ONI and real (deflated) prices
+python scripts/04_generate_scalograms.py     # if scalograms.npy is missing
 ```
+
+Scalograms use the log real price with each day's mean removed, so the image shows only the intraday shape. The daily level (mean and standard deviation of the log real price) is saved in `scalogram_metadata.csv` and appended to the latent vector before the GMM.
 
 Then run notebooks 02, 03 and 04 in order. Days are split chronologically (60% train, 20% validation, 20% test) and the GMM is fitted on training days only.
 

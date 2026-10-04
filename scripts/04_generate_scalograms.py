@@ -1,20 +1,25 @@
 """
-Generate CWT scalograms from the hourly spot price series.
+Generate CWT scalograms from the hourly real spot price series.
 
-Follows the configuration from Benavides & Luna (2024):
+Window, wavelet and scales follow Benavides & Luna (2024):
 - Window: 24 hours (one scalogram per day)
 - Wavelet: Complex Morlet (cmor1.5-1.0)
 - Scales: 1 to 128
 - Output: magnitude of CWT coefficients, min-max normalized to [0, 1]
 
+Input is the log real price (run 03_process_external_data.py first). Each day's
+mean is subtracted before the CWT (Torrence & Compo, 1998), so the scalogram
+shows only the intraday shape. Without this step the zero-padding edge effect
+grows with the day's level and dominates the large scales. The daily level
+(mean and std of the log real price) is saved in the metadata instead.
+
 Known limitation: with a 24-hour window, CWT coefficients at scales above ~8
-fall outside the cone of influence (Torrence & Compo, 1998). These coefficients
-are consistent across all windows and do not affect downstream model training,
-but they do not carry reliable frequency information. See documents/nota_cono_de_influencia.md.
+fall outside the cone of influence (Torrence & Compo, 1998) and do not carry
+reliable frequency information.
 
 Usage:
-    python scripts/generate_scalograms.py
-    python scripts/generate_scalograms.py --save-png 50
+    python scripts/04_generate_scalograms.py
+    python scripts/04_generate_scalograms.py --save-png 50
 """
 
 import argparse
@@ -55,46 +60,44 @@ SAMPLING_PERIOD = 1.0       # 1 hour
 # ---------------------------------------------------------------------------
 
 def load_price_series() -> pd.DataFrame:
-    path = PROC_DIR / "precio_bolsa.csv"
+    path = PROC_DIR / "precio_bolsa_real.csv"
     df = pd.read_csv(path, parse_dates=["datetime"])
     df = df.sort_values("datetime").reset_index(drop=True)
     log.info(f"Loaded {len(df):,} rows from {path.name}")
     log.info(f"  Range: {df.datetime.min()} to {df.datetime.max()}")
-    log.info(f"  Nulls: {df.precio_cop_kwh.isna().sum()}")
+    log.info(f"  Nulls: {df.precio_real_cop_kwh.isna().sum()}")
     return df
 
 
 # ---------------------------------------------------------------------------
-# Step 2: Pre-CWT normalization
+# Step 2: Pre-CWT transform
 # ---------------------------------------------------------------------------
 
-def normalize_price(series: np.ndarray) -> tuple[np.ndarray, dict]:
-    """Log-transform then z-score the price series. Returns normalized
-    array and parameters needed for inverse transform."""
+def log_price(series: np.ndarray) -> tuple[np.ndarray, dict]:
+    """Natural log of the real price. Level is removed per day in create_windows."""
 
-    log_series = np.log1p(series)
-    mean = float(log_series.mean())
-    std = float(log_series.std())
-    normalized = (log_series - mean) / std
+    if (series <= 0).any():
+        raise ValueError("Real price has non-positive values, log is undefined")
 
     params = {
+        "price_series": "precio_real_cop_kwh",
         "log_transform": True,
-        "log_function": "log1p",
-        "z_score_mean": mean,
-        "z_score_std": std,
+        "log_function": "log",
+        "daily_demean": True,
     }
 
-    log.info(f"  Log1p -> z-score: mean={mean:.4f}, std={std:.4f}")
-    return normalized, params
+    log.info(f"  Log real price: min={np.log(series.min()):.4f}, max={np.log(series.max()):.4f}")
+    return np.log(series), params
 
 
 # ---------------------------------------------------------------------------
-# Step 3: Window the series
+# Step 3: Window the series and remove the daily level
 # ---------------------------------------------------------------------------
 
 def create_windows(series: np.ndarray, datetimes: np.ndarray) -> tuple[np.ndarray, pd.DataFrame]:
-    """Segment the series into non-overlapping 24-hour windows.
-    Returns the windowed array and a metadata DataFrame."""
+    """Segment the series into non-overlapping 24-hour windows and subtract each
+    window's mean. Returns the demeaned windows and a metadata DataFrame with
+    the daily level (mean and std of the log real price)."""
 
     n_windows = len(series) // STRIDE
     usable = n_windows * STRIDE
@@ -104,13 +107,19 @@ def create_windows(series: np.ndarray, datetimes: np.ndarray) -> tuple[np.ndarra
     windows = series.reshape(n_windows, WINDOW)
     dt_windows = datetimes.reshape(n_windows, WINDOW)
 
+    day_mean = windows.mean(axis=1)
+    day_std = windows.std(axis=1)
+    windows = windows - day_mean[:, np.newaxis]
+
     metadata = pd.DataFrame({
         "window_id": range(n_windows),
         "start_datetime": dt_windows[:, 0],
         "end_datetime": dt_windows[:, -1],
+        "log_price_mean": day_mean,
+        "log_price_std": day_std,
     })
 
-    log.info(f"  {n_windows:,} windows of {WINDOW}h (stride={STRIDE}h)")
+    log.info(f"  {n_windows:,} windows of {WINDOW}h (stride={STRIDE}h), daily mean removed")
     return windows, metadata
 
 
@@ -251,7 +260,7 @@ def validate(scalograms: np.ndarray):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate CWT scalograms from spot price")
+    parser = argparse.ArgumentParser(description="Generate CWT scalograms from the real spot price")
     parser.add_argument(
         "--save-png", type=int, default=0, metavar="N",
         help="Save N sample scalograms as PNG (default: 0, no PNGs)"
@@ -266,16 +275,16 @@ def main():
     log.info("=" * 60)
 
     # Step 1
-    log.info("\n[1] Loading price series")
+    log.info("\n[1] Loading real price series")
     df = load_price_series()
 
     # Step 2
-    log.info("\n[2] Pre-CWT normalization")
-    normalized, pre_cwt_params = normalize_price(df.precio_cop_kwh.values)
+    log.info("\n[2] Pre-CWT transform")
+    log_series, pre_cwt_params = log_price(df.precio_real_cop_kwh.values)
 
     # Step 3
-    log.info("\n[3] Windowing")
-    windows, metadata = create_windows(normalized, df.datetime.values)
+    log.info("\n[3] Windowing and daily demeaning")
+    windows, metadata = create_windows(log_series, df.datetime.values)
 
     # Step 4
     log.info("\n[4] Computing CWT")
@@ -304,4 +313,4 @@ if __name__ == "__main__":
     main()
 
 # Run the following command to generate scalograms:
-# python 03_generate_scalograms.py --save-png 10
+# python 04_generate_scalograms.py --save-png 10

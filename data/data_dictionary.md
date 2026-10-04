@@ -39,7 +39,7 @@ One row per date with columns: `Id` ("Sistema"), `Value`, `Date`.
 Each variable maps to a specific stage of the analysis.
 
 **Primary input (CWT scalograms)**
-`precio_bolsa_horario.csv` is the only input to the wavelet transform. Hourly spot prices are segmented into overlapping windows, transformed via CWT, and the resulting scalograms become inputs to the VAE.
+`precio_bolsa_horario.csv` is the only input to the wavelet transform. Hourly spot prices are deflated to real pesos (`precio_bolsa_real.csv`), log-transformed and segmented into non-overlapping daily windows. Each day's mean is removed before the CWT, so the scalograms carry only the intraday shape and become inputs to the VAE. The daily mean and standard deviation of the log real price are kept as separate level variables.
 
 **Regime validation (Interpretation and Validation)**
 Once the VAE latent space is clustered into regimes, the following variables help identify what each regime represents:

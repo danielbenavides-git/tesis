@@ -1,14 +1,14 @@
 {
   "pre_cwt": {
+    "price_series": "precio_real_cop_kwh",
     "log_transform": true,
-    "log_function": "log1p",
-    "z_score_mean": 4.836761772565071,
-    "z_score_std": 0.809393530565049
+    "log_function": "log",
+    "daily_demean": true
   },
   "post_cwt": {
     "method": "min_max",
     "global_min": 0.0,
-    "global_max": 3.9960732460021973
+    "global_max": 1.2690001726150513
   },
   "wavelet": "cmor1.5-1.0",
   "scales": [

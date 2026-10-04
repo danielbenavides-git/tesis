@@ -17,7 +17,7 @@ Outputs:
     data/processed/XM/precio_bolsa_diario_real.csv
 
 Usage:
-    python scripts/04_process_external_data.py
+    python scripts/03_process_external_data.py
 """
 
 import logging

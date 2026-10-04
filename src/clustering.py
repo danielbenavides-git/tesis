@@ -7,6 +7,17 @@ from sklearn.metrics import silhouette_score
 from sklearn.mixture import GaussianMixture
 
 
+LEVEL_COLUMNS = ("log_price_mean", "log_price_std")
+
+
+def with_level(latents, metadata, train_idx, columns=LEVEL_COLUMNS):
+    """Append the daily price level to the latents, z-scored with training-day statistics.
+    The scalograms carry only the intraday shape, so the level enters the GMM here."""
+    level = metadata[list(columns)].to_numpy(dtype=np.float64)
+    mean, std = level[train_idx].mean(axis=0), level[train_idx].std(axis=0)
+    return np.hstack([latents.astype(np.float64), (level - mean) / std])
+
+
 def _gmm(k, seed):
     return GaussianMixture(n_components=k, covariance_type="full", reg_covar=1e-4, n_init=5, random_state=seed)
 
