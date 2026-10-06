@@ -1,6 +1,7 @@
 {
   "pre_cwt": {
     "price_series": "precio_real_cop_kwh",
+    "price_set": "real_price_log",
     "log_transform": true,
     "log_function": "log",
     "daily_demean": true

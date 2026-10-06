@@ -5,10 +5,10 @@ data/cache/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 MNIST/
-data/processed/scalograms/*.npy
+data/processed/scalograms/**/*.npy
 
 # Figures
-figures/scalograms/*png
+figures/scalograms/**/*.png
 !figures/scalograms/.gitkeep
 
 # Python
@@ -32,6 +32,6 @@ Thumbs.db
 .ipynb_checkpoints/
 notebooks/data/
 
-# Training artifacts
-models/*/
-!models/*/.gitkeep
+# Experiment artifacts (weights, latents and cached features are regenerated locally)
+experiments/**/*.pt
+experiments/**/*.npy

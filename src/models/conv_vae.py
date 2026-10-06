@@ -7,7 +7,7 @@ import torch.nn.functional as F
 class ConvEncoder(nn.Module):
     """Stride-2 conv blocks. Maps (B, C, H, W) to a flat feature vector."""
 
-    def __init__(self, in_channels, img_h, img_w, filters=(32, 64, 128)):
+    def __init__(self, in_channels, img_h, img_w, filters=(128, 64, 32)):
         super().__init__()
         layers = []
         ch_in = in_channels
@@ -30,7 +30,7 @@ class ConvEncoder(nn.Module):
 class ConvDecoder(nn.Module):
     """Mirror of ConvEncoder. Maps a latent vector back to (B, C, H, W) in [0, 1]."""
 
-    def __init__(self, z_dim, out_channels, img_h, img_w, feat_shape, filters=(32, 64, 128)):
+    def __init__(self, z_dim, out_channels, img_h, img_w, feat_shape, filters=(128, 64, 32)):
         super().__init__()
         self.img_h, self.img_w = img_h, img_w
         self.feat_shape = feat_shape
@@ -71,7 +71,7 @@ def kl_loss(mu, log_var):
 
 
 class ConvVAE(nn.Module):
-    def __init__(self, z_dim, in_channels, img_h, img_w, filters=(32, 64, 128)):
+    def __init__(self, z_dim, in_channels, img_h, img_w, filters=(128, 64, 32)):
         super().__init__()
         self.z_dim = z_dim
         self.encoder = ConvEncoder(in_channels, img_h, img_w, filters)

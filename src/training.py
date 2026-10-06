@@ -1,6 +1,4 @@
-import json
 import random
-from pathlib import Path
 
 import numpy as np
 import torch
@@ -47,11 +45,3 @@ def train(model, train_loader, val_loader, device, epochs=30, lr=1e-3, beta=1.0,
             parts = "  ".join(f"{k}={v:.2f}" for k, v in train_losses.items())
             print(f"Epoch {epoch:3d}/{epochs}  train: {parts}  val total={val_losses['total']:.2f}")
     return history
-
-
-def save_run(run_dir, model, config, history):
-    run_dir = Path(run_dir)
-    run_dir.mkdir(parents=True, exist_ok=True)
-    torch.save(model.state_dict(), run_dir / "model.pt")
-    (run_dir / "config.json").write_text(json.dumps(config, indent=2))
-    (run_dir / "history.json").write_text(json.dumps(history, indent=2))

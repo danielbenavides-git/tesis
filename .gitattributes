@@ -1,2 +1,0 @@
-*.npy filter=lfs diff=lfs merge=lfs -text
-data/processed/scalograms/scalograms.npy filter=lfs diff=lfs merge=lfs -text

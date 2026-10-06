@@ -22,7 +22,7 @@ class TemporalVAE(nn.Module):
     recurrent state, so it only uses days up to t. The decoder rebuilds each day separately.
     """
 
-    def __init__(self, z_dim, in_channels, img_h, img_w, filters=(32, 64, 128),
+    def __init__(self, z_dim, in_channels, img_h, img_w, filters=(128, 64, 32),
                  proj_dim=128, rnn_hidden=64, rnn_type="lstm"):
         super().__init__()
         self.z_dim = z_dim

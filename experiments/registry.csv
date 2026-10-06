@@ -1,0 +1,1 @@
+run_id,date,model,scalogram_set,clustering,k,filters,z_dim,beta,lam,kl_warmup_epochs,epochs,silhouette,davies_bouldin,calinski_harabasz,mean_run_days,switches_per_year,git_commit

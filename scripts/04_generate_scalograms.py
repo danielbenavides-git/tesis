@@ -7,19 +7,26 @@ Window, wavelet and scales follow Benavides & Luna (2024):
 - Scales: 1 to 128
 - Output: magnitude of CWT coefficients, scaled to [0, 1] with the p99.5 value (values above it clipped)
 
-Input is the log real price (run 03_process_external_data.py first). Each day's
-mean is subtracted before the CWT (Torrence & Compo, 1998), so the scalogram
-shows only the intraday shape. Without this step the zero-padding edge effect
-grows with the day's level and dominates the large scales. The daily level
-(mean and std of the log real price) is saved in the metadata instead.
+Input is the real price (run 03_process_external_data.py first), either in logs
+(--price log) or in COP/kWh (--price linear). The log is the only difference
+between the two sets. Each day's mean is subtracted before the CWT (Torrence &
+Compo, 1998), so the scalogram shows only the intraday shape. Without this step
+the zero-padding edge effect grows with the day's level and dominates the large
+scales. The daily level (mean and std of the transformed series) is saved in the
+metadata instead: log_price_mean/log_price_std for --price log and
+price_mean/price_std for --price linear.
+
+Outputs:
+    --price log     data/processed/scalograms/real_price_log/
+    --price linear  data/processed/scalograms/real_price/
 
 Known limitation: with a 24-hour window, CWT coefficients at scales above ~8
 fall outside the cone of influence (Torrence & Compo, 1998) and do not carry
 reliable frequency information.
 
 Usage:
-    python scripts/04_generate_scalograms.py
-    python scripts/04_generate_scalograms.py --save-png 50
+    python scripts/04_generate_scalograms.py --price linear
+    python scripts/04_generate_scalograms.py --price log --save-png 50
 """
 
 import argparse
@@ -41,8 +48,9 @@ log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent.parent
 PROC_DIR = ROOT / "data" / "processed" / "XM"
-SCALO_DIR = ROOT / "data" / "processed" / "scalograms"
-FIG_DIR = ROOT / "figures" / "scalograms"
+SCALO_ROOT = ROOT / "data" / "processed" / "scalograms"
+FIG_ROOT = ROOT / "figures" / "scalograms"
+PRICE_SETS = {"log": "real_price_log", "linear": "real_price"}
 
 # ---------------------------------------------------------------------------
 # Parameters
@@ -73,31 +81,36 @@ def load_price_series() -> pd.DataFrame:
 # Step 2: Pre-CWT transform
 # ---------------------------------------------------------------------------
 
-def log_price(series: np.ndarray) -> tuple[np.ndarray, dict]:
-    """Natural log of the real price. Level is removed per day in create_windows."""
+def transform_price(series: np.ndarray, price: str) -> tuple[np.ndarray, dict, str]:
+    """Natural log of the real price (price="log") or the real price as is (price="linear").
+    Level is removed per day in create_windows. Returns the series, its params and the
+    prefix of the level columns in the metadata."""
 
-    if (series <= 0).any():
+    use_log = price == "log"
+    if use_log and (series <= 0).any():
         raise ValueError("Real price has non-positive values, log is undefined")
 
     params = {
         "price_series": "precio_real_cop_kwh",
-        "log_transform": True,
-        "log_function": "log",
+        "price_set": PRICE_SETS[price],
+        "log_transform": use_log,
+        "log_function": "log" if use_log else None,
         "daily_demean": True,
     }
 
-    log.info(f"  Log real price: min={np.log(series.min()):.4f}, max={np.log(series.max()):.4f}")
-    return np.log(series), params
+    out = np.log(series) if use_log else series.astype(np.float64)
+    log.info(f"  {'Log real' if use_log else 'Real'} price: min={out.min():.4f}, max={out.max():.4f}")
+    return out, params, "log_price" if use_log else "price"
 
 
 # ---------------------------------------------------------------------------
 # Step 3: Window the series and remove the daily level
 # ---------------------------------------------------------------------------
 
-def create_windows(series: np.ndarray, datetimes: np.ndarray) -> tuple[np.ndarray, pd.DataFrame]:
+def create_windows(series: np.ndarray, datetimes: np.ndarray, level_prefix: str) -> tuple[np.ndarray, pd.DataFrame]:
     """Segment the series into non-overlapping 24-hour windows and subtract each
     window's mean. Returns the demeaned windows and a metadata DataFrame with
-    the daily level (mean and std of the log real price)."""
+    the daily level (mean and std of the transformed series)."""
 
     n_windows = len(series) // STRIDE
     usable = n_windows * STRIDE
@@ -115,8 +128,8 @@ def create_windows(series: np.ndarray, datetimes: np.ndarray) -> tuple[np.ndarra
         "window_id": range(n_windows),
         "start_datetime": dt_windows[:, 0],
         "end_datetime": dt_windows[:, -1],
-        "log_price_mean": day_mean,
-        "log_price_std": day_std,
+        f"{level_prefix}_mean": day_mean,
+        f"{level_prefix}_std": day_std,
     })
 
     log.info(f"  {n_windows:,} windows of {WINDOW}h (stride={STRIDE}h), daily mean removed")
@@ -178,23 +191,24 @@ def normalize_scalograms(scalograms: np.ndarray) -> tuple[np.ndarray, dict]:
 # ---------------------------------------------------------------------------
 
 def save_outputs(
+    out_dir: Path,
     scalograms: np.ndarray,
     metadata: pd.DataFrame,
     pre_cwt_params: dict,
     post_cwt_params: dict,
 ):
-    SCALO_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    npy_path = SCALO_DIR / "scalograms.npy"
+    npy_path = out_dir / "scalograms.npy"
     np.save(npy_path, scalograms)
     size_mb = npy_path.stat().st_size / (1024 * 1024)
     log.info(f"  Saved {npy_path.name}: shape={scalograms.shape}, {size_mb:.1f} MB")
 
-    meta_path = SCALO_DIR / "scalogram_metadata.csv"
+    meta_path = out_dir / "scalogram_metadata.csv"
     metadata.to_csv(meta_path, index=False)
     log.info(f"  Saved {meta_path.name}: {len(metadata):,} rows")
 
-    norm_path = SCALO_DIR / "normalization_params.json"
+    norm_path = out_dir / "normalization_params.json"
     params = {
         "pre_cwt": pre_cwt_params,
         "post_cwt": post_cwt_params,
@@ -209,7 +223,7 @@ def save_outputs(
     log.info(f"  Saved {norm_path.name}")
 
 
-def save_sample_pngs(scalograms: np.ndarray, metadata: pd.DataFrame, n_samples: int):
+def save_sample_pngs(fig_dir: Path, scalograms: np.ndarray, metadata: pd.DataFrame, n_samples: int):
     """Save a sample of scalograms as PNG for visual inspection."""
     import matplotlib
     matplotlib.use("Agg")
@@ -217,7 +231,7 @@ def save_sample_pngs(scalograms: np.ndarray, metadata: pd.DataFrame, n_samples: 
 
     plt.rcParams['font.family'] = 'Arial'
 
-    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    fig_dir.mkdir(parents=True, exist_ok=True)
     n_total = len(scalograms)
     indices = np.linspace(0, n_total - 1, n_samples, dtype=int)
 
@@ -240,10 +254,10 @@ def save_sample_pngs(scalograms: np.ndarray, metadata: pd.DataFrame, n_samples: 
         fig.tight_layout()
 
         fname = f"scalogram_{start}.png"
-        fig.savefig(FIG_DIR / fname, dpi=150)
+        fig.savefig(fig_dir / fname, dpi=150)
         plt.close(fig)
 
-    log.info(f"  Saved {n_samples} sample PNGs to {FIG_DIR}")
+    log.info(f"  Saved {n_samples} sample PNGs to {fig_dir}")
 
 
 # ---------------------------------------------------------------------------
@@ -270,13 +284,19 @@ def validate(scalograms: np.ndarray):
 def main():
     parser = argparse.ArgumentParser(description="Generate CWT scalograms from the real spot price")
     parser.add_argument(
+        "--price", choices=sorted(PRICE_SETS), required=True,
+        help="log: log real price -> real_price_log/; linear: real price -> real_price/"
+    )
+    parser.add_argument(
         "--save-png", type=int, default=0, metavar="N",
         help="Save N sample scalograms as PNG (default: 0, no PNGs)"
     )
     args = parser.parse_args()
+    set_name = PRICE_SETS[args.price]
+    out_dir = SCALO_ROOT / set_name
 
     log.info("=" * 60)
-    log.info("CWT Scalogram Generation")
+    log.info(f"CWT Scalogram Generation ({set_name})")
     log.info(f"  Wavelet: {WAVELET}")
     log.info(f"  Scales: {SCALES[0]} to {SCALES[-1]} ({len(SCALES)} scales)")
     log.info(f"  Window: {WINDOW}h, Stride: {STRIDE}h")
@@ -288,11 +308,11 @@ def main():
 
     # Step 2
     log.info("\n[2] Pre-CWT transform")
-    log_series, pre_cwt_params = log_price(df.precio_real_cop_kwh.values)
+    series, pre_cwt_params, level_prefix = transform_price(df.precio_real_cop_kwh.values, args.price)
 
     # Step 3
     log.info("\n[3] Windowing and daily demeaning")
-    windows, metadata = create_windows(log_series, df.datetime.values)
+    windows, metadata = create_windows(series, df.datetime.values, level_prefix)
 
     # Step 4
     log.info("\n[4] Computing CWT")
@@ -308,17 +328,14 @@ def main():
 
     # Step 7
     log.info("\n[7] Saving outputs")
-    save_outputs(scalograms, metadata, pre_cwt_params, post_cwt_params)
+    save_outputs(out_dir, scalograms, metadata, pre_cwt_params, post_cwt_params)
 
     if args.save_png > 0:
         log.info(f"\n[8] Saving {args.save_png} sample PNGs")
-        save_sample_pngs(scalograms, metadata, args.save_png)
+        save_sample_pngs(FIG_ROOT / set_name, scalograms, metadata, args.save_png)
 
     log.info("\nDone.")
 
 
 if __name__ == "__main__":
     main()
-
-# Run the following command to generate scalograms:
-# python 04_generate_scalograms.py --save-png 10
