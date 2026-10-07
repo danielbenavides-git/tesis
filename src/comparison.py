@@ -122,7 +122,7 @@ def checks(a, b):
 
 def latents_match(a, b):
     """Compare latents.npy of two runs of the same model. None when either file is missing locally."""
-    pa, pb = a["dir"] / "latents.npy", b["dir"] / "latents.npy"
+    pa, pb = (run["dir"] / "artifacts" / "latents.npy" for run in (a, b))
     if run_setup(a)["model"] != run_setup(b)["model"] or not (pa.exists() and pb.exists()):
         return None
     la, lb = np.load(pa), np.load(pb)
