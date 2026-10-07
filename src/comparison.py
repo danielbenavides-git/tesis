@@ -18,7 +18,7 @@ METRICS = {
     "switches_per_year": ("Switches per year", "persistence", False),
 }
 GROUPS = ("separation", "persistence")
-IGNORED_CONFIG_KEYS = ("model", "clustering", "scalogram_set", "n_regimes", "k_range")
+IGNORED_CONFIG_KEYS = ("model", "clustering", "scalogram_set", "n_regimes", "k_range", "k_values", "trained_in")
 
 
 def load_run(run_id, root=EXPERIMENTS_DIR):

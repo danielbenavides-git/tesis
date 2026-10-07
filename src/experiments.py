@@ -66,10 +66,12 @@ def save_latents(run_dir, latents):
     np.save(Path(run_dir) / "artifacts" / "latents.npy", latents)
 
 
-def save_table(run_dir, name, table):
-    """Print a PrettyTable and write it to tables/<name>.txt."""
-    print(table)
-    (Path(run_dir) / "tables" / f"{name}.txt").write_text(table.get_string() + "\n", encoding="utf-8")
+def save_table(run_dir, name, table, show=True):
+    """Write a PrettyTable or DataFrame to tables/<name>.txt and print it unless show=False."""
+    text = table.to_string() if isinstance(table, pd.DataFrame) else table.get_string()
+    if show:
+        print(text)
+    (Path(run_dir) / "tables" / f"{name}.txt").write_text(text + "\n", encoding="utf-8")
 
 
 def figure_path(run_dir, name):
