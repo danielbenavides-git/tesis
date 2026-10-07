@@ -1,0 +1,5 @@
+run_id,date,model,scalogram_set,clustering,k,filters,z_dim,beta,lam,kl_warmup_epochs,epochs,silhouette,davies_bouldin,calinski_harabasz,mean_run_days,switches_per_year,git_commit
+conv_vae/001_real_price_kmeans_k2,2026-10-07T01:03:21,conv_vae,real_price,kmeans,2,128-64-32,16,1.0,,0,30,0.3396,1.2392,3797.7772,4.4253,82.5001,cfc7138
+conv_vae/002_real_price_gmm_k2,2026-10-07T01:03:44,conv_vae,real_price,gmm,2,128-64-32,16,1.0,,0,30,0.31,1.2944,3365.4395,4.2103,86.7135,cfc7138
+conv_vae/003_real_price_log_kmeans_k2,2026-10-07T14:54:22,conv_vae,real_price_log,kmeans,2,128-64-32,16,1.0,,0,30,0.3186,1.4682,3774.7298,4.7946,76.1423,cfc7138
+conv_vae/004_real_price_log_gmm_k2,2026-10-07T14:55:16,conv_vae,real_price_log,gmm,2,128-64-32,16,1.0,,0,30,0.2465,1.5312,3346.2902,4.128,88.444,cfc7138
