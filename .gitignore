@@ -1,7 +1,6 @@
 # Data (too large for git)
 data/raw/*.csv
 data/processed/*.csv
-data/cache/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 MNIST/
