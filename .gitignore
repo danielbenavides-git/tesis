@@ -32,6 +32,5 @@ Thumbs.db
 .ipynb_checkpoints/
 notebooks/data/
 
-# Experiment artifacts (weights, latents and cached features are regenerated locally)
-experiments/**/*.pt
-experiments/**/*.npy
+# Experiment artifacts (weights and latents are regenerated locally)
+experiments/**/artifacts/

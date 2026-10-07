@@ -67,7 +67,7 @@ Each run of notebooks 02 and 03 is set in the first cell (`SCALOGRAM_SET`, `CLUS
 config.json, history.json, metrics.json, regimes.csv
 tables/     splits, hyperparameters, k_selection, regime_profile, clustering_metrics (PrettyTable .txt)
 figures/    loss_curves, reconstructions, k_selection, tsne_regimes, regime_timeline
-model.pt, latents.npy   (not in git)
+artifacts/  model.pt, latents.npy (not in git)
 ```
 
 The last cell adds the run to `experiments/registry.csv` with the scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.

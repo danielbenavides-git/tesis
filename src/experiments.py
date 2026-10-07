@@ -19,7 +19,8 @@ REGISTRY_COLUMNS = [
 
 
 def create_run(model, scalogram_set, clustering, k, root=EXPERIMENTS_DIR):
-    """New folder experiments/<model>/NNN_<scalogram_set>_<clustering>_k<k>/ with tables/ and figures/.
+    """New folder experiments/<model>/NNN_<scalogram_set>_<clustering>_k<k>/ with tables/, figures/ and
+    artifacts/ (weights and latents, not in git).
     NNN is consecutive within each model and never reused."""
     model_dir = Path(root) / model
     model_dir.mkdir(parents=True, exist_ok=True)
@@ -28,6 +29,7 @@ def create_run(model, scalogram_set, clustering, k, root=EXPERIMENTS_DIR):
     run_dir = model_dir / f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_{clustering}_{k_label}"
     (run_dir / "tables").mkdir(parents=True)
     (run_dir / "figures").mkdir()
+    (run_dir / "artifacts").mkdir()
     return run_dir
 
 
@@ -52,11 +54,11 @@ def save_metrics(run_dir, metrics):
 
 
 def save_model(run_dir, model):
-    torch.save(model.state_dict(), Path(run_dir) / "model.pt")
+    torch.save(model.state_dict(), Path(run_dir) / "artifacts" / "model.pt")
 
 
 def save_latents(run_dir, latents):
-    np.save(Path(run_dir) / "latents.npy", latents)
+    np.save(Path(run_dir) / "artifacts" / "latents.npy", latents)
 
 
 def save_table(run_dir, name, table):
