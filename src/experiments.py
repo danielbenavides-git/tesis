@@ -34,7 +34,12 @@ def create_run(model, scalogram_set, clustering, k, root=EXPERIMENTS_DIR):
 
 
 def run_id(run_dir):
-    return f"{Path(run_dir).parent.name}/{Path(run_dir).name}"
+    """Path of the run inside experiments/, e.g. conv_vae/kmeans/001_real_price_kmeans_k2."""
+    run_dir = Path(run_dir).resolve()
+    try:
+        return run_dir.relative_to(EXPERIMENTS_DIR.resolve()).as_posix()
+    except ValueError:
+        return f"{run_dir.parent.name}/{run_dir.name}"
 
 
 def _write_json(path, obj):
