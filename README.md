@@ -23,23 +23,24 @@ src/                Model code imported by the notebooks
   training.py       Training loop with KL warm-up
   clustering.py     K-means and GMM regime assignment, k selection, regime ordering, metrics and profiles
   experiments.py    Run folders, saved config/metrics/tables, registry and PrettyTable builders
+  comparison.py     Pairwise run comparison, winners by metric family, comparison CSVs
   plots.py          Loss curves, k selection, t-SNE and regime timeline charts
   models/
     conv_vae.py     Convolutional VAE (encoder, decoder, losses)
     temporal_vae.py ConvVAE with a causal LSTM over consecutive days
-    baselines.py    Raw PCA and frozen MobileNetV2 + PCA
 notebooks/
   01_eda.ipynb
   02_vae_gmm.ipynb              ConvVAE + GMM
   02_vae_kmeans.ipynb           ConvVAE + k-means
   03_temporal_vae_gmm.ipynb     Temporal VAE + GMM
   03_temporal_vae_kmeans.ipynb  Temporal VAE + k-means
-  04_baselines.ipynb            Raw PCA and MobileNetV2 baselines
+  04_comparisons.ipynb          K-means vs GMM per model, then ConvVAE vs Temporal VAE
 experiments/
-  registry.csv      One row per run: hyperparameters that change and main metrics
-  conv_vae/         One folder per run, e.g. 001_real_price_kmeans_k2/
+  registry.csv               One row per run: hyperparameters that change and main metrics
+  comparisons.csv            One row per compared pair and metric (notebook 04)
+  comparisons_summary.csv    One row per compared pair: winner per metric family and overall
+  conv_vae/                  One folder per run, e.g. 001_real_price_kmeans_k2/
   temporal_vae/
-  baselines/        Outputs of notebook 04
 figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
 ```
 
@@ -70,6 +71,10 @@ model.pt, latents.npy   (not in git)
 ```
 
 The last cell adds the run to `experiments/registry.csv` with the scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
+
+## Comparisons
+
+Notebook 04 reads finished runs and compares them in pairs: k-means vs GMM for each model, then the two winners (ConvVAE vs Temporal VAE). The run ids go in its first cell. Metrics are grouped in two families, separation (silhouette, Davies-Bouldin, Calinski-Harabasz) and persistence (mean run length, switches per year). A run wins a family when it wins more of its metrics; the overall winner wins both families, or one with the other tied, and a split is resolved by total metric wins and marked as such. Each pair also reports what changed between the runs, the regime profiles side by side and the share of days assigned to the same regime. Results go to `experiments/comparisons.csv` and `experiments/comparisons_summary.csv`.
 
 ## Data Acquisition
 
