@@ -22,7 +22,8 @@ src/                Model code imported by the notebooks
   data.py           Scalogram loading, chronological split, daily and sequence datasets, context variables
   training.py       Training loop with KL warm-up
   clustering.py     K-means and GMM regime assignment, k selection, regime ordering, metrics and profiles
-  experiments.py    Run folders, saved config/metrics/tables, registry and PrettyTable builders
+  experiments.py    Run folders, saved config/metrics/tables, registry, loading a trained run and PrettyTable builders
+  runs.py           Steps shared by notebooks 02 and 03: one run folder per k, clustering, figures, tables, k sweep
   comparison.py     Pairwise run comparison, winners by metric family, comparison CSVs
   plots.py          Loss curves, k selection, t-SNE and regime timeline charts
   models/
@@ -30,10 +31,8 @@ src/                Model code imported by the notebooks
     temporal_vae.py ConvVAE with a causal LSTM over consecutive days
 notebooks/
   01_eda.ipynb
-  02_vae_gmm.ipynb              ConvVAE + GMM
-  02_vae_kmeans.ipynb           ConvVAE + k-means
-  03_temporal_vae_gmm.ipynb     Temporal VAE + GMM
-  03_temporal_vae_kmeans.ipynb  Temporal VAE + k-means
+  02_conv_vae.ipynb             ConvVAE + k-means or GMM
+  03_temporal_vae.ipynb         Temporal VAE + k-means or GMM
   04_comparisons.ipynb          K-means vs GMM per model, then ConvVAE vs Temporal VAE
 experiments/
   registry.csv               One row per run: hyperparameters that change and main metrics
@@ -61,16 +60,21 @@ Days are split chronologically (60% train, 20% validation, 20% test). K-means an
 
 ## Experiments
 
-Each run of notebooks 02 and 03 is set in the first cell (`SCALOGRAM_SET`, `CLUSTERING`, `N_REGIMES` and the hyperparameters) and creates `experiments/<model>/NNN_<set>_<clustering>_k<k>/` with a consecutive number:
+Notebooks 02 and 03 are set in their first configuration cell: `scalogram_set`, `clustering` (`"kmeans"` or `"gmm"`), `k_values`, `study`, `load_from` and the hyperparameters. The model is trained once and the clustering runs once per k in `k_values`. Each k creates `experiments/<model>/<clustering>/NNN_<set>_<clustering>_k<k>/`, numbered consecutively inside each clustering folder:
 
 ```
 config.json, history.json, metrics.json, regimes.csv
-tables/     splits, hyperparameters, k_selection, regime_profile, clustering_metrics (PrettyTable .txt)
+tables/     splits, hyperparameters, k_selection, k_sweep, regime_profile, clustering_metrics,
+            price_spread, weekday_share, feature_checks
 figures/    loss_curves, reconstructions, k_selection, tsne_regimes, regime_timeline
 artifacts/  model.pt, latents.npy (not in git)
 ```
 
-The last cell adds the run to `experiments/registry.csv` with the scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
+- `study` names the question a run answers: `k_sweep`, `price_set`, `clustering`, `vae_model` or `hyperparameters`. Filter the registry with `registry[registry["study"] == "k_sweep"]`.
+- `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents.
+- `load_from` takes the `run_id` of an earlier run and skips training: the notebook loads its model, history and latents, and uses its set and hyperparameters. Use it to try other k or the other clustering algorithm on the same latents.
+
+Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/`, `scripts/` or `notebooks/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
 
 ## Comparisons
 

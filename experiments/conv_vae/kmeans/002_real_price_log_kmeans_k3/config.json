@@ -1,5 +1,6 @@
 {
   "model": "conv_vae",
+  "study": "k_sweep",
   "scalogram_set": "real_price_log",
   "clustering": "kmeans",
   "k_values": [

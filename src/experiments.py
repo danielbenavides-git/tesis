@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 EXPERIMENTS_DIR = ROOT / "experiments"
 
 REGISTRY_COLUMNS = [
-    "run_id", "date", "model", "scalogram_set", "clustering", "k", "filters", "z_dim", "beta", "lam",
+    "run_id", "date", "study", "model", "scalogram_set", "clustering", "k", "filters", "z_dim", "beta", "lam",
     "kl_warmup_epochs", "epochs", "silhouette", "davies_bouldin", "calinski_harabasz",
     "mean_run_days", "switches_per_year", "git_commit",
 ]
@@ -66,6 +66,17 @@ def save_latents(run_dir, latents):
     np.save(Path(run_dir) / "artifacts" / "latents.npy", latents)
 
 
+def load_trained(run_id, device="cpu", root=EXPERIMENTS_DIR):
+    """Config, history, model weights and latents saved by an earlier run, to reuse its model without training."""
+    run_dir = Path(root) / run_id
+    return {
+        "config": json.loads((run_dir / "config.json").read_text()),
+        "history": json.loads((run_dir / "history.json").read_text()),
+        "state_dict": torch.load(run_dir / "artifacts" / "model.pt", map_location=device),
+        "latents": np.load(run_dir / "artifacts" / "latents.npy"),
+    }
+
+
 def save_table(run_dir, name, table, show=True):
     """Write a PrettyTable or DataFrame to tables/<name>.txt and print it unless show=False."""
     text = table.to_string() if isinstance(table, pd.DataFrame) else table.get_string()
@@ -79,11 +90,11 @@ def figure_path(run_dir, name):
 
 
 def git_commit(root=ROOT):
-    """Short HEAD hash, with -dirty if src/ or scripts/ have uncommitted changes."""
+    """Short HEAD hash, with -dirty if src/, scripts/ or notebooks/ have uncommitted changes."""
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root,
                                 capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts"], cwd=root,
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts", "notebooks"], cwd=root,
                                capture_output=True, text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
@@ -97,6 +108,7 @@ def log_run(run_dir, config, metrics, registry=None):
     row = {
         "run_id": run_id(run_dir),
         "date": datetime.now().isoformat(timespec="seconds"),
+        "study": config.get("study", ""),
         "model": config["model"],
         "scalogram_set": config["scalogram_set"],
         "clustering": config["clustering"],

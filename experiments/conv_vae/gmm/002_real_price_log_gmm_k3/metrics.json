@@ -1,0 +1,14 @@
+{
+  "run_id": "conv_vae/gmm/002_real_price_log_gmm_k3",
+  "model": "conv_vae",
+  "scalogram_set": "real_price_log",
+  "clustering": "gmm",
+  "k": 3,
+  "regimes": 3,
+  "silhouette": 0.1276011513783813,
+  "davies_bouldin": 1.9280995392484759,
+  "calinski_harabasz": 2375.3839259039464,
+  "mean_run_days": 2.673919030570091,
+  "median_run_days": 2.0,
+  "switches_per_year": 136.55963538984446
+}

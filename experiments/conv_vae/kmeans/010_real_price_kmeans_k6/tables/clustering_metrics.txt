@@ -1,0 +1,16 @@
++-------------------+------------------------------------------+
+| Metric            |                  Value                   |
++-------------------+------------------------------------------+
+| run_id            | conv_vae/kmeans/010_real_price_kmeans_k6 |
+| model             |                 conv_vae                 |
+| scalogram_set     |                real_price                |
+| clustering        |                  kmeans                  |
+| k                 |                    6                     |
+| regimes           |                    6                     |
+| silhouette        |                  0.238                   |
+| davies_bouldin    |                  1.321                   |
+| calinski_harabasz |                 3060.573                 |
+| mean_run_days     |                  2.270                   |
+| median_run_days   |                  1.000                   |
+| switches_per_year |                 160.862                  |
++-------------------+------------------------------------------+
