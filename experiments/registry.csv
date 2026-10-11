@@ -14,3 +14,8 @@ conv_vae/kmeans/007_real_price_kmeans_k3,2026-10-11T17:01:38,price_set,conv_vae,
 conv_vae/kmeans/008_real_price_kmeans_k4,2026-10-11T17:01:45,price_set,conv_vae,real_price,kmeans,4,128-64-32,16,1.0,,0,30,0.238,1.371,3432.3264,2.7403,133.2491,dbf9ce3-dirty
 conv_vae/kmeans/009_real_price_kmeans_k5,2026-10-11T17:01:54,price_set,conv_vae,real_price,kmeans,5,128-64-32,16,1.0,,0,30,0.2307,1.387,3371.9552,2.545,143.4817,dbf9ce3-dirty
 conv_vae/kmeans/010_real_price_kmeans_k6,2026-10-11T17:02:01,price_set,conv_vae,real_price,kmeans,6,128-64-32,16,1.0,,0,30,0.2381,1.3212,3060.5727,2.27,160.862,dbf9ce3-dirty
+conv_vae/gmm/006_real_price_gmm_k2,2026-10-11T17:11:58,clustering,conv_vae,real_price,gmm,2,128-64-32,16,1.0,,0,30,0.31,1.2944,3365.4395,4.2103,86.7135,7462b1e-dirty
+conv_vae/gmm/007_real_price_gmm_k3,2026-10-11T17:12:17,clustering,conv_vae,real_price,gmm,3,128-64-32,16,1.0,,0,30,0.2533,1.7296,2442.9919,3.1089,117.4488,7462b1e-dirty
+conv_vae/gmm/008_real_price_gmm_k4,2026-10-11T17:12:39,clustering,conv_vae,real_price,gmm,4,128-64-32,16,1.0,,0,30,0.1724,1.9099,1904.202,2.382,153.3004,7462b1e-dirty
+conv_vae/gmm/009_real_price_gmm_k5,2026-10-11T17:13:02,clustering,conv_vae,real_price,gmm,5,128-64-32,16,1.0,,0,30,0.1645,2.1495,2019.6158,2.1278,171.6212,7462b1e-dirty
+conv_vae/gmm/010_real_price_gmm_k6,2026-10-11T17:13:26,clustering,conv_vae,real_price,gmm,6,128-64-32,16,1.0,,0,30,0.148,2.0104,1985.7764,2.029,179.9728,7462b1e-dirty

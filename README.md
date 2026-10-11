@@ -74,7 +74,7 @@ artifacts/  model.pt, latents.npy (not in git)
 - `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents.
 - `load_from` takes the `run_id` of an earlier run and skips training: the notebook loads its model, history and latents, and uses its set and hyperparameters. Use it to try other k or the other clustering algorithm on the same latents.
 
-Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/`, `scripts/` or `notebooks/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
+Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes; notebook settings are saved in each `config.json`). Commit code changes before a run so the commit identifies the code that produced it.
 
 ## Comparisons
 

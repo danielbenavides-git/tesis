@@ -90,11 +90,12 @@ def figure_path(run_dir, name):
 
 
 def git_commit(root=ROOT):
-    """Short HEAD hash, with -dirty if src/, scripts/ or notebooks/ have uncommitted changes."""
+    """Short HEAD hash, with -dirty if src/ or scripts/ have uncommitted changes.
+    Notebooks are not checked: their config cell is edited before every run and is saved in config.json."""
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root,
                                 capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts", "notebooks"], cwd=root,
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts"], cwd=root,
                                capture_output=True, text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"

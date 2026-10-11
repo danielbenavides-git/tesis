@@ -1,0 +1,32 @@
+diff --git a/README.md b/README.md
+index a1ccd90..9d1c755 100644
+--- a/README.md
++++ b/README.md
+@@ -74,7 +74,7 @@ artifacts/  model.pt, latents.npy (not in git)
+ - `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents.
+ - `load_from` takes the `run_id` of an earlier run and skips training: the notebook loads its model, history and latents, and uses its set and hyperparameters. Use it to try other k or the other clustering algorithm on the same latents.
+ 
+-Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/`, `scripts/` or `notebooks/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
++Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes; notebook settings are saved in each `config.json`). Commit code changes before a run so the commit identifies the code that produced it.
+ 
+ ## Comparisons
+ 
+diff --git a/src/experiments.py b/src/experiments.py
+index 4a41d75..bade7b5 100644
+--- a/src/experiments.py
++++ b/src/experiments.py
+@@ -90,11 +90,12 @@ def figure_path(run_dir, name):
+ 
+ 
+ def git_commit(root=ROOT):
+-    """Short HEAD hash, with -dirty if src/, scripts/ or notebooks/ have uncommitted changes."""
++    """Short HEAD hash, with -dirty if src/ or scripts/ have uncommitted changes.
++    Notebooks are not checked: their config cell is edited before every run and is saved in config.json."""
+     try:
+         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root,
+                                 capture_output=True, text=True, check=True).stdout.strip()
+-        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts", "notebooks"], cwd=root,
++        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "scripts"], cwd=root,
+                                capture_output=True, text=True, check=True).stdout.strip()
+     except (OSError, subprocess.CalledProcessError):
+         return "unknown"

@@ -1,0 +1,14 @@
+{
+  "run_id": "conv_vae/gmm/009_real_price_gmm_k5",
+  "model": "conv_vae",
+  "scalogram_set": "real_price",
+  "clustering": "gmm",
+  "k": 5,
+  "regimes": 5,
+  "silhouette": 0.16448819975043288,
+  "davies_bouldin": 2.149486211103947,
+  "calinski_harabasz": 2019.6157806371295,
+  "mean_run_days": 2.1277668200745126,
+  "median_run_days": 1.0,
+  "switches_per_year": 171.62122772685137
+}
