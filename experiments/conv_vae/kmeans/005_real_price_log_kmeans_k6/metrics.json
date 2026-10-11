@@ -1,0 +1,14 @@
+{
+  "run_id": "conv_vae/kmeans/005_real_price_log_kmeans_k6",
+  "model": "conv_vae",
+  "scalogram_set": "real_price_log",
+  "clustering": "kmeans",
+  "k": 6,
+  "regimes": 6,
+  "silhouette": 0.21486781142176756,
+  "davies_bouldin": 1.4113640072271985,
+  "calinski_harabasz": 2298.21639374686,
+  "mean_run_days": 2.3542677012609117,
+  "median_run_days": 1.0,
+  "switches_per_year": 155.10616438356163
+}

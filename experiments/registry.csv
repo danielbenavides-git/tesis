@@ -1,0 +1,6 @@
+run_id,date,model,scalogram_set,clustering,k,filters,z_dim,beta,lam,kl_warmup_epochs,epochs,silhouette,davies_bouldin,calinski_harabasz,mean_run_days,switches_per_year,git_commit
+conv_vae/kmeans/001_real_price_log_kmeans_k2,2026-10-07T17:16:18,conv_vae,real_price_log,kmeans,2,128-64-32,16,1.0,,0,30,0.3186,1.4682,3774.7298,4.7946,76.1423,71bc23d
+conv_vae/kmeans/002_real_price_log_kmeans_k3,2026-10-07T17:16:47,conv_vae,real_price_log,kmeans,3,128-64-32,16,1.0,,0,30,0.2115,1.6112,2838.5157,3.2043,113.9502,71bc23d
+conv_vae/kmeans/003_real_price_log_kmeans_k4,2026-10-07T17:17:16,conv_vae,real_price_log,kmeans,4,128-64-32,16,1.0,,0,30,0.2111,1.4566,2747.0053,2.8199,129.4871,71bc23d
+conv_vae/kmeans/004_real_price_log_kmeans_k5,2026-10-07T17:18:00,conv_vae,real_price_log,kmeans,5,128-64-32,16,1.0,,0,30,0.2104,1.4305,2275.3661,2.3571,154.9181,71bc23d
+conv_vae/kmeans/005_real_price_log_kmeans_k6,2026-10-07T17:18:36,conv_vae,real_price_log,kmeans,6,128-64-32,16,1.0,,0,30,0.2149,1.4114,2298.2164,2.3543,155.1062,71bc23d
