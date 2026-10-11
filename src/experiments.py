@@ -103,7 +103,8 @@ def git_commit(root=ROOT):
 
 
 def log_run(run_dir, config, metrics, registry=None):
-    """Add (or replace) this run's row in experiments/registry.csv and return it."""
+    """Add (or replace) this run's row in experiments/registry.csv and return it.
+    Model hyperparameters are left empty for runs without a model (the level-only baseline)."""
     run_dir = Path(run_dir)
     registry = Path(registry) if registry else run_dir.parent.parent / "registry.csv"
     row = {
@@ -114,12 +115,12 @@ def log_run(run_dir, config, metrics, registry=None):
         "scalogram_set": config["scalogram_set"],
         "clustering": config["clustering"],
         "k": metrics["k"],
-        "filters": "-".join(str(f) for f in config["filters"]),
-        "z_dim": config["z_dim"],
-        "beta": config["beta"],
+        "filters": "-".join(str(f) for f in config.get("filters", [])),
+        "z_dim": config.get("z_dim", ""),
+        "beta": config.get("beta", ""),
         "lam": config.get("lam", ""),
-        "kl_warmup_epochs": config["kl_warmup_epochs"],
-        "epochs": config["epochs"],
+        "kl_warmup_epochs": config.get("kl_warmup_epochs", ""),
+        "epochs": config.get("epochs", ""),
         **{key: round(metrics[key], 4) for key in
            ("silhouette", "davies_bouldin", "calinski_harabasz", "mean_run_days", "switches_per_year")},
         "git_commit": git_commit(),

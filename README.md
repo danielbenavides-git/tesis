@@ -34,12 +34,14 @@ notebooks/
   02_conv_vae.ipynb             ConvVAE + k-means or GMM
   03_temporal_vae.ipynb         Temporal VAE + k-means or GMM
   04_comparisons.ipynb          K-means vs GMM per model, then ConvVAE vs Temporal VAE
+  05_level_baseline.ipynb       Baseline: clustering on the daily price level only (no CWT, no VAE)
 experiments/
   registry.csv               One row per run: hyperparameters that change and main metrics
   comparisons.csv            One row per compared pair and metric (notebook 04)
   comparisons_summary.csv    One row per compared pair: winner per metric family and overall
   conv_vae/                  One folder per run, e.g. 001_real_price_kmeans_k2/
   temporal_vae/
+  level_only/                Level-only baseline runs (notebook 05)
 figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
 ```
 
@@ -70,11 +72,15 @@ figures/    loss_curves, reconstructions, k_selection, tsne_regimes, regime_time
 artifacts/  model.pt, latents.npy (not in git)
 ```
 
-- `study` names the question a run answers: `k_sweep`, `price_set`, `clustering`, `vae_model` or `hyperparameters`. Filter the registry with `registry[registry["study"] == "k_sweep"]`.
+- `study` names the question a run answers: `k_sweep`, `price_set`, `clustering`, `vae_model`, `hyperparameters` or `baseline`. Filter the registry with `registry[registry["study"] == "k_sweep"]`.
 - `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents.
 - `load_from` takes the `run_id` of an earlier run and skips training: the notebook loads its model, history and latents, and uses its set and hyperparameters. Use it to try other k or the other clustering algorithm on the same latents.
 
 Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes; notebook settings are saved in each `config.json`). Commit code changes before a run so the commit identifies the code that produced it.
+
+## Baseline
+
+Notebook 05 clusters the days with only the daily price level (mean and standard deviation of the day's price, in logs for `real_price_log`), without scalograms or VAE. It is the reference every model has to beat: if the latents do not improve persistence or the capture of the El Nino episodes over this baseline, the intraday shape is not adding information about the regime. Its runs go to `experiments/level_only/<clustering>/` with `study = "baseline"` and are compared in notebook 04 like any other run.
 
 ## Comparisons
 

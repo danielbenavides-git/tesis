@@ -1,0 +1,16 @@
++-------------------+------------------------------------------------+
+| Metric            |                     Value                      |
++-------------------+------------------------------------------------+
+| run_id            | level_only/kmeans/001_real_price_log_kmeans_k2 |
+| model             |                   level_only                   |
+| scalogram_set     |                 real_price_log                 |
+| clustering        |                     kmeans                     |
+| k                 |                       2                        |
+| regimes           |                       2                        |
+| silhouette        |                     0.364                      |
+| davies_bouldin    |                     1.084                      |
+| calinski_harabasz |                    4693.608                    |
+| mean_run_days     |                     6.228                      |
+| median_run_days   |                     2.000                      |
+| switches_per_year |                     58.612                     |
++-------------------+------------------------------------------------+
