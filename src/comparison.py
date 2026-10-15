@@ -9,6 +9,7 @@ from prettytable import PrettyTable
 from .clustering import regime_profile
 from .data import load_context
 from .experiments import EXPERIMENTS_DIR
+from .runs import complete_regimes
 
 METRICS = {
     "silhouette": ("Silhouette", "separation", True),
@@ -16,21 +17,38 @@ METRICS = {
     "calinski_harabasz": ("Calinski-Harabasz", "separation", True),
     "mean_run_days": ("Mean run (days)", "persistence", True),
     "switches_per_year": ("Switches per year", "persistence", False),
+    "nino_2015_16_in_top_pct": ("El Nino 2015-2016 in top regime %", "el_nino", True),
+    "nino_2023_24_in_top_pct": ("El Nino 2023-2024 in top regime %", "el_nino", True),
+    "top_el_nino_pct": ("El Nino % of the top regime", "el_nino", True),
 }
-GROUPS = ("separation", "persistence")
-IGNORED_CONFIG_KEYS = ("model", "clustering", "scalogram_set", "n_regimes", "k_range", "k_values", "trained_in", "study")
+GROUPS = ("separation", "persistence", "el_nino")
+IGNORED_CONFIG_KEYS = ("model", "clustering", "scalogram_set", "n_regimes", "k_range", "k_values", "trained_in", "study", "tag")
 
 
-def load_run(run_id, root=EXPERIMENTS_DIR):
+def nino_metrics(regimes):
+    """El Nino family, from the per-day columns of regimes.csv: share of each episode's El Nino days in the most
+    expensive regime (higher captures more of the episode) and share of El Nino days among the days of that regime
+    (higher means the regime is not just large). Reading both keeps a large top regime from winning by size alone."""
+    top = regimes[regimes["top_regime"] == 1]
+    return {
+        "nino_2015_16_in_top_pct": 100 * regimes.loc[regimes["episode"] == "2015-2016", "captured"].mean(),
+        "nino_2023_24_in_top_pct": 100 * regimes.loc[regimes["episode"] == "2023-2024", "captured"].mean(),
+        "top_el_nino_pct": 100 * top["nino"].mean(),
+        "top_share_pct": 100 * len(top) / len(regimes),
+    }
+
+
+def load_run(run_id, data_dir, root=EXPERIMENTS_DIR):
     run_dir = Path(root) / run_id
     if not (run_dir / "metrics.json").exists():
         raise FileNotFoundError(f"{run_id} has no metrics.json (run not finished or wrong id)")
+    regimes = complete_regimes(run_dir, data_dir)
     return {
         "run_id": run_id,
         "dir": run_dir,
         "config": json.loads((run_dir / "config.json").read_text()),
-        "metrics": json.loads((run_dir / "metrics.json").read_text()),
-        "regimes": pd.read_csv(run_dir / "regimes.csv", parse_dates=["date"]),
+        "metrics": {**json.loads((run_dir / "metrics.json").read_text()), **nino_metrics(regimes)},
+        "regimes": regimes,
     }
 
 
@@ -54,14 +72,28 @@ def _winner(value_a, value_b, higher_is_better, id_a, id_b):
     return id_a if a_better else id_b
 
 
+def same_space(a, b):
+    """Separation metrics are measured in each run's own clustering features, so they only compare runs of the
+    same model and scalogram set (e.g. k-means vs GMM on the same latents)."""
+    sa, sb = run_setup(a), run_setup(b)
+    return sa["model"] == sb["model"] and sa["scalogram_set"] == sb["scalogram_set"]
+
+
+def counted_groups(a, b):
+    """Families that decide the winner: all three for runs in the same space, otherwise persistence and El Nino
+    only (different models, a baseline, or different scalogram sets)."""
+    return GROUPS if same_space(a, b) else ("persistence", "el_nino")
+
+
 def metric_table(a, b):
-    """One row per metric with both values, the better direction and the winning run."""
+    """One row per metric with both values, the better direction, the winning run and whether it is counted."""
     rows = []
+    groups = counted_groups(a, b)
     for key, (label, group, higher) in METRICS.items():
         va, vb = float(a["metrics"][key]), float(b["metrics"][key])
         rows.append({"metric": key, "label": label, "group": group, "better": "higher" if higher else "lower",
                      "value_a": va, "value_b": vb, "difference_b_minus_a": vb - va,
-                     "winner": _winner(va, vb, higher, a["run_id"], b["run_id"])})
+                     "winner": _winner(va, vb, higher, a["run_id"], b["run_id"]), "counted": group in groups})
     return pd.DataFrame(rows)
 
 
@@ -73,17 +105,21 @@ def _group_result(table, group, id_a, id_b):
 
 
 def summarize(a, b, table):
-    """Winner per metric group and overall. The overall winner wins both groups, or one group with the other
-    tied. If each run wins one group, the split is resolved by total metric wins and marked as split."""
+    """Winner per metric group and overall, over the counted groups only. The overall winner wins every counted
+    group that is not tied. If the runs split the groups, the split is resolved by total wins over the counted
+    metrics and marked as split."""
     id_a, id_b = a["run_id"], b["run_id"]
-    summary = {"run_a": id_a, "run_b": id_b,
+    groups = counted_groups(a, b)
+    summary = {"run_a": id_a, "run_b": id_b, "counted_groups": ", ".join(groups),
                "changed": "; ".join(f"{k}: {va} -> {vb}" for k, (va, vb) in sorted(differences(a, b).items()))}
     group_winners = {}
     for group in GROUPS:
         wins_a, wins_b, winner = _group_result(table, group, id_a, id_b)
         summary.update({f"{group}_wins_a": wins_a, f"{group}_wins_b": wins_b, f"{group}_winner": winner})
-        group_winners[group] = winner
-    total_a, total_b = int((table["winner"] == id_a).sum()), int((table["winner"] == id_b).sum())
+        if group in groups:
+            group_winners[group] = winner
+    counted = table[table["counted"]]
+    total_a, total_b = int((counted["winner"] == id_a).sum()), int((counted["winner"] == id_b).sum())
     summary.update({"total_wins_a": total_a, "total_wins_b": total_b})
 
     decided = {w for w in group_winners.values() if w != "tie"}
@@ -96,7 +132,7 @@ def summarize(a, b, table):
         overall, basis = "tie", "tie"
     summary.update({"overall_winner": overall, "basis": basis})
 
-    won = {run: [METRICS[m][0] for m in table.loc[table["winner"] == run, "metric"]] for run in (id_a, id_b)}
+    won = {run: [METRICS[m][0] for m in counted.loc[counted["winner"] == run, "metric"]] for run in (id_a, id_b)}
     if overall == "tie":
         summary["verdict"] = "Tie: neither run wins more metrics."
     else:
@@ -114,9 +150,10 @@ def checks(a, b):
         notes.append(f"Different k ({sa['k']} vs {sb['k']}): separation metrics tend to change with k by themselves.")
     if sa["scalogram_set"] != sb["scalogram_set"]:
         notes.append("Different scalogram sets: the input images and the daily level differ.")
-    if sa["model"] != sb["model"]:
-        notes.append("Different models: silhouette, Davies-Bouldin and Calinski-Harabasz are measured in each "
-                     "model's own latent space, so only run length and switches per year compare cleanly.")
+    if not same_space(a, b):
+        notes.append("Different model or scalogram set: silhouette, Davies-Bouldin and Calinski-Harabasz are measured "
+                     "in each run's own features, so they are shown for reference and not counted. The winner comes "
+                     "from persistence and El Nino.")
     return notes
 
 
@@ -152,7 +189,7 @@ def profile_side_by_side(a, b, data_dir):
 
 
 def compare(id_a, id_b, data_dir, root=EXPERIMENTS_DIR):
-    a, b = load_run(id_a, root), load_run(id_b, root)
+    a, b = load_run(id_a, data_dir, root), load_run(id_b, data_dir, root)
     table = metric_table(a, b)
     return {"a": a, "b": b, "table": table, "summary": summarize(a, b, table), "checks": checks(a, b),
             "latents": latents_match(a, b), "agreement": label_agreement(a, b),
@@ -179,9 +216,11 @@ def report(result):
     t = PrettyTable(["Metric", "Group", "Better", "A", "B", "Winner"])
     for _, row in result["table"].iterrows():
         winner = "A" if row["winner"] == a["run_id"] else "B" if row["winner"] == b["run_id"] else "tie"
-        t.add_row([row["label"], row["group"], row["better"], _fmt(row["value_a"]), _fmt(row["value_b"]), winner])
-    print("\nClustering metrics")
+        t.add_row([row["label"], row["group"], row["better"], _fmt(row["value_a"]), _fmt(row["value_b"]),
+                   winner if row["counted"] else f"({winner}, not counted)"])
+    print("\nMetrics")
     print(t)
+    print(f"Top regime size: A {a['metrics']['top_share_pct']:.1f}% of the days, B {b['metrics']['top_share_pct']:.1f}%")
 
     p = result["profile"]
     t = PrettyTable(["Regime", "Days A", "Days B", "Price A", "Price B", "Reservoir A", "Reservoir B",
@@ -209,13 +248,14 @@ def report(result):
 
 
 def summary_table(summaries):
-    t = PrettyTable(["Run A", "Run B", "Separation", "Persistence", "Total wins A-B", "Overall winner"])
+    t = PrettyTable(["Run A", "Run B", "Separation", "Persistence", "El Nino", "Total wins A-B", "Overall winner"])
     t.align = "l"
     for s in summaries:
-        t.add_row([s["run_a"], s["run_b"],
-                   f"{s['separation_wins_a']}-{s['separation_wins_b']} ({_short(s, 'separation_winner')})",
-                   f"{s['persistence_wins_a']}-{s['persistence_wins_b']} ({_short(s, 'persistence_winner')})",
-                   f"{s['total_wins_a']}-{s['total_wins_b']}", _short(s, "overall_winner")])
+        cells = []
+        for group in GROUPS:
+            cell = f"{s[f'{group}_wins_a']}-{s[f'{group}_wins_b']} ({_short(s, f'{group}_winner')})"
+            cells.append(cell if group in s["counted_groups"] else f"{cell}, not counted")
+        t.add_row([s["run_a"], s["run_b"], *cells, f"{s['total_wins_a']}-{s['total_wins_b']}", _short(s, "overall_winner")])
     return t
 
 
@@ -241,7 +281,7 @@ def save_comparisons(results, root=EXPERIMENTS_DIR):
     long = pd.concat([r["table"].assign(run_a=r["a"]["run_id"], run_b=r["b"]["run_id"], date=date)
                       for r in results], ignore_index=True)
     long = long[["date", "run_a", "run_b", "metric", "group", "better", "value_a", "value_b",
-                 "difference_b_minus_a", "winner"]]
+                 "difference_b_minus_a", "winner", "counted"]]
     summary = pd.DataFrame([{"date": date, **r["summary"],
                              "same_regime_share": r["agreement"],
                              "latents_identical": None if r["latents"] is None else r["latents"]["same"],

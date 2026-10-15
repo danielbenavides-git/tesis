@@ -18,23 +18,29 @@ REGISTRY_COLUMNS = [
 ]
 
 
-def create_run(model, scalogram_set, clustering, k, root=EXPERIMENTS_DIR):
-    """New folder experiments/<model>/NNN_<scalogram_set>_<clustering>_k<k>/ with tables/, figures/ and
-    artifacts/ (weights and latents, not in git).
-    NNN is consecutive within each model and never reused."""
-    model_dir = Path(root) / model
-    model_dir.mkdir(parents=True, exist_ok=True)
-    numbers = [int(p.name[:3]) for p in model_dir.iterdir() if p.is_dir() and p.name[:3].isdigit()]
+def create_run(model, clustering, study, scalogram_set, k, tag="", root=EXPERIMENTS_DIR):
+    """New folder experiments/<model>/<clustering>/<study>/NNN_<scalogram_set>_<clustering>_k<k>[_<tag>]/.
+    Its tables/, figures/ and artifacts/ (weights and latents, not in git) are created when something is saved
+    in them, so no empty folder is left (a run without a model has no artifacts/).
+    NNN is consecutive within each study folder and never reused. tag is an optional label for the folder name."""
+    study_dir = Path(root) / model / clustering / study
+    study_dir.mkdir(parents=True, exist_ok=True)
+    numbers = [int(p.name[:3]) for p in study_dir.iterdir() if p.is_dir() and p.name[:3].isdigit()]
     k_label = f"k{k}" if k else "kbic"
-    run_dir = model_dir / f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_{clustering}_{k_label}"
-    (run_dir / "tables").mkdir(parents=True)
-    (run_dir / "figures").mkdir()
-    (run_dir / "artifacts").mkdir()
+    name = f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_{clustering}_{k_label}" + (f"_{tag}" if tag else "")
+    run_dir = study_dir / name
+    run_dir.mkdir()
     return run_dir
 
 
+def _subdir(run_dir, name):
+    path = Path(run_dir) / name
+    path.mkdir(exist_ok=True)
+    return path
+
+
 def run_id(run_dir):
-    """Path of the run inside experiments/, e.g. conv_vae/kmeans/001_real_price_kmeans_k2."""
+    """Path of the run inside experiments/, e.g. conv_vae/kmeans/k_sweep/001_real_price_log_kmeans_k2."""
     run_dir = Path(run_dir).resolve()
     try:
         return run_dir.relative_to(EXPERIMENTS_DIR.resolve()).as_posix()
@@ -59,11 +65,11 @@ def save_metrics(run_dir, metrics):
 
 
 def save_model(run_dir, model):
-    torch.save(model.state_dict(), Path(run_dir) / "artifacts" / "model.pt")
+    torch.save(model.state_dict(), _subdir(run_dir, "artifacts") / "model.pt")
 
 
 def save_latents(run_dir, latents):
-    np.save(Path(run_dir) / "artifacts" / "latents.npy", latents)
+    np.save(_subdir(run_dir, "artifacts") / "latents.npy", latents)
 
 
 def load_trained(run_id, device="cpu", root=EXPERIMENTS_DIR):
@@ -82,11 +88,11 @@ def save_table(run_dir, name, table, show=True):
     text = table.to_string() if isinstance(table, pd.DataFrame) else table.get_string()
     if show:
         print(text)
-    (Path(run_dir) / "tables" / f"{name}.txt").write_text(text + "\n", encoding="utf-8")
+    (_subdir(run_dir, "tables") / f"{name}.txt").write_text(text + "\n", encoding="utf-8")
 
 
 def figure_path(run_dir, name):
-    return str(Path(run_dir) / "figures" / f"{name}.png")
+    return str(_subdir(run_dir, "figures") / f"{name}.png")
 
 
 def git_commit(root=ROOT):
@@ -106,7 +112,7 @@ def log_run(run_dir, config, metrics, registry=None):
     """Add (or replace) this run's row in experiments/registry.csv and return it.
     Model hyperparameters are left empty for runs without a model (the level-only baseline)."""
     run_dir = Path(run_dir)
-    registry = Path(registry) if registry else run_dir.parent.parent / "registry.csv"
+    registry = Path(registry) if registry else EXPERIMENTS_DIR / "registry.csv"
     row = {
         "run_id": run_id(run_dir),
         "date": datetime.now().isoformat(timespec="seconds"),

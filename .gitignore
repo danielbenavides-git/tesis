@@ -34,4 +34,3 @@ notebooks/data/
 # Experiments
 experiments/**/artifacts/
 experiments/**/figures/
-experiments/**/splits.txt

@@ -39,7 +39,7 @@ experiments/
   registry.csv               One row per run: hyperparameters that change and main metrics
   comparisons.csv            One row per compared pair and metric (notebook 04)
   comparisons_summary.csv    One row per compared pair: winner per metric family and overall
-  conv_vae/                  One folder per run, e.g. 001_real_price_kmeans_k2/
+  conv_vae/                  <clustering>/<study>/ with one folder per run, e.g. kmeans/k_sweep/001_real_price_log_kmeans_k2/
   temporal_vae/
   level_only/                Level-only baseline runs (notebook 05)
 figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
@@ -62,29 +62,30 @@ Days are split chronologically (60% train, 20% validation, 20% test). K-means an
 
 ## Experiments
 
-Notebooks 02 and 03 are set in their first configuration cell: `scalogram_set`, `clustering` (`"kmeans"` or `"gmm"`), `k_values`, `study`, `load_from` and the hyperparameters. The model is trained once and the clustering runs once per k in `k_values`. Each k creates `experiments/<model>/<clustering>/NNN_<set>_<clustering>_k<k>/`, numbered consecutively inside each clustering folder:
+Notebooks 02 and 03 are set in their first configuration cell: `scalogram_set`, `clustering` (`"kmeans"` or `"gmm"`), `k_values`, `study`, `load_from` and the hyperparameters. The model is trained once and the clustering runs once per k in `k_values`. Each k creates `experiments/<model>/<clustering>/<study>/NNN_<set>_<clustering>_k<k>/`, numbered consecutively inside each study folder. When `tag` is set (a short label such as `7d` or `z4`), it is added at the end of the folder name:
 
 ```
 config.json, history.json, metrics.json, regimes.csv
-tables/     splits, hyperparameters, k_selection, k_sweep, regime_profile, clustering_metrics,
+tables/     hyperparameters, k_selection, k_sweep, regime_profile, clustering_metrics,
             price_spread, weekday_share, feature_checks
 figures/    loss_curves, reconstructions, k_selection, tsne_regimes, regime_timeline
-artifacts/  model.pt, latents.npy (not in git)
+artifacts/  model.pt, latents.npy (not in git, only in runs with a model)
 ```
 
+- `regimes.csv` has one row per day: `date`, `split` (train, val, test), `regime`, `real_price` (the price used to number the regimes), `oni`, `nino` (1 if the ONI of the month is >= 0.5), `episode` (2015-2016, 2023-2024 or empty), `top_regime` (1 if the regime is the most expensive one) and `captured` (1 if an El Nino day fell in the most expensive regime), plus `prob_0..` for the GMM. `python scripts/inspect_regimes.py <run folder>` prints the days, price and El Nino days of each regime, the share of each episode captured by the most expensive regime and the switches per year (`--missed` lists the episode days that fell elsewhere). Runs saved before these columns existed get them with `python scripts/inspect_regimes.py --update-all`.
 - `study` names the question a run answers: `k_sweep`, `price_set`, `clustering`, `vae_model`, `hyperparameters` or `baseline`. Filter the registry with `registry[registry["study"] == "k_sweep"]`.
-- `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents.
+- `trained_in` in `config.json` names the run where the model was trained. Runs with the same `trained_in` share the same model and latents. It is empty in runs without a model (the baseline).
 - `load_from` takes the `run_id` of an earlier run and skips training: the notebook loads its model, history and latents, and uses its set and hyperparameters. Use it to try other k or the other clustering algorithm on the same latents.
 
 Each run adds a row to `experiments/registry.csv` with the study, scalogram set, clustering algorithm, k, filters, latent dimension, beta, lambda, KL warm-up, epochs, silhouette, Davies-Bouldin, Calinski-Harabasz, mean run length, switches per year and the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes; notebook settings are saved in each `config.json`). Commit code changes before a run so the commit identifies the code that produced it.
 
 ## Baseline
 
-Notebook 05 clusters the days with only the daily price level (mean and standard deviation of the day's price, in logs for `real_price_log`), without scalograms or VAE. It is the reference every model has to beat: if the latents do not improve persistence or the capture of the El Nino episodes over this baseline, the intraday shape is not adding information about the regime. Its runs go to `experiments/level_only/<clustering>/` with `study = "baseline"` and are compared in notebook 04 like any other run.
+Notebook 05 clusters the days with only the daily price level (mean and standard deviation of the day's price, in logs for `real_price_log`), without scalograms or VAE. It is the reference every model has to beat: if the latents do not improve persistence or the capture of the El Nino episodes over this baseline, the intraday shape is not adding information about the regime. There are two formal baselines, set with `level_window`: 1 uses each day's own mean and standard deviation, and 7 replaces both by their backward 7-day mean (the day and the 6 days before it), which removes most of the day-to-day noise. Its runs go to `experiments/level_only/<clustering>/baseline/` (the 7-day runs with `tag = "7d"`) with `study = "baseline"` and are compared in notebook 04 like any other run.
 
 ## Comparisons
 
-Notebook 04 reads finished runs and compares them in pairs: k-means vs GMM for each model, then the two winners (ConvVAE vs Temporal VAE). The run ids go in its first cell. Metrics are grouped in two families, separation (silhouette, Davies-Bouldin, Calinski-Harabasz) and persistence (mean run length, switches per year). A run wins a family when it wins more of its metrics; the overall winner wins both families, or one with the other tied, and a split is resolved by total metric wins and marked as such. Each pair also reports what changed between the runs, the regime profiles side by side and the share of days assigned to the same regime. Results go to `experiments/comparisons.csv` and `experiments/comparisons_summary.csv`.
+Notebook 04 reads finished runs and compares them in pairs: k-means vs GMM, log vs linear price, ConvVAE vs Temporal VAE and each model against the two baselines. The run ids go in its first cell. Metrics are grouped in three families: separation (silhouette, Davies-Bouldin, Calinski-Harabasz), persistence (mean run length, switches per year) and El Nino (share of the 2015-2016 and 2023-2024 El Nino days in the most expensive regime, and share of El Nino days among that regime's days). Separation is counted only when both runs share the model and the scalogram set; against a baseline or between different models only persistence and El Nino are counted. A run wins a family when it wins more of its metrics; the overall winner wins every counted family that is not tied, and a split is resolved by total wins over the counted metrics and marked as such. Each pair also reports what changed between the runs, the regime profiles side by side and the share of days assigned to the same regime. Results go to `experiments/comparisons.csv` and `experiments/comparisons_summary.csv`.
 
 ## Data Acquisition
 

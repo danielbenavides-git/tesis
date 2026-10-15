@@ -7,8 +7,8 @@ from .conv_vae import ConvDecoder, ConvEncoder, kl_loss, reconstruction_loss, re
 
 def smoothness_loss(mu, eps=1e-4):
     """Squared day-to-day change of the latent mean relative to its spread in the batch, averaged over dims.
-    Equals about 1 - lag-1 autocorrelation per dim (0 = perfectly smooth, 1 = no persistence), so it does
-    not drop when the latent space shrinks."""
+    0 means the latent mean does not change between days and about 1 means it changes at random. Dividing by
+    the spread keeps the model from lowering it by shrinking the latent space."""
     diff = mu[:, 1:] - mu[:, :-1]
     var = mu.reshape(-1, mu.shape[-1]).var(dim=0)
     return (diff.pow(2).mean(dim=(0, 1)) / (2 * var + eps)).mean()

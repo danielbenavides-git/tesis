@@ -31,6 +31,12 @@ def with_level(latents, metadata, train_idx, columns=None):
     return np.hstack([latents.astype(np.float64), (level - mean) / std])
 
 
+def active_dims(latents, threshold=0.1):
+    """Number of latent dimensions whose mean varies across days (variance above threshold). With 0.01 almost
+    every dimension counted as active even when only a few carried information."""
+    return int((latents.var(axis=0) > threshold).sum())
+
+
 def _gmm(k, seed):
     return GaussianMixture(n_components=k, covariance_type="full", reg_covar=1e-4, n_init=5, random_state=seed)
 
@@ -144,10 +150,11 @@ def assign_regimes(latents, train_idx, order_values, k=None, k_range=range(2, 9)
     return table, k, labels, probs
 
 
-def save_regimes(run_dir, context, labels, probs, metrics):
+def save_regimes(run_dir, table, probs, metrics):
+    """regimes.csv (the per-day table of runs.regime_table, plus the GMM probabilities) and metrics.json."""
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
-    out = context[["date"]].assign(regime=labels)
+    out = table.copy()
     if probs is not None:
         for j in range(probs.shape[1]):
             out[f"prob_{j}"] = probs[:, j]

@@ -1,5 +1,8 @@
 """Steps shared by notebooks 02 and 03 after the model is trained: one run folder per k, clustering, figures,
 tables and the registry row. The model is trained (or loaded) once and every k reuses its latents."""
+import json
+from pathlib import Path
+
 import altair as alt
 import numpy as np
 import pandas as pd
@@ -7,29 +10,39 @@ from prettytable import PrettyTable
 
 from src import experiments as exp
 from src.clustering import fit_clusters, order_regimes, regime_profile, save_regimes, summary_metrics
+from src.data import chronological_split, load_context
 from src.plots import regime_timeline, selection_chart, tsne_chart
 
 # Keys taken from the current notebook when load_from reuses an earlier run. Everything else (set, filters,
 # epochs...) comes from the loaded run, so the config always describes the model that produced the latents.
-RUN_KEYS = ("study", "clustering", "k_values", "k_range")
+RUN_KEYS = ("study", "clustering", "k_values", "k_range", "tag")
 WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+# El Nino episodes used to judge the most expensive regime: El Nino days (ONI >= 0.5) in these years.
+nino_episodes = {"2015-2016": [2015, 2016], "2023-2024": [2023, 2024]}
+regime_columns = ["date", "split", "regime", "real_price", "oni", "nino", "episode", "top_regime", "captured"]
 
 
 def prepare_runs(config, load_from=None, device="cpu"):
-    """Create one run folder per k in config["k_values"] and save each config.
+    """Create one run folder per k in config["k_values"] and save each config. Runs go to
+    experiments/<model>/<clustering>/<study>/, so each study keeps its own folder.
     With load_from (a run_id), the model, history and latents of that run are reused and training is skipped.
-    Returns (config, run_dirs, run_configs, trained); trained is None when the model has to be trained."""
+    Returns (config, run_dirs, run_configs, trained); trained is None when the model has to be trained.
+    trained_in is empty for runs without a model (no z_dim in the config, e.g. the level-only baseline)."""
     trained = None
     if load_from:
         trained = exp.load_trained(load_from, device)
-        config = {**trained["config"], **{key: config[key] for key in RUN_KEYS}}
+        config = {**trained["config"], **{key: config[key] for key in RUN_KEYS if key in config}}
     run_dirs = {
-        k: exp.create_run(config["clustering"], config["scalogram_set"], config["clustering"], k,
-                          root=exp.EXPERIMENTS_DIR / config["model"])
+        k: exp.create_run(config["model"], config["clustering"], config["study"], config["scalogram_set"], k,
+                          config.get("tag", ""))
         for k in config["k_values"]
     }
-    first = exp.run_id(run_dirs[config["k_values"][0]])
-    trained_in = trained["config"].get("trained_in", load_from) if trained else first
+    if trained:
+        trained_in = trained["config"].get("trained_in", load_from)
+    elif "z_dim" in config:
+        trained_in = exp.run_id(run_dirs[config["k_values"][0]])
+    else:
+        trained_in = ""
     run_configs = {k: {**config, "n_regimes": k, "trained_in": trained_in} for k in run_dirs}
     for k, run_dir in run_dirs.items():
         exp.save_config(run_dir, run_configs[k])
@@ -80,7 +93,7 @@ def cluster_runs(run_dirs, run_configs, features, context, train_idx, split_date
         profile = regime_profile(ctx)
         metrics = {"run_id": exp.run_id(run_dir), "model": config["model"], "scalogram_set": config["scalogram_set"],
                    "clustering": method, "k": k, **summary_metrics(features, labels, seed=seed)}
-        save_regimes(run_dir, context, labels, probs, metrics)
+        save_regimes(run_dir, regime_table(ctx, split_dates), probs, metrics)
         exp.log_run(run_dir, config, metrics, registry=exp.EXPERIMENTS_DIR / "registry.csv")
 
         spread = ctx.groupby("regime")["precio_real_cop_kwh"].describe(percentiles=[0.1, 0.5, 0.9])
@@ -105,6 +118,38 @@ def nino_share_in_top(ctx, years):
     return 100 * (days["regime"] == ctx["regime"].max()).mean()
 
 
+def regime_table(ctx, split_dates):
+    """One row per day, saved as regimes.csv so every El Nino number can be checked by hand:
+    split (train, val, test), regime, real price (the one used to number the regimes), ONI of the month,
+    nino (1 if ONI >= 0.5), episode (2015-2016, 2023-2024 or empty), top_regime (1 if the regime is the most
+    expensive one) and captured (1 if an El Nino day fell in the most expensive regime)."""
+    date = ctx["date"]
+    nino = (ctx["enso_phase"] == "El Nino").astype(int)
+    episode = pd.Series("", index=ctx.index)
+    for name, years in nino_episodes.items():
+        episode[(nino == 1) & date.dt.year.isin(years)] = name
+    top = (ctx["regime"] == ctx["regime"].max()).astype(int)
+    split = np.where(date < split_dates[0], "train", np.where(date < split_dates[1], "val", "test"))
+    return pd.DataFrame({"date": date, "split": split, "regime": ctx["regime"], "real_price": ctx["precio_real_cop_kwh"],
+                         "oni": ctx["oni"], "nino": nino, "episode": episode, "top_regime": top,
+                         "captured": nino * top})[regime_columns]
+
+
+def complete_regimes(run_dir, data_dir):
+    """regimes.csv of a run with all the regime_table columns. Older runs only saved date and regime (and GMM
+    probabilities): the other columns are rebuilt from the data and the run's own split ratios."""
+    run_dir = Path(run_dir)
+    saved = pd.read_csv(run_dir / "regimes.csv", parse_dates=["date"])
+    if set(regime_columns) <= set(saved.columns):
+        return saved
+    config = json.loads((run_dir / "config.json").read_text())
+    ctx = load_context(data_dir, pd.DataFrame({"start_datetime": saved["date"]}))
+    ctx = ctx.assign(regime=saved["regime"].to_numpy())
+    _, val_idx, test_idx = chronological_split(len(saved), config["train_ratio"], config["val_ratio"])
+    table = regime_table(ctx, [saved["date"].iloc[val_idx[0]], saved["date"].iloc[test_idx[0]]])
+    return pd.concat([table, saved.filter(regex=r"^prob_")], axis=1)
+
+
 def k_sweep_table(results):
     """One row per k: separation, persistence and the most expensive regime (size, price, reservoir, El Nino)."""
     rows = []
@@ -115,8 +160,8 @@ def k_sweep_table(results):
             "calinski_harabasz": m["calinski_harabasz"], "mean_run_days": m["mean_run_days"],
             "switches_per_year": m["switches_per_year"], "top_share_pct": top["share_pct"],
             "top_price": top["mean_real_price"], "top_reservoir": top["mean_reservoir"],
-            "nino_2015_16_in_top_pct": nino_share_in_top(r["context"], [2015, 2016]),
-            "nino_2023_24_in_top_pct": nino_share_in_top(r["context"], [2023, 2024]),
+            "nino_2015_16_in_top_pct": nino_share_in_top(r["context"], nino_episodes["2015-2016"]),
+            "nino_2023_24_in_top_pct": nino_share_in_top(r["context"], nino_episodes["2023-2024"]),
         })
     return pd.DataFrame(rows).set_index("k").round(3)
 
