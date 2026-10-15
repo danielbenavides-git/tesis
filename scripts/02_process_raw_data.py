@@ -5,7 +5,7 @@ Hourly files: melt Values_Hour01..24 into rows with a datetime column.
 Daily files: rename columns, drop redundant fields.
 
 Usage:
-    python scripts/process_raw_data.py
+    python scripts/02_process_raw_data.py
 """
 
 import logging
@@ -17,8 +17,8 @@ import pandas as pd
 # Config
 # ---------------------------------------------------------------------------
 
-RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
-PROC_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
+RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw" / "XM"
+PROC_DIR = Path(__file__).resolve().parent.parent / "data" / "processed" / "XM"
 PROC_DIR.mkdir(parents=True, exist_ok=True)
 
 LOG_FMT = "%(asctime)s  %(levelname)-8s  %(message)s"

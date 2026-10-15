@@ -8,9 +8,9 @@ Requirements:
     pip install pydataxm pandas
 
 Usage:
-    python scripts/download_xm_data.py --discover     # validate MetricIds
-    python scripts/download_xm_data.py --download      # download all
-    python scripts/download_xm_data.py --all            # both
+    python scripts/01_download_xm_data.py --discover     # validate MetricIds
+    python scripts/01_download_xm_data.py --download      # download all
+    python scripts/01_download_xm_data.py --all            # both
 """
 
 import argparse
@@ -26,7 +26,7 @@ from pydataxm.pydataxm import ReadDB # type: ignore
 # Config
 # ---------------------------------------------------------------------------
 
-RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
+RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw" / "XM"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
 LOG_FMT = "%(asctime)s  %(levelname)-8s  %(message)s"
