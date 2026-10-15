@@ -29,3 +29,8 @@ temporal_vae/kmeans/vae_model/002_real_price_log_kmeans_k3,2026-10-12T19:04:49,v
 temporal_vae/kmeans/vae_model/003_real_price_log_kmeans_k4,2026-10-12T19:04:59,vae_model,temporal_vae,real_price_log,kmeans,4,128-64-32,16,1.0,100.0,5,30,0.268,1.1688,5052.998,3.4912,104.5829,a60268e
 temporal_vae/kmeans/vae_model/004_real_price_log_kmeans_k5,2026-10-12T19:05:09,vae_model,temporal_vae,real_price_log,kmeans,5,128-64-32,16,1.0,100.0,5,30,0.2434,1.1951,4585.6166,3.093,118.0507,a60268e
 temporal_vae/kmeans/vae_model/005_real_price_log_kmeans_k6,2026-10-12T19:05:25,vae_model,temporal_vae,real_price_log,kmeans,6,128-64-32,16,1.0,100.0,5,30,0.2409,1.1467,4336.9255,2.7105,134.7163,a60268e
+level_only/kmeans/baseline/006_real_price_log_kmeans_k2_7d,2026-10-14T22:59:19,baseline,level_only,real_price_log,kmeans,2,,,,,,,0.3472,1.0932,4767.4318,26.7466,13.6183,f1d46bb-dirty
+level_only/kmeans/baseline/007_real_price_log_kmeans_k3_7d,2026-10-14T22:59:23,baseline,level_only,real_price_log,kmeans,3,,,,,,,0.3837,0.8406,7379.2996,23.7384,15.3489,f1d46bb-dirty
+level_only/kmeans/baseline/008_real_price_log_kmeans_k4_7d,2026-10-14T22:59:26,baseline,level_only,real_price_log,kmeans,4,,,,,,,0.3701,0.8562,7612.2257,19.6538,18.5465,f1d46bb-dirty
+level_only/kmeans/baseline/009_real_price_log_kmeans_k5_7d,2026-10-14T22:59:32,baseline,level_only,real_price_log,kmeans,5,,,,,,,0.3437,0.8857,7367.3141,14.2361,25.619,f1d46bb-dirty
+level_only/kmeans/baseline/010_real_price_log_kmeans_k6_7d,2026-10-14T22:59:36,baseline,level_only,real_price_log,kmeans,6,,,,,,,0.3509,0.8884,7174.0779,11.4224,31.9392,f1d46bb-dirty

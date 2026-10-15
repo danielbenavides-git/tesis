@@ -15,7 +15,6 @@ regimes.csv has one row per day with these columns:
 Usage:
     python scripts/inspect_regimes.py experiments/temporal_vae/kmeans/vae_model/003_real_price_log_kmeans_k4
     python scripts/inspect_regimes.py path/to/regimes.csv --missed
-    python scripts/inspect_regimes.py --update-all     # add the columns to the regimes.csv of older runs
 """
 
 import argparse

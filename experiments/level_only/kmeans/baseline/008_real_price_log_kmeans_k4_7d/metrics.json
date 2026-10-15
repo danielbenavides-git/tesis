@@ -1,0 +1,14 @@
+{
+  "run_id": "level_only/kmeans/baseline/008_real_price_log_kmeans_k4_7d",
+  "model": "level_only",
+  "scalogram_set": "real_price_log",
+  "clustering": "kmeans",
+  "k": 4,
+  "regimes": 4,
+  "silhouette": 0.37014902321690696,
+  "davies_bouldin": 0.8561540572566285,
+  "calinski_harabasz": 7612.225733802249,
+  "mean_run_days": 19.653846153846153,
+  "median_run_days": 8.0,
+  "switches_per_year": 18.546528993717168
+}
