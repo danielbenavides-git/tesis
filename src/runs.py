@@ -22,30 +22,48 @@ nino_episodes = {"2015-2016": [2015, 2016], "2023-2024": [2023, 2024]}
 regime_columns = ["date", "split", "regime", "real_price", "oni", "nino", "episode", "top_regime", "captured"]
 
 
+def existing_runs(model, clustering, trained_in, scalogram_set):
+    """{k: run folder} of earlier runs that clustered the latents of trained_in with this algorithm and set."""
+    found = {}
+    for path in sorted((exp.EXPERIMENTS_DIR / model / clustering).glob("*/*/config.json")):
+        c = json.loads(path.read_text())
+        if c.get("trained_in") == trained_in and c.get("scalogram_set") == scalogram_set:
+            found.setdefault(c["n_regimes"], path.parent)
+    return found
+
+
 def prepare_runs(config, load_from=None, device="cpu"):
-    """Create one run folder per k in config["k_values"] and save each config. Runs go to
+    """One run folder per k in config["k_values"], with its config saved. Runs go to
     experiments/<model>/<clustering>/<study>/, so each study keeps its own folder.
     With load_from (a run_id), the model, history and latents of that run are reused and training is skipped.
+    A k that was already clustered with the same model, algorithm and set reuses its folder instead of creating
+    a new one (its files are rewritten with the same results); only new k or a new algorithm get new folders.
     Returns (config, run_dirs, run_configs, trained); trained is None when the model has to be trained.
     trained_in is empty for runs without a model (no z_dim in the config, e.g. the level-only baseline)."""
     trained = None
+    reused = {}
     if load_from:
         trained = exp.load_trained(load_from, device)
         config = {**trained["config"], **{key: config[key] for key in RUN_KEYS if key in config}}
+        trained_in = trained["config"].get("trained_in", load_from)
+        reused = existing_runs(config["model"], config["clustering"], trained_in, config["scalogram_set"])
     run_dirs = {
-        k: exp.create_run(config["model"], config["clustering"], config["study"], config["scalogram_set"], k,
-                          config.get("tag", ""))
+        k: reused.get(k) or exp.create_run(config["model"], config["clustering"], config["study"],
+                                           config["scalogram_set"], k, config.get("tag", ""))
         for k in config["k_values"]
     }
-    if trained:
-        trained_in = trained["config"].get("trained_in", load_from)
-    elif "z_dim" in config:
-        trained_in = exp.run_id(run_dirs[config["k_values"][0]])
-    else:
-        trained_in = ""
-    run_configs = {k: {**config, "n_regimes": k, "trained_in": trained_in} for k in run_dirs}
+    if not trained:
+        trained_in = exp.run_id(run_dirs[config["k_values"][0]]) if "z_dim" in config else ""
+    run_configs = {}
     for k, run_dir in run_dirs.items():
-        exp.save_config(run_dir, run_configs[k])
+        if k in reused:
+            run_configs[k] = json.loads((run_dir / "config.json").read_text())
+        else:
+            run_configs[k] = {**config, "n_regimes": k, "trained_in": trained_in}
+            exp.save_config(run_dir, run_configs[k])
+    if reused:
+        print(f"Reused folders for k = {sorted(k for k in run_dirs if k in reused)}; "
+              f"new folders for k = {sorted(k for k in run_dirs if k not in reused)}")
     return config, run_dirs, run_configs, trained
 
 
