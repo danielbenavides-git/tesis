@@ -62,7 +62,7 @@ Days are split chronologically (60% train, 20% validation, 20% test). K-means an
 
 ## Experiments
 
-Notebooks 02 and 03 are set in their first configuration cell: `scalogram_set`, `clustering` (`"kmeans"` or `"gmm"`), `k_values`, `study`, `load_from` and the hyperparameters. The model is trained once and the clustering runs once per k in `k_values`. Each k creates `experiments/<model>/<clustering>/<study>/NNN_<set>_<clustering>_k<k>/`, numbered consecutively inside each study folder. When `tag` is set (a short label such as `7d` or `z4`), it is added at the end of the folder name:
+Notebooks 02 and 03 are set in their first configuration cell: `scalogram_set`, `clustering` (`"kmeans"` or `"gmm"`), `k_values`, `study`, `load_from` and the hyperparameters. The model is trained once and the clustering runs once per k in `k_values`. Notebook 03 also has a `grid` with lists of `lam`, `beta` and `seed`: it trains the model once for every combination, adds the values to the folder name (e.g. `lam100_beta0.5_seed42`) and saves `grid_results.csv` and `grid_summary.csv` (mean and standard deviation over seeds) in the study folder. Each k creates `experiments/<model>/<clustering>/<study>/NNN_<set>_<clustering>_k<k>/`, numbered consecutively inside each study folder. When `tag` is set (a short label such as `7d` or `z4`), it is added at the end of the folder name:
 
 ```
 config.json, history.json, metrics.json, regimes.csv
