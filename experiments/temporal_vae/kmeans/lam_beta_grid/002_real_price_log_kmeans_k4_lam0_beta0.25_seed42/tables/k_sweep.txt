@@ -1,0 +1,5 @@
+   silhouette  davies_bouldin  calinski_harabasz  mean_run_days  switches_per_year  top_share_pct  top_price  top_reservoir  nino_2015_16_in_top_pct  nino_2023_24_in_top_pct
+k                                                                                                                                                                            
+3       0.325           1.033           5742.711          4.493             81.259         32.599    552.111          0.618                   87.427                   85.672
+4       0.274           1.019           5282.273          3.234            112.897         29.838    571.568          0.615                   83.752                   83.582
+5       0.290           0.999           5351.138          3.044            119.969          8.621   1002.052          0.588                   41.393                   66.269

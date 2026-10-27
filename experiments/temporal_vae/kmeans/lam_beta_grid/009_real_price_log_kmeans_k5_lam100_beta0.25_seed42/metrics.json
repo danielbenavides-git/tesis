@@ -1,0 +1,14 @@
+{
+  "run_id": "temporal_vae/kmeans/lam_beta_grid/009_real_price_log_kmeans_k5_lam100_beta0.25_seed42",
+  "model": "temporal_vae",
+  "scalogram_set": "real_price_log",
+  "clustering": "kmeans",
+  "k": 5,
+  "regimes": 5,
+  "silhouette": 0.38027125182977145,
+  "davies_bouldin": 0.9465629041457735,
+  "calinski_harabasz": 9133.12374056083,
+  "mean_run_days": 5.205898123324396,
+  "median_run_days": 2.0,
+  "switches_per_year": 70.1231846740138
+}

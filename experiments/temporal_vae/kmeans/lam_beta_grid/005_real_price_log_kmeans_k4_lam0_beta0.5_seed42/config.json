@@ -1,0 +1,42 @@
+{
+  "model": "temporal_vae",
+  "study": "lam_beta_grid",
+  "scalogram_set": "real_price_log",
+  "clustering": "kmeans",
+  "k_values": [
+    3,
+    4,
+    5
+  ],
+  "k_range": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "z_dim": 4,
+  "filters": [
+    128,
+    64,
+    32
+  ],
+  "proj_dim": 128,
+  "rnn_type": "lstm",
+  "rnn_hidden": 64,
+  "seq_len": 30,
+  "stride": 14,
+  "kl_warmup_epochs": 5,
+  "optimizer": "Adam",
+  "lr": 0.001,
+  "batch_size": 16,
+  "epochs": 30,
+  "train_ratio": 0.6,
+  "val_ratio": 0.2,
+  "lam": 0.0,
+  "beta": 0.5,
+  "seed": 42,
+  "tag": "lam0_beta0.5_seed42",
+  "n_regimes": 4,
+  "trained_in": "temporal_vae/kmeans/lam_beta_grid/004_real_price_log_kmeans_k3_lam0_beta0.5_seed42"
+}
