@@ -68,19 +68,14 @@ class TemporalVAE(nn.Module):
         return {"total": recon + beta * kl + lam * smooth, "recon": recon, "kl": kl, "smooth": smooth, **kl_dims}
 
     @torch.no_grad()
-    def extract_latents(self, images, device, seq_len=None, batch_size=256):
-        """Return mu for every day. With seq_len=None, one causal pass over the whole series: day t uses days 0..t,
-        and two consecutive days are consecutive steps of the same pass, as inside a training sequence.
-        With seq_len, each day gets its own pass over that day and the seq_len - 1 days before it."""
+    def extract_latents(self, images, device, seq_len=30, batch_size=256):
+        """Return mu for every day, using only that day and the seq_len - 1 days before it."""
         self.eval()
         feats = []
         for start in range(0, len(images), batch_size):
             x = torch.as_tensor(images[start:start + batch_size]).to(device)
             feats.append(self.proj(self.encoder(x)))
         feats = torch.cat(feats)
-        if seq_len is None:
-            h, _ = self.rnn(feats.unsqueeze(0))
-            return self.fc_mu(torch.cat([feats, h[0]], dim=-1)).cpu().numpy()
         n = len(feats)
         seq_len = min(seq_len, n)
 
