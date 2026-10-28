@@ -1,0 +1,8 @@
+,,,,switches_per_year,switches_per_year,mean_run_days,mean_run_days,nino_2015_16_in_top_pct,nino_2015_16_in_top_pct,nino_2023_24_in_top_pct,nino_2023_24_in_top_pct,top_share_pct,top_share_pct,active_dims,active_dims,val_recon,val_recon,seeds
+,,,,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,
+study,lam,beta,k,,,,,,,,,,,,,,,
+hyperparameters,100.0,1.0,2,65.83,,5.54,,89.17,,79.4,,65.32,,1.0,,1005.47,,1
+hyperparameters,100.0,1.0,3,79.4,8.26,4.63,0.46,85.82,0.4,82.29,4.47,39.44,13.34,1.67,1.15,1013.27,14.5,3
+hyperparameters,100.0,1.0,4,100.14,4.14,3.65,0.15,83.69,1.29,83.28,1.37,29.23,1.06,1.67,1.15,1013.27,14.5,3
+hyperparameters,100.0,1.0,5,105.22,,3.47,,41.39,,68.06,,8.86,,1.0,,1005.47,,1
+hyperparameters,100.0,1.0,6,119.18,,3.06,,40.23,,64.78,,8.11,,1.0,,1005.47,,1

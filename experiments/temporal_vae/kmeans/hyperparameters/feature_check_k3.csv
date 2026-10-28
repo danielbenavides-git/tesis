@@ -1,0 +1,10 @@
+study,lam,beta,seed,features,switches_per_year,nino_2015_16_in_top_pct,nino_2023_24_in_top_pct,top_share_pct,median_price_by_regime
+hyperparameters,100.0,1.0,42,level 7d,15.3,91.1,90.4,34.1,"[195.0, 184.0, 406.0]"
+hyperparameters,100.0,1.0,42,latents only,107.6,25.0,35.8,22.5,"[219.0, 255.0, 217.0]"
+hyperparameters,100.0,1.0,42,latents + level 7d,30.4,91.1,89.6,33.8,"[196.0, 186.0, 406.0]"
+hyperparameters,100.0,1.0,43,level 7d,15.3,91.5,90.4,34.2,"[195.0, 184.0, 405.0]"
+hyperparameters,100.0,1.0,43,latents only,93.7,66.3,65.4,48.8,"[218.0, 222.0, 241.0]"
+hyperparameters,100.0,1.0,43,latents + level 7d,45.3,90.5,86.6,32.2,"[194.0, 192.0, 407.0]"
+hyperparameters,100.0,1.0,44,level 7d,15.3,91.1,90.4,34.1,"[195.0, 184.0, 406.0]"
+hyperparameters,100.0,1.0,44,latents only,118.7,37.1,48.1,34.0,"[223.0, 241.0, 225.0]"
+hyperparameters,100.0,1.0,44,latents + level 7d,41.5,90.7,87.2,32.4,"[193.0, 193.0, 409.0]"
