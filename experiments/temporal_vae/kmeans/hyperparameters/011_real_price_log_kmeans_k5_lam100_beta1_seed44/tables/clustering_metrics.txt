@@ -1,0 +1,16 @@
++-------------------+--------------------------------------------------------------------------------------+
+| Metric            |                                        Value                                         |
++-------------------+--------------------------------------------------------------------------------------+
+| run_id            | temporal_vae/kmeans/hyperparameters/011_real_price_log_kmeans_k5_lam100_beta1_seed44 |
+| model             |                                     temporal_vae                                     |
+| scalogram_set     |                                    real_price_log                                    |
+| clustering        |                                        kmeans                                        |
+| k                 |                                          5                                           |
+| regimes           |                                          5                                           |
+| silhouette        |                                        0.312                                         |
+| davies_bouldin    |                                        0.964                                         |
+| calinski_harabasz |                                       6039.128                                       |
+| mean_run_days     |                                        3.283                                         |
+| median_run_days   |                                        2.000                                         |
+| switches_per_year |                                       111.204                                        |
++-------------------+--------------------------------------------------------------------------------------+
