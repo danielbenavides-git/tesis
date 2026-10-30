@@ -25,21 +25,6 @@ def chronological_split(n, train_ratio=0.6, val_ratio=0.2):
     return np.arange(0, train_end), np.arange(train_end, val_end), np.arange(val_end, n)
 
 
-class ScalogramDataset(Dataset):
-    """One scalogram per item. Returns (image, day index)."""
-
-    def __init__(self, images, indices):
-        self.images = torch.from_numpy(images)
-        self.indices = np.asarray(indices)
-
-    def __len__(self):
-        return len(self.indices)
-
-    def __getitem__(self, i):
-        idx = int(self.indices[i])
-        return self.images[idx], idx
-
-
 class ScalogramSequenceDataset(Dataset):
     """Runs of seq_len consecutive days inside one split. Returns (sequence, first day index)."""
 

@@ -11,23 +11,18 @@ from prettytable import PrettyTable
 ROOT = Path(__file__).resolve().parent.parent
 EXPERIMENTS_DIR = ROOT / "experiments"
 
-REGISTRY_COLUMNS = [
-    "run_id", "date", "study", "model", "scalogram_set", "clustering", "k", "filters", "z_dim", "beta", "lam",
-    "kl_warmup_epochs", "epochs", "silhouette", "davies_bouldin", "calinski_harabasz",
-    "mean_run_days", "switches_per_year", "git_commit",
-]
+REGISTRY_COLUMNS = ["run_id", "study", "model", "k", "z_dim", "lam", "beta", "seed", "epochs", "trained_in", "git_commit"]
 
 
-def create_run(model, clustering, study, scalogram_set, k, tag="", root=EXPERIMENTS_DIR):
-    """New folder experiments/<model>/<clustering>/<study>/NNN_<scalogram_set>_<clustering>_k<k>[_<tag>]/.
+def create_run(model, study, scalogram_set, k, tag="", root=EXPERIMENTS_DIR):
+    """New folder experiments/<model>/kmeans/<study>/NNN_<scalogram_set>_kmeans_k<k>[_<tag>]/.
     Its tables/, figures/ and artifacts/ (weights and latents, not in git) are created when something is saved
     in them, so no empty folder is left (a run without a model has no artifacts/).
     NNN is consecutive within each study folder and never reused. tag is an optional label for the folder name."""
-    study_dir = Path(root) / model / clustering / study
+    study_dir = Path(root) / model / "kmeans" / study
     study_dir.mkdir(parents=True, exist_ok=True)
     numbers = [int(p.name[:3]) for p in study_dir.iterdir() if p.is_dir() and p.name[:3].isdigit()]
-    k_label = f"k{k}" if k else "kbic"
-    name = f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_{clustering}_{k_label}" + (f"_{tag}" if tag else "")
+    name = f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_kmeans_k{k}" + (f"_{tag}" if tag else "")
     run_dir = study_dir / name
     run_dir.mkdir()
     return run_dir
@@ -58,10 +53,6 @@ def save_config(run_dir, config):
 
 def save_history(run_dir, history):
     _write_json(Path(run_dir) / "history.json", history)
-
-
-def save_metrics(run_dir, metrics):
-    _write_json(Path(run_dir) / "metrics.json", metrics)
 
 
 def save_model(run_dir, model):
@@ -108,34 +99,42 @@ def git_commit(root=ROOT):
     return commit + ("-dirty" if dirty else "")
 
 
-def log_run(run_dir, config, metrics, registry=None):
-    """Add (or replace) this run's row in experiments/registry.csv and return it.
-    Model hyperparameters are left empty for runs without a model (the level-only baseline)."""
-    run_dir = Path(run_dir)
+def registry_row(run_dir, config, commit=""):
+    """Registry row of one run: what was run, not its results (those are in metrics/)."""
+    seed = config.get("seed", "") if "z_dim" in config else ""
+    return {"run_id": run_id(run_dir), "study": config.get("study", ""), "model": config["model"],
+            "k": config["n_regimes"], "z_dim": config.get("z_dim", ""), "lam": config.get("lam", ""),
+            "beta": config.get("beta", ""), "seed": seed, "epochs": config.get("epochs", ""),
+            "trained_in": config.get("trained_in", ""), "git_commit": commit}
+
+
+def log_run(run_dir, config, registry=None):
+    """Add (or replace) this run's row in experiments/registry.csv."""
     registry = Path(registry) if registry else EXPERIMENTS_DIR / "registry.csv"
-    row = {
-        "run_id": run_id(run_dir),
-        "date": datetime.now().isoformat(timespec="seconds"),
-        "study": config.get("study", ""),
-        "model": config["model"],
-        "scalogram_set": config["scalogram_set"],
-        "clustering": config["clustering"],
-        "k": metrics["k"],
-        "filters": "-".join(str(f) for f in config.get("filters", [])),
-        "z_dim": config.get("z_dim", ""),
-        "beta": config.get("beta", ""),
-        "lam": config.get("lam", ""),
-        "kl_warmup_epochs": config.get("kl_warmup_epochs", ""),
-        "epochs": config.get("epochs", ""),
-        **{key: round(metrics[key], 4) for key in
-           ("silhouette", "davies_bouldin", "calinski_harabasz", "mean_run_days", "switches_per_year")},
-        "git_commit": git_commit(),
-    }
-    table = pd.read_csv(registry, dtype=str) if registry.exists() else pd.DataFrame(columns=REGISTRY_COLUMNS)
+    row = registry_row(run_dir, config, git_commit())
+    table = pd.read_csv(registry, dtype=str, keep_default_na=False) if registry.exists() else pd.DataFrame()
+    table = table.reindex(columns=REGISTRY_COLUMNS)
     table = table[table["run_id"] != row["run_id"]]
     table = pd.concat([table, pd.DataFrame([row]).astype(str)], ignore_index=True)[REGISTRY_COLUMNS]
-    table.to_csv(registry, index=False)
+    table.sort_values("run_id").to_csv(registry, index=False)
     return row
+
+
+def rebuild_registry(registry=None):
+    """Rewrite experiments/registry.csv with one row per run folder under experiments/. The git commit of each run is
+    kept from the old registry when it was there."""
+    registry = Path(registry) if registry else EXPERIMENTS_DIR / "registry.csv"
+    commits = {}
+    if registry.exists():
+        old = pd.read_csv(registry, dtype=str, keep_default_na=False)
+        if "git_commit" in old:
+            commits = dict(zip(old["run_id"], old["git_commit"]))
+    rows = []
+    for path in sorted(EXPERIMENTS_DIR.glob("*/kmeans/*/*/config.json")):
+        config = json.loads(path.read_text())
+        rows.append(registry_row(path.parent, config, commits.get(run_id(path.parent), "")))
+    pd.DataFrame(rows, columns=REGISTRY_COLUMNS).to_csv(registry, index=False)
+    return len(rows)
 
 
 def split_table(context, splits):
@@ -167,15 +166,6 @@ def hyperparameter_table(config, n_params):
         ]
     for row in rows:
         t.add_row(row)
-    return t
-
-
-def selection_table(selection):
-    criterion = "bic" if "bic" in selection else "inertia"
-    t = PrettyTable(["k", "BIC" if criterion == "bic" else "Inertia", "Silhouette", "Davies-Bouldin", "Calinski-Harabasz"])
-    for _, row in selection.iterrows():
-        t.add_row([int(row["k"]), f"{row[criterion]:,.0f}", f"{row['silhouette']:.3f}",
-                   f"{row['davies_bouldin']:.3f}", f"{row['calinski_harabasz']:,.0f}"])
     return t
 
 

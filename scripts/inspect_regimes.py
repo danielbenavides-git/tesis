@@ -37,7 +37,7 @@ def read_regimes(arg):
     table = pd.read_csv(path, parse_dates=["date"], keep_default_na=False)
     missing = {"split", "real_price", "nino", "episode", "top_regime", "captured"} - set(table.columns)
     if missing:
-        sys.exit(f"{path} has no {sorted(missing)} columns. Run: python scripts/inspect_regimes.py --update-all")
+        sys.exit(f"{path} has no {sorted(missing)} columns")
     return path, table
 
 
@@ -82,26 +82,12 @@ def report(path, table, missed):
                 print(f"  regime {regime}: " + "; ".join(date_ranges(g["date"])))
 
 
-def update_all():
-    sys.path.insert(0, str(root))
-    from src.runs import complete_regimes
-
-    paths = sorted((root / "experiments").rglob("regimes.csv"))
-    for path in paths:
-        complete_regimes(path.parent, root / "data" / "processed").to_csv(path, index=False)
-        print(f"updated {path.parent.relative_to(root / 'experiments').as_posix()}")
-    print(f"{len(paths)} runs updated")
-
-
 def main():
     parser = argparse.ArgumentParser(description="Regimes and El Nino days of one run")
     parser.add_argument("run", nargs="?", help="run folder, its regimes.csv, or a run id inside experiments/")
     parser.add_argument("--missed", action="store_true", help="list the episode days outside the most expensive regime")
-    parser.add_argument("--update-all", action="store_true", help="add the El Nino columns to every regimes.csv")
     args = parser.parse_args()
-    if args.update_all:
-        update_all()
-    elif args.run:
+    if args.run:
         report(*read_regimes(args.run), args.missed)
     else:
         parser.print_help()

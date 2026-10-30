@@ -34,4 +34,7 @@ notebooks/data/
 # Experiments
 experiments/**/artifacts/
 experiments/**/figures/
-experiments/**/gmm/
+
+# Archive (only its README is in git)
+archive/*
+!archive/README.md

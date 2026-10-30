@@ -27,26 +27,6 @@ def loss_curves(history, components=("total", "recon", "kl")):
     return alt.hconcat(*charts)
 
 
-def selection_chart(table, k_best):
-    """BIC (GMM) or inertia (k-means) next to the separation metrics, all on training days. Dashed line marks k_best."""
-    base = alt.Chart(table).encode(x=alt.X("k:O", title="Number of regimes (k)"))
-    rule = alt.Chart(pd.DataFrame({"k": [k_best]})).mark_rule(strokeDash=[4, 4], color="#e45756").encode(x="k:O")
-    criterion = "bic" if "bic" in table else "inertia"
-    panels = [
-        (criterion, "BIC (lower is better)" if criterion == "bic" else "Inertia (look for the elbow)",
-         "GMM BIC" if criterion == "bic" else "K-means inertia", "#4c78a8"),
-        ("silhouette", "Silhouette (higher is better)", "Silhouette", "#54a24b"),
-        ("davies_bouldin", "Davies-Bouldin (lower is better)", "Davies-Bouldin", "#f58518"),
-        ("calinski_harabasz", "Calinski-Harabasz (higher is better)", "Calinski-Harabasz", "#b279a2"),
-    ]
-    charts = [
-        (base.mark_line(point=alt.OverlayMarkDef(color=color), color=color).encode(y=alt.Y(f"{col}:Q", title=y_title, scale=alt.Scale(zero=False)))
-         + rule).properties(width=220, height=200, title=title)
-        for col, y_title, title, color in panels if col in table
-    ]
-    return alt.hconcat(*charts)
-
-
 def tsne_chart(coords, labels, title):
     df = pd.DataFrame({"tsne_1": coords[:, 0], "tsne_2": coords[:, 1], "regime": labels.astype(str)})
     return alt.Chart(df).mark_circle(size=8, opacity=0.6).encode(

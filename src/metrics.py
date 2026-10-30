@@ -4,6 +4,8 @@ A day is expensive when its real price is above a percentile of the whole series
 80 for k = 5. The daily view uses each day's price; the 7d view uses the backward 7-day mean of the price (the day and
 the 6 days before it), so a smoothed model is compared with smoothed prices. A day is El Nino when the ONI of its
 month is >= 0.5, and the two episodes are the El Nino days in 2015-2016 and in 2023-2024 (as in runs.regime_table).
+Every metric of a regime assignment is computed here, from regimes.csv of each run and from the regimes saved by
+notebook 06; the runs only save their separation metrics (silhouette, Davies-Bouldin, Calinski-Harabasz).
 
 Ranking (agreed 2026-10-29): criterion A orders configurations by expensive_f1_pct, the F1 between
 top_expensive_precision_pct and expensive_recall_pct. Criterion C first keeps the configurations whose switches per
@@ -14,7 +16,7 @@ import numpy as np
 import pandas as pd
 from prettytable import PrettyTable
 
-from src.clustering import run_lengths
+from src.clustering import regime_profile, run_lengths
 from src.runs import nino_episodes
 
 thresholds = {3: 66.7, 4: 75.0, 5: 80.0}
@@ -110,7 +112,7 @@ table_columns = {
     "expensive_recall_pct": "Expensive recall %",
     "cheap_in_top_2015_16_pct": "Cheap in top 15-16 %", "cheap_in_top_2023_24_pct": "Cheap in top 23-24 %",
 }
-config_columns = ["model", "study", "lam", "beta", "features", "latents"]
+config_columns = ["model", "study", "z_dim", "lam", "beta", "features", "latents"]
 
 
 def reference_table(reference, k):
@@ -131,7 +133,8 @@ def metrics_table(rows, k):
     """One row per model configuration with the mean over seeds (+- std with more than one seed), only the view that
     matches the input (daily for unsmoothed inputs, 7d for smoothed ones)."""
     data = rows[(rows["k"] == k) & rows["matched"]].fillna({c: "-" for c in config_columns})
-    t = PrettyTable(["Model", "Study", "lam", "beta", "Features", "Latents", "View", "Seeds", *table_columns.values()])
+    t = PrettyTable(["Model", "Study", "z_dim", "lam", "beta", "Features", "Latents", "View", "Seeds",
+                     *table_columns.values()])
     for keys, group in data.groupby(config_columns + ["view"], sort=False):
         t.add_row([*keys, len(group), *[mean_cell(group, c) for c in table_columns]])
     return t
@@ -167,7 +170,7 @@ def ranking_table(stats, rank=None, top=5):
         data = stats[stats["model"] == "level_only"]
     else:
         data = stats.dropna(subset=[rank]).sort_values(rank).head(top)
-    t = PrettyTable(["Rank", "Model", "Study", "lam", "beta", "Features", "Latents", "View", "Seeds",
+    t = PrettyTable(["Rank", "Model", "Study", "z_dim", "lam", "beta", "Features", "Latents", "View", "Seeds",
                      *[table_columns[c] for c in ranking_columns]])
     for _, r in data.iterrows():
         cells = []
@@ -177,3 +180,8 @@ def ranking_table(stats, rank=None, top=5):
         t.add_row(["ref" if rank is None else int(r[rank]), *[r[c] for c in config_columns + ["view"]],
                    int(r["seeds"]), *cells])
     return t
+
+
+def profile_rows(context, regimes, identity):
+    """Regime profile (days, share, real price, reservoir, ONI, El Nino share of each regime) with the identity columns."""
+    return regime_profile(context.assign(regime=regimes)).assign(**identity)
