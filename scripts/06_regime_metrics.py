@@ -35,7 +35,7 @@ from src.metrics import (data_reference, days_from_context, metrics_table, persi
 k_values = [3, 4, 5]
 scalogram_set = "real_price_log"
 runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
-        "temporal_vae/kmeans/z16"]
+        "temporal_vae/kmeans/dimensions"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
 

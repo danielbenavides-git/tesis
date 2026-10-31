@@ -80,3 +80,84 @@ c077,temporal_vae,temporal_vae/kmeans/lam_beta_grid/016_real_price_log_kmeans_k3
 c078,temporal_vae,temporal_vae/kmeans/lam_beta_grid/016_real_price_log_kmeans_k3_lam300_beta0.5_seed42,lam_beta_grid,4,300.0,0.5,42,3,latents 7d + level 7d,scaled,True
 c079,temporal_vae,temporal_vae/kmeans/lam_beta_grid/016_real_price_log_kmeans_k3_lam300_beta0.5_seed42,lam_beta_grid,4,300.0,0.5,42,4,latents 7d + level 7d,scaled,True
 c080,temporal_vae,temporal_vae/kmeans/lam_beta_grid/016_real_price_log_kmeans_k3_lam300_beta0.5_seed42,lam_beta_grid,4,300.0,0.5,42,5,latents 7d + level 7d,scaled,True
+c081,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,3,latents + level,scaled,False
+c082,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,4,latents + level,scaled,False
+c083,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,5,latents + level,scaled,False
+c084,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,3,latents 7d + level 7d,raw,True
+c085,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,4,latents 7d + level 7d,raw,True
+c086,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,5,latents 7d + level 7d,raw,True
+c087,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,3,latents 7d + level 7d,scaled,True
+c088,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,4,latents 7d + level 7d,scaled,True
+c089,temporal_vae,temporal_vae/kmeans/dimensions/001_real_price_log_kmeans_k3_lam100_beta0.25_seed42,dimensions,16,100.0,0.25,42,5,latents 7d + level 7d,scaled,True
+c090,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,3,latents + level,scaled,False
+c091,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,4,latents + level,scaled,False
+c092,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,5,latents + level,scaled,False
+c093,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,3,latents 7d + level 7d,raw,True
+c094,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,4,latents 7d + level 7d,raw,True
+c095,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,5,latents 7d + level 7d,raw,True
+c096,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,3,latents 7d + level 7d,scaled,True
+c097,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,4,latents 7d + level 7d,scaled,True
+c098,temporal_vae,temporal_vae/kmeans/dimensions/004_real_price_log_kmeans_k3_lam100_beta0.25_seed43,dimensions,16,100.0,0.25,43,5,latents 7d + level 7d,scaled,True
+c099,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,3,latents + level,scaled,False
+c100,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,4,latents + level,scaled,False
+c101,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,5,latents + level,scaled,False
+c102,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,3,latents 7d + level 7d,raw,True
+c103,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,4,latents 7d + level 7d,raw,True
+c104,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,5,latents 7d + level 7d,raw,True
+c105,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,3,latents 7d + level 7d,scaled,True
+c106,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,4,latents 7d + level 7d,scaled,True
+c107,temporal_vae,temporal_vae/kmeans/dimensions/007_real_price_log_kmeans_k3_lam100_beta0.25_seed44,dimensions,16,100.0,0.25,44,5,latents 7d + level 7d,scaled,True
+c108,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,3,latents + level,scaled,False
+c109,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,4,latents + level,scaled,False
+c110,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,5,latents + level,scaled,False
+c111,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,3,latents 7d + level 7d,raw,True
+c112,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,4,latents 7d + level 7d,raw,True
+c113,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,5,latents 7d + level 7d,raw,True
+c114,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,3,latents 7d + level 7d,scaled,True
+c115,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,4,latents 7d + level 7d,scaled,True
+c116,temporal_vae,temporal_vae/kmeans/dimensions/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42,dimensions,16,100.0,0.5,42,5,latents 7d + level 7d,scaled,True
+c117,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,3,latents + level,scaled,False
+c118,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,4,latents + level,scaled,False
+c119,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,5,latents + level,scaled,False
+c120,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,3,latents 7d + level 7d,raw,True
+c121,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,4,latents 7d + level 7d,raw,True
+c122,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,5,latents 7d + level 7d,raw,True
+c123,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,3,latents 7d + level 7d,scaled,True
+c124,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,4,latents 7d + level 7d,scaled,True
+c125,temporal_vae,temporal_vae/kmeans/dimensions/013_real_price_log_kmeans_k3_lam100_beta0.5_seed43,dimensions,16,100.0,0.5,43,5,latents 7d + level 7d,scaled,True
+c126,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,3,latents + level,scaled,False
+c127,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,4,latents + level,scaled,False
+c128,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,5,latents + level,scaled,False
+c129,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,3,latents 7d + level 7d,raw,True
+c130,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,4,latents 7d + level 7d,raw,True
+c131,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,5,latents 7d + level 7d,raw,True
+c132,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,3,latents 7d + level 7d,scaled,True
+c133,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,4,latents 7d + level 7d,scaled,True
+c134,temporal_vae,temporal_vae/kmeans/dimensions/016_real_price_log_kmeans_k3_lam100_beta0.5_seed44,dimensions,16,100.0,0.5,44,5,latents 7d + level 7d,scaled,True
+c135,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,3,latents + level,scaled,False
+c136,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,4,latents + level,scaled,False
+c137,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,5,latents + level,scaled,False
+c138,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,3,latents 7d + level 7d,raw,True
+c139,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,4,latents 7d + level 7d,raw,True
+c140,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,5,latents 7d + level 7d,raw,True
+c141,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,3,latents 7d + level 7d,scaled,True
+c142,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,4,latents 7d + level 7d,scaled,True
+c143,temporal_vae,temporal_vae/kmeans/dimensions/019_real_price_log_kmeans_k3_lam100_beta1_seed42,dimensions,16,100.0,1.0,42,5,latents 7d + level 7d,scaled,True
+c144,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,3,latents + level,scaled,False
+c145,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,4,latents + level,scaled,False
+c146,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,5,latents + level,scaled,False
+c147,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,3,latents 7d + level 7d,raw,True
+c148,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,4,latents 7d + level 7d,raw,True
+c149,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,5,latents 7d + level 7d,raw,True
+c150,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,3,latents 7d + level 7d,scaled,True
+c151,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,4,latents 7d + level 7d,scaled,True
+c152,temporal_vae,temporal_vae/kmeans/dimensions/022_real_price_log_kmeans_k3_lam100_beta1_seed43,dimensions,16,100.0,1.0,43,5,latents 7d + level 7d,scaled,True
+c153,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,3,latents + level,scaled,False
+c154,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,4,latents + level,scaled,False
+c155,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,5,latents + level,scaled,False
+c156,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,3,latents 7d + level 7d,raw,True
+c157,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,4,latents 7d + level 7d,raw,True
+c158,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,5,latents 7d + level 7d,raw,True
+c159,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,3,latents 7d + level 7d,scaled,True
+c160,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,4,latents 7d + level 7d,scaled,True
+c161,temporal_vae,temporal_vae/kmeans/dimensions/025_real_price_log_kmeans_k3_lam100_beta1_seed44,dimensions,16,100.0,1.0,44,5,latents 7d + level 7d,scaled,True
