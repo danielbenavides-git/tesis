@@ -6,6 +6,9 @@ has (scaled latents and smoothed latents): latent_smoothing/regimes.csv (one col
 column is). Each assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
 `matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones.
 
+Runs of every set in `scalogram_sets` are read. Every assignment is measured on the same days: the dates that all those
+sets have (the weekly set has no scalogram for the first 6 days, so all models and baselines start on 2000-01-07).
+
 The script stops if a trained model of `runs` is missing from notebook 06, so no table mixes complete and missing inputs.
 
 Outputs (in metrics/):
@@ -33,9 +36,9 @@ from src.metrics import (data_reference, days_from_context, metrics_table, persi
                          ranking_table, reference_table, regime_metrics)
 
 k_values = [3, 4, 5]
-scalogram_set = "real_price_log"
+scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
 runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
-        "temporal_vae/kmeans/dimensions"]
+        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/small_filters", "temporal_vae/kmeans/weekly"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
 
@@ -52,21 +55,43 @@ def run_identity(config, run_dir):
             "features": features, "latents": latents, "smoothed": smoothed}
 
 
-metadata = pd.read_csv(root / "data/processed/scalograms" / scalogram_set / "scalogram_metadata.csv",
-                       parse_dates=["start_datetime", "end_datetime"])
+def set_dates(scalogram_set):
+    metadata = pd.read_csv(root / "data/processed/scalograms" / scalogram_set / "scalogram_metadata.csv",
+                           parse_dates=["start_datetime", "end_datetime"])
+    return metadata, metadata["start_datetime"].dt.normalize()
+
+
+def on_common_dates(regimes, name):
+    """regimes (a Series indexed by date) on the common dates; stops if one of them has no regime."""
+    regimes = regimes.reindex(common_dates)
+    if regimes.isna().any():
+        sys.exit(f"{name} has no regime on {int(regimes.isna().sum())} of the common dates")
+    return regimes.astype(int).to_numpy()
+
+
+metadata, dates = set_dates(scalogram_sets[0])
+common_dates = pd.DatetimeIndex(dates)
+for scalogram_set in scalogram_sets[1:]:
+    common_dates = common_dates.intersection(set_dates(scalogram_set)[1])
 context = load_context(root / "data/processed", metadata)
+context = context[context["date"].isin(common_dates)].reset_index(drop=True)
 days = days_from_context(context)
 
-assignments, trained = [], set()
+assignments, trained, no_regimes = [], set(), []
 for study in runs:
     for path in sorted((exp.EXPERIMENTS_DIR / study).glob("*/config.json")):
         config = json.loads(path.read_text())
-        if config.get("scalogram_set") != scalogram_set or config.get("n_regimes") not in k_values:
+        if config.get("scalogram_set") not in scalogram_sets or config.get("n_regimes") not in k_values:
             continue
-        regimes = pd.read_csv(path.parent / "regimes.csv")["regime"].to_numpy()
-        assignments.append((run_identity(config, path.parent), regimes))
+        if not (path.parent / "regimes.csv").exists():
+            no_regimes.append(exp.run_id(path.parent))
+            continue
+        regimes = pd.read_csv(path.parent / "regimes.csv", parse_dates=["date"]).set_index("date")["regime"]
+        assignments.append((run_identity(config, path.parent), on_common_dates(regimes, exp.run_id(path.parent))))
         if config.get("trained_in"):
             trained.add(config["trained_in"])
+if no_regimes:
+    sys.exit("These runs have no regimes.csv (unfinished run?), finish or remove them first:\n  " + "\n  ".join(no_regimes))
 
 if not (smoothing_dir / "inputs.csv").exists():
     sys.exit(f"{(smoothing_dir / 'inputs.csv').relative_to(root)} not found: run notebook 06 first")
@@ -74,11 +99,12 @@ inputs = pd.read_csv(smoothing_dir / "inputs.csv")
 missing = sorted(trained - set(inputs["run_id"]))
 if missing:
     sys.exit("Notebook 06 has not read these trained models, run it again first:\n  " + "\n  ".join(missing))
-smoothed_regimes = pd.read_csv(smoothing_dir / "regimes.csv")
+smoothed_regimes = pd.read_csv(smoothing_dir / "regimes.csv", parse_dates=["date"]).set_index("date")
 for _, row in inputs.iterrows():
     identity = row.drop("column").to_dict()
     if identity["k"] in k_values:
-        assignments.append((identity, smoothed_regimes[row["column"]].to_numpy()))
+        regimes = on_common_dates(smoothed_regimes[row["column"]], f"{row['column']} of notebook 06 ({row['run_id']})")
+        assignments.append((identity, regimes))
 
 rows, profiles = [], []
 for identity, regimes in assignments:
@@ -110,4 +136,4 @@ for k, stats in zip(k_values, rankings):
         f"Top 5 by criterion C (switches / yr <= {persistence_factor:g} x 7-day baseline = {limit:.1f}, then expensive F1)\n"
         f"{ranking_table(stats, 'rank_c')}")
 (out_dir / "ranking.txt").write_text("\n\n\n".join(sections) + "\n", encoding="utf-8")
-print(f"{len(assignments)} assignments, {len(results)} rows -> metrics/")
+print(f"{len(assignments)} assignments on {len(days)} days from {days['date'].min():%Y-%m-%d}, {len(results)} rows -> metrics/")

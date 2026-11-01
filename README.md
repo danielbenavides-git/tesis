@@ -39,8 +39,8 @@ notebooks/
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
   level_only/kmeans/baseline/    Daily and 7-day price baselines (notebook 05)
-  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions;
-                                 weekly (notebook 03_temporal_vae_weekly)
+  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions,
+                                 small_filters; weekly (notebook 03_temporal_vae_weekly)
   temporal_vae/kmeans/latent_smoothing/   regimes.csv and inputs.csv of notebook 06
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)
@@ -80,7 +80,7 @@ artifacts/  model.pt, latents.npy (not in git, only in runs with a model)
 - `trained_in` in `config.json` names the run where the model was trained; runs with the same `trained_in` share the same model and latents. It is empty in the baseline.
 - A latent dim is active when its KL on the training days at the last epoch is at least `active_threshold` (0.75 nats).
 - `load_from` takes the `run_id` of an earlier run and skips training: the notebook clusters its saved latents again.
-- Notebook 03 shows, for the models with seed 42, the t-SNE for k = 3, 4 and 5, the regime timeline of each k and the regime strips.
+- Notebook 03 shows the loss curves of every trained model and, for the models with seed 42, the reconstructions of eight test days, the t-SNE for k = 3, 4 and 5, the regime timeline of each k and the regime strips.
 
 Each run writes its row in `experiments/registry.csv`, with the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
 
@@ -90,11 +90,11 @@ Notebook 05 clusters the days with only the daily mean and standard deviation of
 
 ## Smoothed and scaled latents
 
-Notebook 06 reads the latents of every trained model of the studies in its configuration and clusters three more inputs per model and k: latents scaled with training-day statistics, and latents and price both replaced by their backward 7-day mean, raw and scaled. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
+Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters three more inputs per model and k: latents scaled with training-day statistics, and latents and price both replaced by their backward 7-day mean, raw and scaled. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
 
 ## Metrics
 
-`python scripts/06_regime_metrics.py` (after notebook 06) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv`, `regime_metrics.csv` and `.txt`, `regime_profiles.csv`, `ranking.csv` and `.txt`. A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the series for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. The ranking keeps the configurations with at most twice the switches per year of the 7-day baseline and orders them by the F1 between the share of the most expensive regime that is expensive and the share of expensive days in it. It stops if a trained model has not been read by notebook 06.
+`python scripts/06_regime_metrics.py` (after notebook 06) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv`, `regime_metrics.csv` and `.txt`, `regime_profiles.csv`, `ranking.csv` and `.txt`. A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the series for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. The ranking keeps the configurations with at most twice the switches per year of the 7-day baseline and orders them by the F1 between the share of the most expensive regime that is expensive and the share of expensive days in it. It stops if a trained model has not been read by notebook 06 or a run has no `regimes.csv`. Every assignment, daily or weekly, is measured on the dates that all scalogram sets have, so all models and baselines start on 2000-01-07 (the weekly set has no scalogram for the first 6 days).
 
 ## Archive
 
