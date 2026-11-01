@@ -1,0 +1,16 @@
++--------------------------------+----------------+
+| Hyperparameter                 |     Value      |
++--------------------------------+----------------+
+| Latent dimension               |       16       |
+| Encoder filters                | 64 -> 32 -> 16 |
+| Decoder filters                | 16 -> 32 -> 64 |
+| Beta (KL weight)               |      1.0       |
+| Smoothness weight (lambda)     |     100.0      |
+| KL warm-up epochs              |       5        |
+| Optimizer, learning rate       |  Adam, 0.001   |
+| Batch size                     |       16       |
+| Epochs                         |       20       |
+| Sequence length, stride (days) |     30, 14     |
+| Recurrent layer, hidden size   |    LSTM, 64    |
+| Trainable parameters           |    883,345     |
++--------------------------------+----------------+
