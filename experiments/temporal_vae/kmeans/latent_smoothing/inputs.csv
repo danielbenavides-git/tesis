@@ -188,3 +188,30 @@ c185,temporal_vae,temporal_vae/kmeans/small_filters/007_real_price_log_kmeans_k3
 c186,temporal_vae,temporal_vae/kmeans/small_filters/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_filters,16,100.0,1.0,44,3,latents 7d + level 7d,scaled,True
 c187,temporal_vae,temporal_vae/kmeans/small_filters/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_filters,16,100.0,1.0,44,4,latents 7d + level 7d,scaled,True
 c188,temporal_vae,temporal_vae/kmeans/small_filters/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_filters,16,100.0,1.0,44,5,latents 7d + level 7d,scaled,True
+c189,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,3,latents + level,scaled,False
+c190,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,4,latents + level,scaled,False
+c191,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,5,latents + level,scaled,False
+c192,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,3,latents 7d + level 7d,raw,True
+c193,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,4,latents 7d + level 7d,raw,True
+c194,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,5,latents 7d + level 7d,raw,True
+c195,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,3,latents 7d + level 7d,scaled,True
+c196,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,4,latents 7d + level 7d,scaled,True
+c197,temporal_vae,temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42,small_stride,16,100.0,1.0,42,5,latents 7d + level 7d,scaled,True
+c198,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,3,latents + level,scaled,False
+c199,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,4,latents + level,scaled,False
+c200,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,5,latents + level,scaled,False
+c201,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,3,latents 7d + level 7d,raw,True
+c202,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,4,latents 7d + level 7d,raw,True
+c203,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,5,latents 7d + level 7d,raw,True
+c204,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,3,latents 7d + level 7d,scaled,True
+c205,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,4,latents 7d + level 7d,scaled,True
+c206,temporal_vae,temporal_vae/kmeans/small_stride/004_real_price_log_kmeans_k3_lam100_beta1_seed43,small_stride,16,100.0,1.0,43,5,latents 7d + level 7d,scaled,True
+c207,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,3,latents + level,scaled,False
+c208,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,4,latents + level,scaled,False
+c209,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,5,latents + level,scaled,False
+c210,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,3,latents 7d + level 7d,raw,True
+c211,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,4,latents 7d + level 7d,raw,True
+c212,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,5,latents 7d + level 7d,raw,True
+c213,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,3,latents 7d + level 7d,scaled,True
+c214,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,4,latents 7d + level 7d,scaled,True
+c215,temporal_vae,temporal_vae/kmeans/small_stride/007_real_price_log_kmeans_k3_lam100_beta1_seed44,small_stride,16,100.0,1.0,44,5,latents 7d + level 7d,scaled,True
