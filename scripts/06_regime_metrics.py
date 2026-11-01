@@ -4,7 +4,8 @@ Metrics of every regime assignment of the k-means runs with k = 3, 4 and 5. The 
 Reads regimes.csv and config.json of every run in `runs`, and the regimes that notebook 06 saves for the inputs only it
 has (scaled latents and smoothed latents): latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each
 column is). Each assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
-`matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones.
+`matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones (the `smoothed`
+column of inputs.csv; for the weekly models, `latents + level 7d` is smoothed).
 
 Runs of every set in `scalogram_sets` are read. Every assignment is measured on the same days: the dates that all those
 sets have (the weekly set has no scalogram for the first 6 days, so all models and baselines start on 2000-01-07).
@@ -38,8 +39,8 @@ from src.metrics import (data_reference, days_from_context, metrics_table, persi
 k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
 runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
-        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/small_filters", "temporal_vae/kmeans/weekly", 
-        "temporal_vae/kmeans/small_stride"]
+        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/small_filters", "temporal_vae/kmeans/weekly",
+        "temporal_vae/kmeans/small_stride", "temporal_vae/kmeans/weekly_large"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
 

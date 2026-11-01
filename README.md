@@ -40,7 +40,7 @@ experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
   level_only/kmeans/baseline/    Daily and 7-day price baselines (notebook 05)
   temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions,
-                                 small_filters; weekly (notebook 03_temporal_vae_weekly)
+                                 small_filters, small_stride; weekly, weekly_large (notebook 03_temporal_vae_weekly)
   temporal_vae/kmeans/latent_smoothing/   regimes.csv and inputs.csv of notebook 06
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)
@@ -90,7 +90,7 @@ Notebook 05 clusters the days with only the daily mean and standard deviation of
 
 ## Smoothed and scaled latents
 
-Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters three more inputs per model and k: latents scaled with training-day statistics, and latents and price both replaced by their backward 7-day mean, raw and scaled. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
+Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters more inputs per model and k. Daily models get three: latents scaled with training-day statistics, and latents and price both replaced by their backward 7-day mean, raw and scaled. Weekly models get two: latents scaled, and the latents as they are with the price replaced by its backward 7-day mean (`latents + level 7d`). The weekly latents are not averaged again because the weekly scalogram already covers the day and the 6 days before it; with the 7-day price, this input differs from the 7-day baseline only in the scalogram. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
 
 ## Metrics
 
