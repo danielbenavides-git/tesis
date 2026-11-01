@@ -14,7 +14,8 @@ documents/          Reference papers
 data/
   raw/              Raw data from XM, DANE and NOAA
   processed/        Cleaned series (XM/, NOAA/) and scalograms
-    scalograms/real_price_log/   Log real price scalograms
+    scalograms/real_price_log/          Log real price scalograms, one day (24 hours) each
+    scalograms/real_price_log_weekly/   Log real price scalograms, day t and the 6 days before it (168 hours) each
 scripts/            Data pipeline, run in order (01 download, 02 process, 03 external data and deflation, 04 scalograms,
                     05 El Nino price statistics), 06_regime_metrics.py (all metrics), inspect_regimes.py (one run),
                     archive_runs.py (one-off move to archive/)
@@ -32,12 +33,14 @@ src/                Code imported by the notebooks and scripts
 notebooks/
   01_eda.ipynb
   03_temporal_vae.ipynb         Trains the Temporal VAE and saves its regimes (no analysis)
+  03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly)
   05_level_baseline.ipynb       Baseline: clustering on the daily price only (no CWT, no VAE)
   06_latent_smoothing.ipynb     Smoothed (7-day) and scaled latents of the trained models, saves their regimes
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
   level_only/kmeans/baseline/    Daily and 7-day price baselines (notebook 05)
-  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, z16
+  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions;
+                                 weekly (notebook 03_temporal_vae_weekly)
   temporal_vae/kmeans/latent_smoothing/   regimes.csv and inputs.csv of notebook 06
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)
@@ -50,9 +53,12 @@ figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
 pip install -r requirements.txt
 python scripts/03_process_external_data.py          # ONI and real (deflated) prices
 python scripts/04_generate_scalograms.py --price log  # -> scalograms/real_price_log/
+python scripts/04_generate_scalograms.py --price log --window week  # -> scalograms/real_price_log_weekly/
 ```
 
-The scalograms (`scalograms.npy`, about 114 MB) are not in git. Regenerate them with the commands above; the metadata and normalization parameters are tracked.
+The scalograms (`scalograms.npy`, about 114 MB daily and 796 MB weekly) are not in git. Regenerate them with the commands above; the metadata and normalization parameters are tracked.
+
+The weekly set has one scalogram per day, from day t and the 6 days before it, and the window moves one day at a time. The mean of the 7-day window is removed before the CWT, so the changes from one day to the next inside the week stay in the image. The first 6 days have no weekly scalogram (9703 days). `start_datetime` and `end_datetime` in its metadata are the first and last hour of day t, and `window_start_datetime` is the first hour of the window.
 
 Each day's mean is removed from the hourly log real price before the CWT, so the image shows only the intraday shape. Magnitudes are scaled to [0, 1] with the global minimum and the 99.5th percentile, clipping values above it. The daily mean and standard deviation of the log real price are saved in `scalogram_metadata.csv` (`log_price_mean`, `log_price_std`) and appended to the latent vector before clustering, z-scored with training-day statistics.
 
