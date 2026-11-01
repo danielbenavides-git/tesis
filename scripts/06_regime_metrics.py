@@ -39,7 +39,7 @@ k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
 runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
         "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/small_filters", "temporal_vae/kmeans/weekly", 
-        "temporal_vae_kmeans/small_stride"]
+        "temporal_vae/kmeans/small_stride"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
 
