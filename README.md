@@ -17,8 +17,7 @@ data/
     scalograms/real_price_log/          Log real price scalograms, one day (24 hours) each
     scalograms/real_price_log_weekly/   Log real price scalograms, day t and the 6 days before it (168 hours) each
 scripts/            Data pipeline, run in order (01 download, 02 process, 03 external data and deflation, 04 scalograms,
-                    05 El Nino price statistics), 06_regime_metrics.py (all metrics), inspect_regimes.py (one run),
-                    archive_runs.py (one-off move to archive/)
+                    05 El Nino price statistics), 06_regime_metrics.py (all metrics), inspect_regimes.py (one run)
 src/                Code imported by the notebooks and scripts
   data.py           Scalogram loading, chronological split, sequence dataset, context variables
   training.py       Training loop with KL warm-up, active latent dims from the KL of each dim
@@ -103,7 +102,7 @@ Notebook 07 reads `metrics/regime_metrics.csv` and, for the `study` in its confi
 
 ## Archive
 
-`archive/` holds the runs, notebooks and files that are no longer used (ConvVAE, GMM, 16-dim Temporal VAE with blocks every 7 days, k = 2 and 6, notebook 04 and its comparisons, scalograms without log). They were moved with `python scripts/archive_runs.py`; `archive/README.md` lists what was moved, why, and the last commit before moving.
+`archive/` holds the runs, notebooks and files that are no longer used (ConvVAE, GMM, 16-dim Temporal VAE with blocks every 7 days, k = 2 and 6, notebook 04 and its comparisons, scalograms without log). `archive/README.md` lists what was moved or deleted, why, and the last commit that still had it.
 
 ## Data Acquisition
 

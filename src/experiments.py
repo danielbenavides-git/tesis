@@ -120,23 +120,6 @@ def log_run(run_dir, config, registry=None):
     return row
 
 
-def rebuild_registry(registry=None):
-    """Rewrite experiments/registry.csv with one row per run folder under experiments/. The git commit of each run is
-    kept from the old registry when it was there."""
-    registry = Path(registry) if registry else EXPERIMENTS_DIR / "registry.csv"
-    commits = {}
-    if registry.exists():
-        old = pd.read_csv(registry, dtype=str, keep_default_na=False)
-        if "git_commit" in old:
-            commits = dict(zip(old["run_id"], old["git_commit"]))
-    rows = []
-    for path in sorted(EXPERIMENTS_DIR.glob("*/kmeans/*/*/config.json")):
-        config = json.loads(path.read_text())
-        rows.append(registry_row(path.parent, config, commits.get(run_id(path.parent), "")))
-    pd.DataFrame(rows, columns=REGISTRY_COLUMNS).to_csv(registry, index=False)
-    return len(rows)
-
-
 def split_table(context, splits):
     t = PrettyTable(["Split", "Days", "From", "To"])
     for name, idx in splits.items():

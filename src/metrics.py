@@ -115,20 +115,6 @@ table_columns = {
 config_columns = ["model", "study", "z_dim", "lam", "beta", "features", "latents"]
 
 
-def reference_table(reference, k):
-    t = PrettyTable(["View", "Threshold (COP/kWh)", "Group", "Days", "Expensive %", "Median price", "Base El Nino %"])
-    for _, r in reference[reference["k"] == k].iterrows():
-        t.add_row([r["view"], f"{r['threshold_cop_kwh']:.1f}", r["group"], r["days"], f"{r['expensive_pct']:.1f}",
-                   f"{r['median_price']:.1f}", f"{r['base_nino_pct']:.1f}"])
-    return t
-
-
-def mean_cell(group, column):
-    mean, std = group[column].mean(), group[column].std()
-    digits = 2 if "lift" in column else 1
-    return f"{mean:.{digits}f}" + (f" +- {std:.{digits}f}" if len(group) > 1 else "")
-
-
 def ranking(rows, k):
     """One row per model configuration (matched view, mean and std over seeds) with its rank by criterion A and, if it
     passes the persistence filter, by criterion C. Baselines get no rank."""

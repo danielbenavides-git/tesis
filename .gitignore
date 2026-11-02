@@ -3,7 +3,6 @@ data/raw/*.csv
 data/processed/*.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-MNIST/
 data/processed/scalograms/**/*.npy
 
 # Figures
@@ -29,7 +28,6 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
-notebooks/data/
 
 # Experiments
 experiments/**/artifacts/
