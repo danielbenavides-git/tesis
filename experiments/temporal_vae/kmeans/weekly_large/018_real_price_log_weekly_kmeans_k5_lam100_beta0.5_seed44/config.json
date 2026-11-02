@@ -30,5 +30,6 @@
   "seed": 44,
   "tag": "lam100_beta0.5_seed44",
   "n_regimes": 5,
-  "trained_in": "temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44"
+  "trained_in": "temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44",
+  "n_params": 1802881
 }

@@ -63,7 +63,7 @@ def save_all(run_dirs, save, *args, **kwargs):
 
 def cluster_runs(run_dirs, run_configs, features, context, train_idx, split_dates, coords, plot_idx):
     """For each k: k-means fitted on training days, regimes numbered by mean real price, then saved: regimes.csv,
-    metrics.json (separation metrics), tables/regime_profile.txt, tables/clustering_metrics.txt, figures/tsne_regimes.png,
+    metrics.json (separation metrics), tables/regime_profile.txt, figures/tsne_regimes.png,
     figures/regime_timeline.png and the registry row. Returns {k: context with the regime column}."""
     price = context["precio_real_cop_kwh"].to_numpy()
     results = {}
@@ -74,7 +74,6 @@ def cluster_runs(run_dirs, run_configs, features, context, train_idx, split_date
         metrics = {"run_id": exp.run_id(run_dir), "k": k, **separation_metrics(features, labels, seed=seed)}
         save_regimes(run_dir, regime_table(ctx, split_dates), metrics)
         exp.save_table(run_dir, "regime_profile", exp.regime_profile_table(regime_profile(ctx)), show=False)
-        exp.save_table(run_dir, "clustering_metrics", exp.metrics_table(metrics), show=False)
         tsne_chart(coords, labels[plot_idx], f"t-SNE of the clustering features (k={k})").save(
             exp.figure_path(run_dir, "tsne_regimes"), scale_factor=2.0)
         regime_timeline(ctx, split_dates, title=f"Detected regimes over time (k={k})").save(

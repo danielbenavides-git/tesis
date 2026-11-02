@@ -144,42 +144,9 @@ def split_table(context, splits):
     return t
 
 
-def hyperparameter_table(config, n_params):
-    t = PrettyTable(["Hyperparameter", "Value"])
-    t.align["Hyperparameter"] = "l"
-    rows = [
-        ("Latent dimension", config["z_dim"]),
-        ("Encoder filters", " -> ".join(str(f) for f in config["filters"])),
-        ("Decoder filters", " -> ".join(str(f) for f in reversed(config["filters"]))),
-        ("Beta (KL weight)", config["beta"]),
-        ("Smoothness weight (lambda)", config.get("lam", "-")),
-        ("KL warm-up epochs", config["kl_warmup_epochs"]),
-        ("Optimizer, learning rate", f"{config['optimizer']}, {config['lr']:g}"),
-        ("Batch size", config["batch_size"]),
-        ("Epochs", config["epochs"]),
-        ("Trainable parameters", f"{n_params:,}"),
-    ]
-    if "seq_len" in config:
-        rows[-1:-1] = [
-            ("Sequence length, stride (days)", f"{config['seq_len']}, {config['stride']}"),
-            ("Recurrent layer, hidden size", f"{config['rnn_type'].upper()}, {config['rnn_hidden']}"),
-        ]
-    for row in rows:
-        t.add_row(row)
-    return t
-
-
 def regime_profile_table(profile):
     t = PrettyTable(["Regime", "Days", "Share %", "Real price", "Reservoir", "Mean ONI", "El Nino %"])
     for _, row in profile.iterrows():
         t.add_row([int(row["regime"]), int(row["days"]), f"{row['share_pct']:.1f}", f"{row['mean_real_price']:.1f}",
                    f"{row['mean_reservoir']:.3f}", f"{row['mean_oni']:.2f}", f"{row['el_nino_pct']:.1f}"])
-    return t
-
-
-def metrics_table(metrics):
-    t = PrettyTable(["Metric", "Value"])
-    t.align["Metric"] = "l"
-    for key, value in metrics.items():
-        t.add_row([key, f"{value:.3f}" if isinstance(value, float) else value])
     return t

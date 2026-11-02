@@ -40,5 +40,6 @@
   "val_ratio": 0.2,
   "seed": 42,
   "n_regimes": 3,
-  "trained_in": "temporal_vae/kmeans/hyperparameters/001_real_price_log_kmeans_k2_z4_s14"
+  "trained_in": "temporal_vae/kmeans/hyperparameters/001_real_price_log_kmeans_k2_z4_s14",
+  "n_params": 443497
 }
