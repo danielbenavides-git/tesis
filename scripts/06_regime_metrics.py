@@ -5,7 +5,8 @@ Reads regimes.csv and config.json of every run in `runs`, and the regimes that n
 has (scaled latents and smoothed latents): latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each
 column is). Each assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
 `matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones (the `smoothed`
-column of inputs.csv; for the weekly models, `latents + level 7d` is smoothed).
+column of inputs.csv; for the weekly models, `latents + level 7d` is smoothed). Each one is also measured on every
+period of src.metrics.periods (all days and the train, val and test days of src.data.date_split).
 
 Runs of every set in `scalogram_sets` are read. Every assignment is measured on the same days: the dates that all those
 sets have (the weekly set has no scalogram for the first 6 days, so all models and baselines start on 2000-01-07).
@@ -14,11 +15,13 @@ The script stops if a trained model of `runs` is missing from notebook 06, so no
 
 Outputs (in metrics/):
     data_reference.csv    no model: expensive days and prices of each episode, per k and view
-    regime_metrics.csv    one row per assignment and view (read by notebook 07, which shows the top configurations)
+    regime_metrics.csv    one row per assignment, view and period (read by notebook 07, which shows the top
+                          configurations)
     regime_profiles.csv   one row per assignment and regime: days, share, real price, reservoir, ONI, El Nino share
 
 and, in every Temporal VAE run folder, tables/baseline_comparison.txt: the run as notebook 03 clustered it, the
-notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view.
+notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view,
+in one table per period in comparison_periods.
 
 Usage (run notebook 06 first):
     python scripts/06_regime_metrics.py
@@ -33,7 +36,9 @@ root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root))
 from src import experiments as exp
 from src.data import load_context
-from src.metrics import comparison_table, data_reference, days_from_context, profile_rows, regime_metrics, thresholds
+from src.data import test_start, val_start
+from src.metrics import (comparison_table, data_reference, days_from_context, periods, profile_rows, regime_metrics,
+                         thresholds)
 
 k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
@@ -41,6 +46,7 @@ runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "te
         "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/weekly"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
+comparison_periods = ["all", "val", "test"]
 
 
 def run_identity(config, run_dir):
@@ -96,11 +102,15 @@ if no_regimes:
 
 if not (smoothing_dir / "inputs.csv").exists():
     sys.exit(f"{(smoothing_dir / 'inputs.csv').relative_to(root)} not found: run notebook 06 first")
-inputs = pd.read_csv(smoothing_dir / "inputs.csv")
+try:
+    inputs = pd.read_csv(smoothing_dir / "inputs.csv")
+except pd.errors.EmptyDataError:  # notebook 06 found no trained model
+    inputs = pd.DataFrame(columns=["column", "run_id", "k"])
 missing = sorted(trained - set(inputs["run_id"]))
 if missing:
     sys.exit("Notebook 06 has not read these trained models, run it again first:\n  " + "\n  ".join(missing))
-smoothed_regimes = pd.read_csv(smoothing_dir / "regimes.csv", parse_dates=["date"]).set_index("date")
+smoothed_regimes = (pd.read_csv(smoothing_dir / "regimes.csv", parse_dates=["date"]).set_index("date")
+                    if len(inputs) else None)
 for _, row in inputs.iterrows():
     identity = row.drop("column").to_dict()
     if identity["k"] in k_values:
@@ -112,8 +122,9 @@ for identity, regimes in assignments:
     run_days = days.assign(regime=regimes)
     profiles.append(profile_rows(context, regimes, identity))
     for view in ("daily", "7d"):
-        rows.append({**identity, **regime_metrics(run_days, identity["k"], view),
-                     "matched": (view == "7d") == bool(identity["smoothed"])})
+        for period in periods:
+            rows.append({**identity, **regime_metrics(run_days, identity["k"], view, period),
+                         "matched": (view == "7d") == bool(identity["smoothed"])})
 results = pd.DataFrame(rows)
 
 out_dir.mkdir(exist_ok=True)
@@ -137,15 +148,22 @@ def run_comparison(run_id, config):
     first, last = days["date"].min(), days["date"].max()
     limits = ", ".join(f"{view} view {rows.loc[rows['view'] == view, 'threshold_cop_kwh'].iloc[0]:.1f} COP/kWh"
                        for view in ("daily", "7d"))
-    header = (f"{run_id}\nk = {k}, {len(days)} days from {first:%Y-%m-%d} to {last:%Y-%m-%d}\n"
-              f"Expensive day: real price above percentile {thresholds[k]} of the series ({limits}); "
+    header = (f"{run_id}\nk = {k}, {len(days)} days from {first:%Y-%m-%d} to {last:%Y-%m-%d}; "
+              f"train before {val_start}, val from {val_start}, test from {test_start}\n"
+              f"Expensive day: real price above percentile {thresholds[k]} of the training days ({limits}); "
               f"the 7d view uses the backward 7-day mean of the price\n"
               f"Capture: share of the El Nino days of the episode in the most expensive regime; "
               f"lift: capture / top regime days % (1 = chance)\n"
-              f"Precision, recall and F1 of the expensive days in the most expensive regime\n")
+              f"Precision, recall and F1 of the expensive days in the most expensive regime\n"
+              f"Switches per year are counted inside each period; - = the episode has no days in the period\n")
+    tables = []
+    for period in comparison_periods:
+        part = rows[rows["period"] == period]
+        n_days = len(days) if period == "all" else int((days["period"] == period).sum())
+        tables.append(f"Period: {period} ({n_days} days)\n" + comparison_table(part, labels).get_string())
     path = exp.EXPERIMENTS_DIR / run_id / "tables" / "baseline_comparison.txt"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(header + "\n" + comparison_table(rows, labels).get_string() + "\n", encoding="utf-8")
+    path.write_text(header + "\n" + "\n\n".join(tables) + "\n", encoding="utf-8")
 
 
 for run_id, config in vae_runs:

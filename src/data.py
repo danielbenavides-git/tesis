@@ -18,6 +18,25 @@ def load_scalograms(scalogram_dir):
     return images, metadata
 
 
+val_start = "2014-10-01"  # first El Nino month of the 2015-2016 episode (ONI >= 0.5), so the whole episode is in val
+test_start = "2021-01-01"  # the 2023-2024 episode is in test
+
+
+def date_split(dates, val_start=val_start, test_start=test_start):
+    """Split day indices into train (before val_start), val (from val_start to the day before test_start) and test
+    (from test_start). dates is a sequence of days in order."""
+    dates = pd.to_datetime(pd.Series(dates)).dt.normalize().to_numpy()
+    idx = np.arange(len(dates))
+    val, test = np.datetime64(pd.Timestamp(val_start)), np.datetime64(pd.Timestamp(test_start))
+    return idx[dates < val], idx[(dates >= val) & (dates < test)], idx[dates >= test]
+
+
+def split_names(dates, val_start=val_start, test_start=test_start):
+    """train, val or test for every day of dates."""
+    dates = pd.to_datetime(pd.Series(dates)).dt.normalize()
+    return np.where(dates < val_start, "train", np.where(dates < test_start, "val", "test"))
+
+
 def chronological_split(n, train_ratio=0.6, val_ratio=0.2):
     """Split day indices 0..n-1 into consecutive train, val and test blocks."""
     train_end = int(n * train_ratio)

@@ -15,7 +15,8 @@ from src.plots import regime_timeline, tsne_chart
 # so the config always describes the model that produced the latents.
 RUN_KEYS = ("study", "k_values", "tag")
 # El Nino episodes used to judge the most expensive regime: El Nino days (ONI >= 0.5) in these years.
-nino_episodes = {"2015-2016": [2015, 2016], "2023-2024": [2023, 2024]}
+# El Nino days (ONI >= 0.5) in these years; the 2015-2016 episode starts in October 2014
+nino_episodes = {"2015-2016": [2014, 2015, 2016], "2023-2024": [2023, 2024]}
 regime_columns = ["date", "split", "regime", "real_price", "oni", "nino", "episode", "top_regime", "captured"]
 
 
