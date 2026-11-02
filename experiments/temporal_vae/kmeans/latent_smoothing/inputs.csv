@@ -233,3 +233,57 @@ c230,temporal_vae,temporal_vae/kmeans/weekly/007_real_price_log_weekly_kmeans_k3
 c231,temporal_vae,temporal_vae/kmeans/weekly/007_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,3,latents + level 7d,raw,True
 c232,temporal_vae,temporal_vae/kmeans/weekly/007_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,4,latents + level 7d,raw,True
 c233,temporal_vae,temporal_vae/kmeans/weekly/007_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,5,latents + level 7d,raw,True
+c234,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,3,latents + level,scaled,False
+c235,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,4,latents + level,scaled,False
+c236,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,5,latents + level,scaled,False
+c237,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,3,latents + level 7d,raw,True
+c238,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,4,latents + level 7d,raw,True
+c239,temporal_vae,temporal_vae/kmeans/weekly_large/001_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed42,weekly_large,16,100.0,0.25,42,5,latents + level 7d,raw,True
+c240,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,3,latents + level,scaled,False
+c241,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,4,latents + level,scaled,False
+c242,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,5,latents + level,scaled,False
+c243,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,3,latents + level 7d,raw,True
+c244,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,4,latents + level 7d,raw,True
+c245,temporal_vae,temporal_vae/kmeans/weekly_large/004_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed43,weekly_large,16,100.0,0.25,43,5,latents + level 7d,raw,True
+c246,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,3,latents + level,scaled,False
+c247,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,4,latents + level,scaled,False
+c248,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,5,latents + level,scaled,False
+c249,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,3,latents + level 7d,raw,True
+c250,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,4,latents + level 7d,raw,True
+c251,temporal_vae,temporal_vae/kmeans/weekly_large/007_real_price_log_weekly_kmeans_k3_lam100_beta0.25_seed44,weekly_large,16,100.0,0.25,44,5,latents + level 7d,raw,True
+c252,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,3,latents + level,scaled,False
+c253,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,4,latents + level,scaled,False
+c254,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,5,latents + level,scaled,False
+c255,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,3,latents + level 7d,raw,True
+c256,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,4,latents + level 7d,raw,True
+c257,temporal_vae,temporal_vae/kmeans/weekly_large/010_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed42,weekly_large,16,100.0,0.5,42,5,latents + level 7d,raw,True
+c258,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,3,latents + level,scaled,False
+c259,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,4,latents + level,scaled,False
+c260,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,5,latents + level,scaled,False
+c261,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,3,latents + level 7d,raw,True
+c262,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,4,latents + level 7d,raw,True
+c263,temporal_vae,temporal_vae/kmeans/weekly_large/013_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed43,weekly_large,16,100.0,0.5,43,5,latents + level 7d,raw,True
+c264,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,3,latents + level,scaled,False
+c265,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,4,latents + level,scaled,False
+c266,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,5,latents + level,scaled,False
+c267,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,3,latents + level 7d,raw,True
+c268,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,4,latents + level 7d,raw,True
+c269,temporal_vae,temporal_vae/kmeans/weekly_large/016_real_price_log_weekly_kmeans_k3_lam100_beta0.5_seed44,weekly_large,16,100.0,0.5,44,5,latents + level 7d,raw,True
+c270,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,3,latents + level,scaled,False
+c271,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,4,latents + level,scaled,False
+c272,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,5,latents + level,scaled,False
+c273,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,3,latents + level 7d,raw,True
+c274,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,4,latents + level 7d,raw,True
+c275,temporal_vae,temporal_vae/kmeans/weekly_large/019_real_price_log_weekly_kmeans_k3_lam100_beta1_seed42,weekly_large,16,100.0,1.0,42,5,latents + level 7d,raw,True
+c276,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,3,latents + level,scaled,False
+c277,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,4,latents + level,scaled,False
+c278,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,5,latents + level,scaled,False
+c279,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,3,latents + level 7d,raw,True
+c280,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,4,latents + level 7d,raw,True
+c281,temporal_vae,temporal_vae/kmeans/weekly_large/022_real_price_log_weekly_kmeans_k3_lam100_beta1_seed43,weekly_large,16,100.0,1.0,43,5,latents + level 7d,raw,True
+c282,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,3,latents + level,scaled,False
+c283,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,4,latents + level,scaled,False
+c284,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,5,latents + level,scaled,False
+c285,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,3,latents + level 7d,raw,True
+c286,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,4,latents + level 7d,raw,True
+c287,temporal_vae,temporal_vae/kmeans/weekly_large/025_real_price_log_weekly_kmeans_k3_lam100_beta1_seed44,weekly_large,16,100.0,1.0,44,5,latents + level 7d,raw,True
