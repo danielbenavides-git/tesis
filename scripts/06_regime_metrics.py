@@ -14,11 +14,11 @@ The script stops if a trained model of `runs` is missing from notebook 06, so no
 
 Outputs (in metrics/):
     data_reference.csv    no model: expensive days and prices of each episode, per k and view
-    regime_metrics.csv    one row per assignment and view
-    regime_metrics.txt    one section per k: the data reference and the matched view of every configuration
+    regime_metrics.csv    one row per assignment and view (read by notebook 07, which shows the top configurations)
     regime_profiles.csv   one row per assignment and regime: days, share, real price, reservoir, ONI, El Nino share
-    ranking.csv           one row per configuration and k: mean and std over seeds, rank by criterion A and C
-    ranking.txt           one section per k: the baselines, the top 5 by criterion A and the top 5 by criterion C
+
+and, in every Temporal VAE run folder, tables/baseline_comparison.txt: the run as notebook 03 clustered it, the
+notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view.
 
 Usage (run notebook 06 first):
     python scripts/06_regime_metrics.py
@@ -33,13 +33,12 @@ root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root))
 from src import experiments as exp
 from src.data import load_context
-from src.metrics import (data_reference, days_from_context, metrics_table, persistence_factor, profile_rows, ranking,
-                         ranking_table, reference_table, regime_metrics)
+from src.metrics import comparison_table, data_reference, days_from_context, profile_rows, regime_metrics, thresholds
 
 k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
 runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
-        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/weekly_large"]
+        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/weekly"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
 out_dir = root / "metrics"
 
@@ -78,7 +77,7 @@ context = load_context(root / "data/processed", metadata)
 context = context[context["date"].isin(common_dates)].reset_index(drop=True)
 days = days_from_context(context)
 
-assignments, trained, no_regimes = [], set(), []
+assignments, trained, no_regimes, vae_runs = [], set(), [], []
 for study in runs:
     for path in sorted((exp.EXPERIMENTS_DIR / study).glob("*/config.json")):
         config = json.loads(path.read_text())
@@ -91,6 +90,7 @@ for study in runs:
         assignments.append((run_identity(config, path.parent), on_common_dates(regimes, exp.run_id(path.parent))))
         if config.get("trained_in"):
             trained.add(config["trained_in"])
+            vae_runs.append((exp.run_id(path.parent), config))
 if no_regimes:
     sys.exit("These runs have no regimes.csv (unfinished run?), finish or remove them first:\n  " + "\n  ".join(no_regimes))
 
@@ -122,19 +122,33 @@ reference.to_csv(out_dir / "data_reference.csv", index=False)
 results.round(3).to_csv(out_dir / "regime_metrics.csv", index=False)
 pd.concat(profiles, ignore_index=True).round(3).to_csv(out_dir / "regime_profiles.csv", index=False)
 
-sections = [f"k = {k}, expensive day = real price above percentile of the series\n"
-            f"{reference_table(reference, k)}\n\n{metrics_table(results, k)}" for k in k_values]
-(out_dir / "regime_metrics.txt").write_text("\n\n\n".join(sections) + "\n", encoding="utf-8")
 
-rankings = [ranking(results, k) for k in k_values]
-pd.concat(rankings, ignore_index=True).round(3).to_csv(out_dir / "ranking.csv", index=False)
-sections = []
-for k, stats in zip(k_values, rankings):
-    limit = stats["switches_limit"].iloc[0]
-    sections.append(
-        f"k = {k}\nBaselines (reference, not ranked)\n{ranking_table(stats)}\n\n"
-        f"Top 5 by criterion A (expensive F1)\n{ranking_table(stats, 'rank_a')}\n\n"
-        f"Top 5 by criterion C (switches / yr <= {persistence_factor:g} x 7-day baseline = {limit:.1f}, then expensive F1)\n"
-        f"{ranking_table(stats, 'rank_c')}")
-(out_dir / "ranking.txt").write_text("\n\n\n".join(sections) + "\n", encoding="utf-8")
+def run_comparison(run_id, config):
+    """tables/baseline_comparison.txt of one Temporal VAE run (see the module docstring)."""
+    k = config["n_regimes"]
+    matched = results[results["matched"] & (results["k"] == k)]
+    as_run = (matched["features"] == "latents + level") & (matched["latents"] == "raw")
+    parts = [("Run (notebook 03)", matched[as_run & (matched["run_id"] == run_id)]),
+             ("Notebook 06", matched[~as_run & (matched["run_id"] == config["trained_in"])]),
+             ("Daily baseline", matched[matched["features"] == "level"]),
+             ("7-day baseline", matched[matched["features"] == "level 7d"])]
+    rows = pd.concat([part.assign(row=name) for name, part in parts], ignore_index=True)
+    labels = {"row": "Row", "features": "Features", "latents": "Latents", "view": "View"}
+    first, last = days["date"].min(), days["date"].max()
+    limits = ", ".join(f"{view} view {rows.loc[rows['view'] == view, 'threshold_cop_kwh'].iloc[0]:.1f} COP/kWh"
+                       for view in ("daily", "7d"))
+    header = (f"{run_id}\nk = {k}, {len(days)} days from {first:%Y-%m-%d} to {last:%Y-%m-%d}\n"
+              f"Expensive day: real price above percentile {thresholds[k]} of the series ({limits}); "
+              f"the 7d view uses the backward 7-day mean of the price\n"
+              f"Capture: share of the El Nino days of the episode in the most expensive regime; "
+              f"lift: capture / top regime days % (1 = chance)\n"
+              f"Precision, recall and F1 of the expensive days in the most expensive regime\n")
+    path = exp.EXPERIMENTS_DIR / run_id / "tables" / "baseline_comparison.txt"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(header + "\n" + comparison_table(rows, labels).get_string() + "\n", encoding="utf-8")
+
+
+for run_id, config in vae_runs:
+    run_comparison(run_id, config)
+print(f"{len(vae_runs)} runs got tables/baseline_comparison.txt")
 print(f"{len(assignments)} assignments on {len(days)} days from {days['date'].min():%Y-%m-%d}, {len(results)} rows -> metrics/")

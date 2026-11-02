@@ -1,0 +1,7 @@
+{
+  "run_id": "temporal_vae/kmeans/weekly/024_real_price_log_weekly_kmeans_k5_lam100_beta1_seed43",
+  "k": 5,
+  "silhouette": 0.12632668351683196,
+  "davies_bouldin": 1.9753174721138336,
+  "calinski_harabasz": 2124.317335917644
+}

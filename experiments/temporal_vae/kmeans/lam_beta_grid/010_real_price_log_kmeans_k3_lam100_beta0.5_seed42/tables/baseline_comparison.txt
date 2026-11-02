@@ -1,0 +1,16 @@
+temporal_vae/kmeans/lam_beta_grid/010_real_price_log_kmeans_k3_lam100_beta0.5_seed42
+k = 3, 9703 days from 2000-01-07 to 2026-07-31
+Expensive day: real price above percentile 66.7 of the series (daily view 299.1 COP/kWh, 7d view 302.1 COP/kWh); the 7d view uses the backward 7-day mean of the price
+Capture: share of the El Nino days of the episode in the most expensive regime; lift: capture / top regime days % (1 = chance)
+Precision, recall and F1 of the expensive days in the most expensive regime
+
++-------------------+-----------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+|        Row        |        Features       | Latents |  View | Switches / yr | Top regime days % | Capture 15-16 % | Lift 15-16 | Capture 23-24 % | Lift 23-24 | Precision % | Recall % | F1 % |
++-------------------+-----------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+| Run (notebook 03) |    latents + level    |   raw   | daily |      66.8     |        41.6       |       59.4      |    1.43    |       57.6      |    1.39    |     33.8    |   42.2   | 37.5 |
+|    Notebook 06    |    latents + level    |  scaled | daily |      58.8     |        43.7       |       61.3      |    1.40    |       57.9      |    1.32    |     33.7    |   44.2   | 38.2 |
+|    Notebook 06    | latents 7d + level 7d |   raw   |   7d  |      13.3     |        31.7       |       77.0      |    2.43    |       73.7      |    2.33    |     75.8    |   72.1   | 73.9 |
+|    Notebook 06    | latents 7d + level 7d |  scaled |   7d  |      14.1     |        34.1       |       33.7      |    0.99    |       31.3      |    0.92    |     46.4    |   47.5   | 46.9 |
+|   Daily baseline  |         level         |    -    | daily |      64.7     |        33.6       |       89.2      |    2.65    |       87.2      |    2.60    |     90.6    |   91.4   | 91.0 |
+|   7-day baseline  |        level 7d       |    -    |   7d  |      15.4     |        34.1       |       91.1      |    2.67    |       90.4      |    2.65    |     90.8    |   93.1   | 91.9 |
++-------------------+-----------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+

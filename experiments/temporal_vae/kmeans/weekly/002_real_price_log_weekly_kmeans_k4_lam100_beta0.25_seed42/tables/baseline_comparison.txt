@@ -1,0 +1,15 @@
+temporal_vae/kmeans/weekly/002_real_price_log_weekly_kmeans_k4_lam100_beta0.25_seed42
+k = 4, 9703 days from 2000-01-07 to 2026-07-31
+Expensive day: real price above percentile 75.0 of the series (daily view 345.6 COP/kWh, 7d view 348.3 COP/kWh); the 7d view uses the backward 7-day mean of the price
+Capture: share of the El Nino days of the episode in the most expensive regime; lift: capture / top regime days % (1 = chance)
+Precision, recall and F1 of the expensive days in the most expensive regime
+
++-------------------+--------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+|        Row        |      Features      | Latents |  View | Switches / yr | Top regime days % | Capture 15-16 % | Lift 15-16 | Capture 23-24 % | Lift 23-24 | Precision % | Recall % | F1 % |
++-------------------+--------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+| Run (notebook 03) |  latents + level   |   raw   | daily |      70.8     |        10.3       |       4.8       |    0.47    |       20.6      |    2.00    |     28.3    |   11.7   | 16.5 |
+|    Notebook 06    |  latents + level   |  scaled | daily |      70.6     |        32.5       |       51.5      |    1.58    |       27.2      |    0.84    |     29.7    |   38.6   | 33.6 |
+|    Notebook 06    | latents + level 7d |   raw   |   7d  |      72.5     |        33.2       |       52.2      |    1.57    |       27.8      |    0.84    |     29.6    |   39.4   | 33.8 |
+|   Daily baseline  |       level        |    -    | daily |      71.2     |        11.2       |       42.7      |    3.83    |       77.3      |    6.93    |    100.0    |   44.6   | 61.7 |
+|   7-day baseline  |      level 7d      |    -    |   7d  |      18.6     |        9.7        |       41.4      |    4.26    |       74.6      |    7.69    |    100.0    |   38.8   | 55.9 |
++-------------------+--------------------+---------+-------+---------------+-------------------+-----------------+------------+-----------------+------------+-------------+----------+------+

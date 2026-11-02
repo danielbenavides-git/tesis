@@ -25,7 +25,7 @@ src/                Code imported by the notebooks and scripts
   clustering.py     Price columns, k-means, regime ordering, run lengths, regime profile, separation metrics
   experiments.py    Run folders, saved config/history/tables, registry, loading a trained run, PrettyTable builders
   runs.py           Steps shared by notebooks 03 and 05: one run folder per k, clustering, regimes.csv, figures
-  metrics.py        Every metric of a regime assignment (persistence, El Nino, expensive days) and the ranking
+  metrics.py        Every metric of a regime assignment (persistence, El Nino, expensive days), the per-run comparison table and the ranking used by notebook 07
   plots.py          Loss curves, reconstructions, t-SNE and regime timeline charts
   models/
     conv_vae.py     Convolutional encoder, decoder and VAE losses
@@ -33,14 +33,15 @@ src/                Code imported by the notebooks and scripts
 notebooks/
   01_eda.ipynb
   03_temporal_vae.ipynb         Trains the Temporal VAE and saves its regimes (no analysis)
-  03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly_large)
+  03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly)
   05_level_baseline.ipynb       Baseline: clustering on the daily price only (no CWT, no VAE)
   06_latent_smoothing.ipynb     Smoothed (7-day) and scaled latents of the trained models, saves their regimes
+  07_top_models.ipynb           Top configurations of one study next to the baselines (reads metrics/)
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
   level_only/kmeans/baseline/    Daily and 7-day price baselines (notebook 05)
   temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions;
-                                 weekly_large (notebook 03_temporal_vae_weekly)
+                                 weekly (notebook 03_temporal_vae_weekly)
   temporal_vae/kmeans/latent_smoothing/   regimes.csv and inputs.csv of notebook 06
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)
@@ -94,7 +95,11 @@ Notebook 06 reads the latents of every trained model of the studies and scalogra
 
 ## Metrics
 
-`python scripts/06_regime_metrics.py` (after notebook 06) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv`, `regime_metrics.csv` and `.txt`, `regime_profiles.csv`, `ranking.csv` and `.txt`. A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the series for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. The ranking keeps the configurations with at most twice the switches per year of the 7-day baseline and orders them by the F1 between the share of the most expensive regime that is expensive and the share of expensive days in it. It stops if a trained model has not been read by notebook 06 or a run has no `regimes.csv`. Every assignment, daily or weekly, is measured on the dates that all scalogram sets have, so all models and baselines start on 2000-01-07 (the weekly set has no scalogram for the first 6 days).
+`python scripts/06_regime_metrics.py` (after notebook 06) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv` (expensive days and prices of each episode, no model), `regime_metrics.csv` (one row per assignment and view, read by notebook 07) and `regime_profiles.csv` (price, reservoir, ONI and El Nino share of each regime of every assignment). A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the series for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. It also writes `tables/baseline_comparison.txt` in every Temporal VAE run folder: the run as notebook 03 clustered it, the notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view, with switches per year, top regime days, El Nino capture and lift of each episode, and precision, recall and F1 of the expensive days. It stops if a trained model has not been read by notebook 06 or a run has no `regimes.csv`. Every assignment, daily or weekly, is measured on the dates that all scalogram sets have, so all models and baselines start on 2000-01-07 (the weekly set has no scalogram for the first 6 days).
+
+## Top models
+
+Notebook 07 reads `metrics/regime_metrics.csv` and, for the `study` in its configuration and each k, shows the daily and 7-day baselines and the `top` configurations (mean +- std over seeds): it leaves out the configurations that switch regime more than twice as often as the 7-day baseline and orders the rest by the F1 of the expensive days. The El Nino capture and lift are shown but not used to order.
 
 ## Archive
 

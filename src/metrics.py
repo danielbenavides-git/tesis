@@ -129,17 +129,6 @@ def mean_cell(group, column):
     return f"{mean:.{digits}f}" + (f" +- {std:.{digits}f}" if len(group) > 1 else "")
 
 
-def metrics_table(rows, k):
-    """One row per model configuration with the mean over seeds (+- std with more than one seed), only the view that
-    matches the input (daily for unsmoothed inputs, 7d for smoothed ones)."""
-    data = rows[(rows["k"] == k) & rows["matched"]].fillna({c: "-" for c in config_columns})
-    t = PrettyTable(["Model", "Study", "z_dim", "lam", "beta", "Features", "Latents", "View", "Seeds",
-                     *table_columns.values()])
-    for keys, group in data.groupby(config_columns + ["view"], sort=False):
-        t.add_row([*keys, len(group), *[mean_cell(group, c) for c in table_columns]])
-    return t
-
-
 def ranking(rows, k):
     """One row per model configuration (matched view, mean and std over seeds) with its rank by criterion A and, if it
     passes the persistence filter, by criterion C. Baselines get no rank."""
@@ -164,21 +153,31 @@ ranking_columns = ["switches_per_year", "mean_run_days", "expensive_f1_pct", "to
                    "expensive_recall_pct", "top_share_pct", "nino_lift_2015_16", "nino_lift_2023_24", "top_nino_lift"]
 
 
-def ranking_table(stats, rank=None, top=5):
-    """Baselines when rank is None, otherwise the first `top` configurations by rank_a or rank_c."""
-    if rank is None:
-        data = stats[stats["model"] == "level_only"]
-    else:
-        data = stats.dropna(subset=[rank]).sort_values(rank).head(top)
-    t = PrettyTable(["Rank", "Model", "Study", "z_dim", "lam", "beta", "Features", "Latents", "View", "Seeds",
-                     *[table_columns[c] for c in ranking_columns]])
-    for _, r in data.iterrows():
+comparison_columns = {
+    "switches_per_year": "Switches / yr", "top_share_pct": "Top regime days %",
+    "nino_recall_2015_16_pct": "Capture 15-16 %", "nino_lift_2015_16": "Lift 15-16",
+    "nino_recall_2023_24_pct": "Capture 23-24 %", "nino_lift_2023_24": "Lift 23-24",
+    "top_expensive_precision_pct": "Precision %", "expensive_recall_pct": "Recall %", "expensive_f1_pct": "F1 %",
+}
+
+
+def comparison_table(rows, labels):
+    """One row per row of rows: the label columns (dict column -> header), then comparison_columns in that order.
+    Precision, recall and F1 are those of the expensive days (expensive_days) in the most expensive regime. Rows from
+    ranking() hold the mean over seeds (column_mean) and its std (column_std, shown as +- with more than one seed)."""
+    t = PrettyTable([*labels.values(), *comparison_columns.values()])
+    for _, r in rows.iterrows():
         cells = []
-        for c in ranking_columns:
+        for c in comparison_columns:
             digits = 2 if "lift" in c else 1
-            cells.append(f"{r[c + '_mean']:.{digits}f}" + (f" +- {r[c + '_std']:.{digits}f}" if r["seeds"] > 1 else ""))
-        t.add_row(["ref" if rank is None else int(r[rank]), *[r[c] for c in config_columns + ["view"]],
-                   int(r["seeds"]), *cells])
+            if f"{c}_mean" in r.index:
+                cell = f"{r[c + '_mean']:.{digits}f}"
+                if r.get("seeds", 1) > 1:
+                    cell += f" +- {r[c + '_std']:.{digits}f}"
+            else:
+                cell = f"{r[c]:.{digits}f}"
+            cells.append(cell)
+        t.add_row([r[c] for c in labels] + cells)
     return t
 
 
