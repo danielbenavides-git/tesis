@@ -20,3 +20,9 @@ Runs, notebooks and files that are no longer part of the thesis. Only this file 
 - `notebooks/04_comparisons.ipynb`: pairwise comparisons, replaced by metrics/ and scripts/06_regime_metrics.py
 - `check_extraction.py`: diagnostic of the continuous LSTM reading, closed (reverted)
 - `data/processed/scalograms/real_price`: scalograms without log, discarded (log real price is used)
+
+## 2026-11-01, deleted (not archived), last commit with them ea4c9fe
+- `experiments/temporal_vae/kmeans/small_filters`: daily Temporal VAE with filters 64, 32, 16 and stride 30, unstable between seeds
+- `experiments/temporal_vae/kmeans/small_stride`: daily Temporal VAE with filters 64, 32, 16 and stride 14, the daily reference of the small weekly model
+- `experiments/temporal_vae/kmeans/weekly`: weekly Temporal VAE with filters 64, 32, 16; replaced by weekly_large (filters 128, 64, 32, trained on Kaggle)
+- Their rows in `experiments/registry.csv`, `latent_smoothing/` and `metrics/`; the small network was only a way to train faster on a 2 GB GPU

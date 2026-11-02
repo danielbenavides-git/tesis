@@ -33,14 +33,14 @@ src/                Code imported by the notebooks and scripts
 notebooks/
   01_eda.ipynb
   03_temporal_vae.ipynb         Trains the Temporal VAE and saves its regimes (no analysis)
-  03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly)
+  03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly_large)
   05_level_baseline.ipynb       Baseline: clustering on the daily price only (no CWT, no VAE)
   06_latent_smoothing.ipynb     Smoothed (7-day) and scaled latents of the trained models, saves their regimes
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
   level_only/kmeans/baseline/    Daily and 7-day price baselines (notebook 05)
-  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions,
-                                 small_filters, small_stride; weekly, weekly_large (notebook 03_temporal_vae_weekly)
+  temporal_vae/kmeans/<study>/   Temporal VAE runs (notebook 03): hyperparameters, lam_beta_grid, dimensions;
+                                 weekly_large (notebook 03_temporal_vae_weekly)
   temporal_vae/kmeans/latent_smoothing/   regimes.csv and inputs.csv of notebook 06
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)

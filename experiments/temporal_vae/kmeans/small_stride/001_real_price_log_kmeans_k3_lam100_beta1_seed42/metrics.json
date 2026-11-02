@@ -1,7 +1,0 @@
-{
-  "run_id": "temporal_vae/kmeans/small_stride/001_real_price_log_kmeans_k3_lam100_beta1_seed42",
-  "k": 3,
-  "silhouette": 0.25970987361369113,
-  "davies_bouldin": 1.2799898713599471,
-  "calinski_harabasz": 5281.897459281607
-}
