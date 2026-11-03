@@ -1,12 +1,13 @@
 """Size-aware metrics of the most expensive regime, compared with the real prices and the El Nino days.
 
-A day is expensive when its real price is above a percentile of the training days (src.data.val_start): 66.7 for
-k = 3, 75 for k = 4 and 80 for k = 5. The daily view uses each day's price; the 7d view uses the backward 7-day mean of the price (the day and
+A day is expensive when its real price is above a percentile of the days of the same period (all days, or the train,
+val or test days of src.data.date_split): 66.7 for k = 3, 75 for k = 4 and 80 for k = 5. Prices after 2014 are much
+higher than before, so a threshold of the training days would make most val and test days expensive. The daily view uses each day's price; the 7d view uses the backward 7-day mean of the price (the day and
 the 6 days before it), so a smoothed model is compared with smoothed prices. A day is El Nino when the ONI of its
 month is >= 0.5, and the two episodes are the El Nino days in 2014-2016 (named 2015-2016) and in 2023-2024 (as in
 runs.regime_table).
-Every metric is computed on one period: all days, or the train, val or test days (src.data.date_split). The thresholds
-are the same for every period. Switches per year are counted inside the period. The metrics of an episode with no days
+Every metric is computed on one period: all days, or the train, val or test days, each with its own threshold.
+Switches per year are counted inside the period. The metrics of an episode with no days
 in the period are empty.
 Every metric of a regime assignment is computed here, from regimes.csv of each run and from the regimes saved by
 notebook 06; the runs only save their separation metrics (silhouette, Davies-Bouldin, Calinski-Harabasz).
@@ -48,12 +49,14 @@ def days_from_context(context):
                          "episode": episode, "period": split_names(date)}).reset_index(drop=True)
 
 
-def expensive_days(days, k, view):
-    """Boolean array of expensive days and the threshold in COP/kWh. The percentile is taken over the training days of
-    the daily price (daily view) or of its backward 7-day mean (7d view)."""
+def expensive_days(days, k, view, period="all"):
+    """Boolean array (one value per day of days) of expensive days and the threshold in COP/kWh. The percentile is
+    taken over the days of period of the daily price (daily view) or of its backward 7-day mean (7d view); the 7-day
+    mean of the first days of a period uses the last days of the period before."""
     price = days.sort_values("date")["real_price"].rolling(price_views[view], min_periods=1).mean()
     price = price.reindex(days.index).to_numpy()
-    threshold = float(np.percentile(price[days["period"].to_numpy() == "train"], thresholds[k]))
+    keep = np.ones(len(days), bool) if period == "all" else days["period"].to_numpy() == period
+    threshold = float(np.percentile(price[keep], thresholds[k]))
     return price > threshold, threshold
 
 
@@ -65,18 +68,20 @@ def data_reference(days, k_values):
     rows = []
     for k in k_values:
         for view in price_views:
-            expensive, threshold = expensive_days(days, k, view)
+            expensive_all = expensive_days(days, k, view)[0]
             groups = {"all": np.ones(len(days), bool),
                       **{period: days["period"].to_numpy() == period for period in periods[1:]},
                       **{name: days["episode"].to_numpy() == name for name in nino_episodes}}
             for group, mask in groups.items():
+                # periods use their own threshold; the episodes use the one of all days
+                expensive, threshold = expensive_days(days, k, view, group if group in periods else "all")
                 rows.append({
                     "k": k, "threshold_pct": thresholds[k], "view": view, "threshold_cop_kwh": round(threshold, 1),
                     "group": group, "days": int(mask.sum()), "nino_days": int((mask & nino).sum()),
                     "expensive_pct": 100 * expensive[mask].mean(),
                     "median_price": float(np.median(price[mask])),
                     "median_price_rest": float(np.median(price[~in_episode])),
-                    "base_expensive_pct": 100 * expensive.mean(), "base_nino_pct": 100 * nino.mean(),
+                    "base_expensive_pct": 100 * expensive_all.mean(), "base_nino_pct": 100 * nino.mean(),
                 })
     return pd.DataFrame(rows).round(2)
 
@@ -85,7 +90,7 @@ def regime_metrics(days, k, view, period="all"):
     """Level 2. days has date, real_price, nino, episode, period and regime (all days of the series); the most
     expensive regime is the highest number. Returns one dict with the metrics of that regime against
     expensive_days(k, view), on the days of period."""
-    expensive, threshold = expensive_days(days, k, view)
+    expensive, threshold = expensive_days(days, k, view, period)
     top_regime = days["regime"].max()
     keep = np.ones(len(days), bool) if period == "all" else days["period"].to_numpy() == period
     days, expensive = days[keep], expensive[keep]

@@ -146,11 +146,9 @@ def run_comparison(run_id, config):
     rows = pd.concat([part.assign(row=name) for name, part in parts], ignore_index=True)
     labels = {"row": "Row", "features": "Features", "view": "View"}
     first, last = days["date"].min(), days["date"].max()
-    limits = ", ".join(f"{view} view {rows.loc[rows['view'] == view, 'threshold_cop_kwh'].iloc[0]:.1f} COP/kWh"
-                       for view in ("daily", "7d"))
     header = (f"{run_id}\nk = {k}, {len(days)} days from {first:%Y-%m-%d} to {last:%Y-%m-%d}; "
               f"train before {val_start}, val from {val_start}, test from {test_start}\n"
-              f"Expensive day: real price above percentile {thresholds[k]} of the training days ({limits}); "
+              f"Expensive day: real price above percentile {thresholds[k]} of the days of the same period; "
               f"the 7d view uses the backward 7-day mean of the price\n"
               f"Capture: share of the El Nino days of the episode in the most expensive regime; "
               f"lift: capture / top regime days % (1 = chance)\n"
@@ -160,7 +158,10 @@ def run_comparison(run_id, config):
     for period in comparison_periods:
         part = rows[rows["period"] == period]
         n_days = len(days) if period == "all" else int((days["period"] == period).sum())
-        tables.append(f"Period: {period} ({n_days} days)\n" + comparison_table(part, labels).get_string())
+        limits = ", ".join(f"{view} view {part.loc[part['view'] == view, 'threshold_cop_kwh'].iloc[0]:.1f}"
+                           for view in ("daily", "7d") if (part["view"] == view).any())
+        tables.append(f"Period: {period} ({n_days} days), expensive above {limits} COP/kWh\n"
+                      + comparison_table(part, labels).get_string())
     path = exp.EXPERIMENTS_DIR / run_id / "tables" / "baseline_comparison.txt"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(header + "\n" + "\n\n".join(tables) + "\n", encoding="utf-8")
