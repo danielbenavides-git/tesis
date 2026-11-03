@@ -34,7 +34,7 @@ notebooks/
   03_temporal_vae.ipynb         Trains the Temporal VAE and saves its regimes (no analysis)
   03_temporal_vae_weekly.ipynb  Copy of notebook 03 that reads the weekly scalograms (study weekly)
   05_level_baseline.ipynb       Baseline: clustering on the daily price only (no CWT, no VAE)
-  06_latent_smoothing.ipynb     Smoothed (7-day) and scaled latents of the trained models, saves their regimes
+  06_latent_smoothing.ipynb     Smoothed (7-day) latents of the trained models, saves their regimes
   07_top_models.ipynb           Top configurations of one study next to the baselines (reads metrics/)
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
@@ -88,9 +88,9 @@ Each run writes its row in `experiments/registry.csv`, with the git commit (`-di
 
 Notebook 05 clusters the days with only the daily mean and standard deviation of the log real price. `level_window = 1` uses each day's own values (daily baseline) and `level_window = 7` replaces both by their backward 7-day mean, the day and the 6 days before it (7-day baseline, `tag = "7d"`). Runs go to `experiments/level_only/kmeans/baseline/`.
 
-## Smoothed and scaled latents
+## Smoothed latents
 
-Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters more inputs per model and k. Daily models get three: latents scaled with training-day statistics, and latents and price both replaced by their backward 7-day mean, raw and scaled. Weekly models get two: latents scaled, and the latents as they are with the price replaced by its backward 7-day mean (`latents + level 7d`). The weekly latents are not averaged again because the weekly scalogram already covers the day and the 6 days before it; with the 7-day price, this input differs from the 7-day baseline only in the scalogram. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
+Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters one more input per model and k. Daily models get the latents and the price both replaced by their backward 7-day mean (`latents 7d + level 7d`). Weekly models get the latents as they are with the price replaced by its backward 7-day mean (`latents + level 7d`). The weekly latents are not averaged again because the weekly scalogram already covers the day and the 6 days before it; with the 7-day price, this input differs from the 7-day baseline only in the scalogram. It saves the regimes in `experiments/temporal_vae/kmeans/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
 
 ## Metrics
 

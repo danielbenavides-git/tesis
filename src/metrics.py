@@ -130,7 +130,7 @@ table_columns = {
     "expensive_recall_pct": "Expensive recall %",
     "cheap_in_top_2015_16_pct": "Cheap in top 15-16 %", "cheap_in_top_2023_24_pct": "Cheap in top 23-24 %",
 }
-config_columns = ["model", "study", "z_dim", "lam", "beta", "features", "latents"]
+config_columns = ["model", "study", "z_dim", "lam", "beta", "features"]
 
 
 def ranking(rows, k, period="all"):

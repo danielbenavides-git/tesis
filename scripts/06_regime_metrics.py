@@ -2,7 +2,7 @@
 Metrics of every regime assignment of the k-means runs with k = 3, 4 and 5. The definitions are in src/metrics.py.
 
 Reads regimes.csv and config.json of every run in `runs`, and the regimes that notebook 06 saves for the inputs only it
-has (scaled latents and smoothed latents): latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each
+has (smoothed latents): latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each
 column is). Each assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
 `matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones (the `smoothed`
 column of inputs.csv; for the weekly models, `latents + level 7d` is smoothed). Each one is also measured on every
@@ -52,13 +52,13 @@ comparison_periods = ["all", "val", "test"]
 def run_identity(config, run_dir):
     if config["model"] == "level_only":
         smoothed = config.get("level_window", 1) > 1
-        features, latents = ("level 7d" if smoothed else "level"), "-"
+        features = "level 7d" if smoothed else "level"
     else:
-        smoothed, features, latents = False, "latents + level", "raw"
+        smoothed, features = False, "latents + level"
     return {"model": config["model"], "study": config["study"], "run_id": exp.run_id(run_dir),
             "z_dim": config.get("z_dim"), "lam": config.get("lam"), "beta": config.get("beta"),
             "seed": config.get("seed") if "z_dim" in config else None, "k": config["n_regimes"],
-            "features": features, "latents": latents, "smoothed": smoothed}
+            "features": features, "smoothed": smoothed}
 
 
 def set_dates(scalogram_set):
@@ -138,13 +138,13 @@ def run_comparison(run_id, config):
     """tables/baseline_comparison.txt of one Temporal VAE run (see the module docstring)."""
     k = config["n_regimes"]
     matched = results[results["matched"] & (results["k"] == k)]
-    as_run = (matched["features"] == "latents + level") & (matched["latents"] == "raw")
+    as_run = matched["features"] == "latents + level"
     parts = [("Run (notebook 03)", matched[as_run & (matched["run_id"] == run_id)]),
              ("Notebook 06", matched[~as_run & (matched["run_id"] == config["trained_in"])]),
              ("Daily baseline", matched[matched["features"] == "level"]),
              ("7-day baseline", matched[matched["features"] == "level 7d"])]
     rows = pd.concat([part.assign(row=name) for name, part in parts], ignore_index=True)
-    labels = {"row": "Row", "features": "Features", "latents": "Latents", "view": "View"}
+    labels = {"row": "Row", "features": "Features", "view": "View"}
     first, last = days["date"].min(), days["date"].max()
     limits = ", ".join(f"{view} view {rows.loc[rows['view'] == view, 'threshold_cop_kwh'].iloc[0]:.1f} COP/kWh"
                        for view in ("daily", "7d"))
