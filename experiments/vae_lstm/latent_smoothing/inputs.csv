@@ -1,0 +1,199 @@
+column,model,run_id,study,z_dim,lam,beta,seed,k,features,smoothed
+c000,vae_lstm,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,daily,4,0.0,0.25,42,3,latents 7d + level 7d,True
+c001,vae_lstm,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,daily,4,0.0,0.25,42,4,latents 7d + level 7d,True
+c002,vae_lstm,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,daily,4,0.0,0.25,42,5,latents 7d + level 7d,True
+c003,vae_lstm,vae_lstm/daily/004_daily_k3_z_dim4_lam0_beta0.25_seed43,daily,4,0.0,0.25,43,3,latents 7d + level 7d,True
+c004,vae_lstm,vae_lstm/daily/004_daily_k3_z_dim4_lam0_beta0.25_seed43,daily,4,0.0,0.25,43,4,latents 7d + level 7d,True
+c005,vae_lstm,vae_lstm/daily/004_daily_k3_z_dim4_lam0_beta0.25_seed43,daily,4,0.0,0.25,43,5,latents 7d + level 7d,True
+c006,vae_lstm,vae_lstm/daily/007_daily_k3_z_dim4_lam0_beta0.25_seed44,daily,4,0.0,0.25,44,3,latents 7d + level 7d,True
+c007,vae_lstm,vae_lstm/daily/007_daily_k3_z_dim4_lam0_beta0.25_seed44,daily,4,0.0,0.25,44,4,latents 7d + level 7d,True
+c008,vae_lstm,vae_lstm/daily/007_daily_k3_z_dim4_lam0_beta0.25_seed44,daily,4,0.0,0.25,44,5,latents 7d + level 7d,True
+c009,vae_lstm,vae_lstm/daily/010_daily_k3_z_dim4_lam0_beta0.5_seed42,daily,4,0.0,0.5,42,3,latents 7d + level 7d,True
+c010,vae_lstm,vae_lstm/daily/010_daily_k3_z_dim4_lam0_beta0.5_seed42,daily,4,0.0,0.5,42,4,latents 7d + level 7d,True
+c011,vae_lstm,vae_lstm/daily/010_daily_k3_z_dim4_lam0_beta0.5_seed42,daily,4,0.0,0.5,42,5,latents 7d + level 7d,True
+c012,vae_lstm,vae_lstm/daily/013_daily_k3_z_dim4_lam0_beta0.5_seed43,daily,4,0.0,0.5,43,3,latents 7d + level 7d,True
+c013,vae_lstm,vae_lstm/daily/013_daily_k3_z_dim4_lam0_beta0.5_seed43,daily,4,0.0,0.5,43,4,latents 7d + level 7d,True
+c014,vae_lstm,vae_lstm/daily/013_daily_k3_z_dim4_lam0_beta0.5_seed43,daily,4,0.0,0.5,43,5,latents 7d + level 7d,True
+c015,vae_lstm,vae_lstm/daily/016_daily_k3_z_dim4_lam0_beta0.5_seed44,daily,4,0.0,0.5,44,3,latents 7d + level 7d,True
+c016,vae_lstm,vae_lstm/daily/016_daily_k3_z_dim4_lam0_beta0.5_seed44,daily,4,0.0,0.5,44,4,latents 7d + level 7d,True
+c017,vae_lstm,vae_lstm/daily/016_daily_k3_z_dim4_lam0_beta0.5_seed44,daily,4,0.0,0.5,44,5,latents 7d + level 7d,True
+c018,vae_lstm,vae_lstm/daily/019_daily_k3_z_dim4_lam0_beta1_seed42,daily,4,0.0,1.0,42,3,latents 7d + level 7d,True
+c019,vae_lstm,vae_lstm/daily/019_daily_k3_z_dim4_lam0_beta1_seed42,daily,4,0.0,1.0,42,4,latents 7d + level 7d,True
+c020,vae_lstm,vae_lstm/daily/019_daily_k3_z_dim4_lam0_beta1_seed42,daily,4,0.0,1.0,42,5,latents 7d + level 7d,True
+c021,vae_lstm,vae_lstm/daily/022_daily_k3_z_dim4_lam0_beta1_seed43,daily,4,0.0,1.0,43,3,latents 7d + level 7d,True
+c022,vae_lstm,vae_lstm/daily/022_daily_k3_z_dim4_lam0_beta1_seed43,daily,4,0.0,1.0,43,4,latents 7d + level 7d,True
+c023,vae_lstm,vae_lstm/daily/022_daily_k3_z_dim4_lam0_beta1_seed43,daily,4,0.0,1.0,43,5,latents 7d + level 7d,True
+c024,vae_lstm,vae_lstm/daily/025_daily_k3_z_dim4_lam0_beta1_seed44,daily,4,0.0,1.0,44,3,latents 7d + level 7d,True
+c025,vae_lstm,vae_lstm/daily/025_daily_k3_z_dim4_lam0_beta1_seed44,daily,4,0.0,1.0,44,4,latents 7d + level 7d,True
+c026,vae_lstm,vae_lstm/daily/025_daily_k3_z_dim4_lam0_beta1_seed44,daily,4,0.0,1.0,44,5,latents 7d + level 7d,True
+c027,vae_lstm,vae_lstm/daily/028_daily_k3_z_dim4_lam100_beta0.25_seed42,daily,4,100.0,0.25,42,3,latents 7d + level 7d,True
+c028,vae_lstm,vae_lstm/daily/028_daily_k3_z_dim4_lam100_beta0.25_seed42,daily,4,100.0,0.25,42,4,latents 7d + level 7d,True
+c029,vae_lstm,vae_lstm/daily/028_daily_k3_z_dim4_lam100_beta0.25_seed42,daily,4,100.0,0.25,42,5,latents 7d + level 7d,True
+c030,vae_lstm,vae_lstm/daily/031_daily_k3_z_dim4_lam100_beta0.25_seed43,daily,4,100.0,0.25,43,3,latents 7d + level 7d,True
+c031,vae_lstm,vae_lstm/daily/031_daily_k3_z_dim4_lam100_beta0.25_seed43,daily,4,100.0,0.25,43,4,latents 7d + level 7d,True
+c032,vae_lstm,vae_lstm/daily/031_daily_k3_z_dim4_lam100_beta0.25_seed43,daily,4,100.0,0.25,43,5,latents 7d + level 7d,True
+c033,vae_lstm,vae_lstm/daily/034_daily_k3_z_dim4_lam100_beta0.25_seed44,daily,4,100.0,0.25,44,3,latents 7d + level 7d,True
+c034,vae_lstm,vae_lstm/daily/034_daily_k3_z_dim4_lam100_beta0.25_seed44,daily,4,100.0,0.25,44,4,latents 7d + level 7d,True
+c035,vae_lstm,vae_lstm/daily/034_daily_k3_z_dim4_lam100_beta0.25_seed44,daily,4,100.0,0.25,44,5,latents 7d + level 7d,True
+c036,vae_lstm,vae_lstm/daily/037_daily_k3_z_dim4_lam100_beta0.5_seed42,daily,4,100.0,0.5,42,3,latents 7d + level 7d,True
+c037,vae_lstm,vae_lstm/daily/037_daily_k3_z_dim4_lam100_beta0.5_seed42,daily,4,100.0,0.5,42,4,latents 7d + level 7d,True
+c038,vae_lstm,vae_lstm/daily/037_daily_k3_z_dim4_lam100_beta0.5_seed42,daily,4,100.0,0.5,42,5,latents 7d + level 7d,True
+c039,vae_lstm,vae_lstm/daily/040_daily_k3_z_dim4_lam100_beta0.5_seed43,daily,4,100.0,0.5,43,3,latents 7d + level 7d,True
+c040,vae_lstm,vae_lstm/daily/040_daily_k3_z_dim4_lam100_beta0.5_seed43,daily,4,100.0,0.5,43,4,latents 7d + level 7d,True
+c041,vae_lstm,vae_lstm/daily/040_daily_k3_z_dim4_lam100_beta0.5_seed43,daily,4,100.0,0.5,43,5,latents 7d + level 7d,True
+c042,vae_lstm,vae_lstm/daily/043_daily_k3_z_dim4_lam100_beta0.5_seed44,daily,4,100.0,0.5,44,3,latents 7d + level 7d,True
+c043,vae_lstm,vae_lstm/daily/043_daily_k3_z_dim4_lam100_beta0.5_seed44,daily,4,100.0,0.5,44,4,latents 7d + level 7d,True
+c044,vae_lstm,vae_lstm/daily/043_daily_k3_z_dim4_lam100_beta0.5_seed44,daily,4,100.0,0.5,44,5,latents 7d + level 7d,True
+c045,vae_lstm,vae_lstm/daily/046_daily_k3_z_dim4_lam100_beta1_seed42,daily,4,100.0,1.0,42,3,latents 7d + level 7d,True
+c046,vae_lstm,vae_lstm/daily/046_daily_k3_z_dim4_lam100_beta1_seed42,daily,4,100.0,1.0,42,4,latents 7d + level 7d,True
+c047,vae_lstm,vae_lstm/daily/046_daily_k3_z_dim4_lam100_beta1_seed42,daily,4,100.0,1.0,42,5,latents 7d + level 7d,True
+c048,vae_lstm,vae_lstm/daily/049_daily_k3_z_dim4_lam100_beta1_seed43,daily,4,100.0,1.0,43,3,latents 7d + level 7d,True
+c049,vae_lstm,vae_lstm/daily/049_daily_k3_z_dim4_lam100_beta1_seed43,daily,4,100.0,1.0,43,4,latents 7d + level 7d,True
+c050,vae_lstm,vae_lstm/daily/049_daily_k3_z_dim4_lam100_beta1_seed43,daily,4,100.0,1.0,43,5,latents 7d + level 7d,True
+c051,vae_lstm,vae_lstm/daily/052_daily_k3_z_dim4_lam100_beta1_seed44,daily,4,100.0,1.0,44,3,latents 7d + level 7d,True
+c052,vae_lstm,vae_lstm/daily/052_daily_k3_z_dim4_lam100_beta1_seed44,daily,4,100.0,1.0,44,4,latents 7d + level 7d,True
+c053,vae_lstm,vae_lstm/daily/052_daily_k3_z_dim4_lam100_beta1_seed44,daily,4,100.0,1.0,44,5,latents 7d + level 7d,True
+c054,vae_lstm,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,daily,8,0.0,0.25,42,3,latents 7d + level 7d,True
+c055,vae_lstm,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,daily,8,0.0,0.25,42,4,latents 7d + level 7d,True
+c056,vae_lstm,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,daily,8,0.0,0.25,42,5,latents 7d + level 7d,True
+c057,vae_lstm,vae_lstm/daily/058_daily_k3_z_dim8_lam0_beta0.25_seed43,daily,8,0.0,0.25,43,3,latents 7d + level 7d,True
+c058,vae_lstm,vae_lstm/daily/058_daily_k3_z_dim8_lam0_beta0.25_seed43,daily,8,0.0,0.25,43,4,latents 7d + level 7d,True
+c059,vae_lstm,vae_lstm/daily/058_daily_k3_z_dim8_lam0_beta0.25_seed43,daily,8,0.0,0.25,43,5,latents 7d + level 7d,True
+c060,vae_lstm,vae_lstm/daily/061_daily_k3_z_dim8_lam0_beta0.25_seed44,daily,8,0.0,0.25,44,3,latents 7d + level 7d,True
+c061,vae_lstm,vae_lstm/daily/061_daily_k3_z_dim8_lam0_beta0.25_seed44,daily,8,0.0,0.25,44,4,latents 7d + level 7d,True
+c062,vae_lstm,vae_lstm/daily/061_daily_k3_z_dim8_lam0_beta0.25_seed44,daily,8,0.0,0.25,44,5,latents 7d + level 7d,True
+c063,vae_lstm,vae_lstm/daily/064_daily_k3_z_dim8_lam0_beta0.5_seed42,daily,8,0.0,0.5,42,3,latents 7d + level 7d,True
+c064,vae_lstm,vae_lstm/daily/064_daily_k3_z_dim8_lam0_beta0.5_seed42,daily,8,0.0,0.5,42,4,latents 7d + level 7d,True
+c065,vae_lstm,vae_lstm/daily/064_daily_k3_z_dim8_lam0_beta0.5_seed42,daily,8,0.0,0.5,42,5,latents 7d + level 7d,True
+c066,vae_lstm,vae_lstm/daily/067_daily_k3_z_dim8_lam0_beta0.5_seed43,daily,8,0.0,0.5,43,3,latents 7d + level 7d,True
+c067,vae_lstm,vae_lstm/daily/067_daily_k3_z_dim8_lam0_beta0.5_seed43,daily,8,0.0,0.5,43,4,latents 7d + level 7d,True
+c068,vae_lstm,vae_lstm/daily/067_daily_k3_z_dim8_lam0_beta0.5_seed43,daily,8,0.0,0.5,43,5,latents 7d + level 7d,True
+c069,vae_lstm,vae_lstm/daily/070_daily_k3_z_dim8_lam0_beta0.5_seed44,daily,8,0.0,0.5,44,3,latents 7d + level 7d,True
+c070,vae_lstm,vae_lstm/daily/070_daily_k3_z_dim8_lam0_beta0.5_seed44,daily,8,0.0,0.5,44,4,latents 7d + level 7d,True
+c071,vae_lstm,vae_lstm/daily/070_daily_k3_z_dim8_lam0_beta0.5_seed44,daily,8,0.0,0.5,44,5,latents 7d + level 7d,True
+c072,vae_lstm,vae_lstm/daily/073_daily_k3_z_dim8_lam0_beta1_seed42,daily,8,0.0,1.0,42,3,latents 7d + level 7d,True
+c073,vae_lstm,vae_lstm/daily/073_daily_k3_z_dim8_lam0_beta1_seed42,daily,8,0.0,1.0,42,4,latents 7d + level 7d,True
+c074,vae_lstm,vae_lstm/daily/073_daily_k3_z_dim8_lam0_beta1_seed42,daily,8,0.0,1.0,42,5,latents 7d + level 7d,True
+c075,vae_lstm,vae_lstm/daily/076_daily_k3_z_dim8_lam0_beta1_seed43,daily,8,0.0,1.0,43,3,latents 7d + level 7d,True
+c076,vae_lstm,vae_lstm/daily/076_daily_k3_z_dim8_lam0_beta1_seed43,daily,8,0.0,1.0,43,4,latents 7d + level 7d,True
+c077,vae_lstm,vae_lstm/daily/076_daily_k3_z_dim8_lam0_beta1_seed43,daily,8,0.0,1.0,43,5,latents 7d + level 7d,True
+c078,vae_lstm,vae_lstm/daily/079_daily_k3_z_dim8_lam0_beta1_seed44,daily,8,0.0,1.0,44,3,latents 7d + level 7d,True
+c079,vae_lstm,vae_lstm/daily/079_daily_k3_z_dim8_lam0_beta1_seed44,daily,8,0.0,1.0,44,4,latents 7d + level 7d,True
+c080,vae_lstm,vae_lstm/daily/079_daily_k3_z_dim8_lam0_beta1_seed44,daily,8,0.0,1.0,44,5,latents 7d + level 7d,True
+c081,vae_lstm,vae_lstm/daily/082_daily_k3_z_dim8_lam100_beta0.25_seed42,daily,8,100.0,0.25,42,3,latents 7d + level 7d,True
+c082,vae_lstm,vae_lstm/daily/082_daily_k3_z_dim8_lam100_beta0.25_seed42,daily,8,100.0,0.25,42,4,latents 7d + level 7d,True
+c083,vae_lstm,vae_lstm/daily/082_daily_k3_z_dim8_lam100_beta0.25_seed42,daily,8,100.0,0.25,42,5,latents 7d + level 7d,True
+c084,vae_lstm,vae_lstm/daily/085_daily_k3_z_dim8_lam100_beta0.25_seed43,daily,8,100.0,0.25,43,3,latents 7d + level 7d,True
+c085,vae_lstm,vae_lstm/daily/085_daily_k3_z_dim8_lam100_beta0.25_seed43,daily,8,100.0,0.25,43,4,latents 7d + level 7d,True
+c086,vae_lstm,vae_lstm/daily/085_daily_k3_z_dim8_lam100_beta0.25_seed43,daily,8,100.0,0.25,43,5,latents 7d + level 7d,True
+c087,vae_lstm,vae_lstm/daily/088_daily_k3_z_dim8_lam100_beta0.25_seed44,daily,8,100.0,0.25,44,3,latents 7d + level 7d,True
+c088,vae_lstm,vae_lstm/daily/088_daily_k3_z_dim8_lam100_beta0.25_seed44,daily,8,100.0,0.25,44,4,latents 7d + level 7d,True
+c089,vae_lstm,vae_lstm/daily/088_daily_k3_z_dim8_lam100_beta0.25_seed44,daily,8,100.0,0.25,44,5,latents 7d + level 7d,True
+c090,vae_lstm,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,daily,8,100.0,0.5,42,3,latents 7d + level 7d,True
+c091,vae_lstm,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,daily,8,100.0,0.5,42,4,latents 7d + level 7d,True
+c092,vae_lstm,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,daily,8,100.0,0.5,42,5,latents 7d + level 7d,True
+c093,vae_lstm,vae_lstm/daily/094_daily_k3_z_dim8_lam100_beta0.5_seed43,daily,8,100.0,0.5,43,3,latents 7d + level 7d,True
+c094,vae_lstm,vae_lstm/daily/094_daily_k3_z_dim8_lam100_beta0.5_seed43,daily,8,100.0,0.5,43,4,latents 7d + level 7d,True
+c095,vae_lstm,vae_lstm/daily/094_daily_k3_z_dim8_lam100_beta0.5_seed43,daily,8,100.0,0.5,43,5,latents 7d + level 7d,True
+c096,vae_lstm,vae_lstm/daily/097_daily_k3_z_dim8_lam100_beta0.5_seed44,daily,8,100.0,0.5,44,3,latents 7d + level 7d,True
+c097,vae_lstm,vae_lstm/daily/097_daily_k3_z_dim8_lam100_beta0.5_seed44,daily,8,100.0,0.5,44,4,latents 7d + level 7d,True
+c098,vae_lstm,vae_lstm/daily/097_daily_k3_z_dim8_lam100_beta0.5_seed44,daily,8,100.0,0.5,44,5,latents 7d + level 7d,True
+c099,vae_lstm,vae_lstm/daily/100_daily_k3_z_dim8_lam100_beta1_seed42,daily,8,100.0,1.0,42,3,latents 7d + level 7d,True
+c100,vae_lstm,vae_lstm/daily/100_daily_k3_z_dim8_lam100_beta1_seed42,daily,8,100.0,1.0,42,4,latents 7d + level 7d,True
+c101,vae_lstm,vae_lstm/daily/100_daily_k3_z_dim8_lam100_beta1_seed42,daily,8,100.0,1.0,42,5,latents 7d + level 7d,True
+c102,vae_lstm,vae_lstm/daily/103_daily_k3_z_dim8_lam100_beta1_seed43,daily,8,100.0,1.0,43,3,latents 7d + level 7d,True
+c103,vae_lstm,vae_lstm/daily/103_daily_k3_z_dim8_lam100_beta1_seed43,daily,8,100.0,1.0,43,4,latents 7d + level 7d,True
+c104,vae_lstm,vae_lstm/daily/103_daily_k3_z_dim8_lam100_beta1_seed43,daily,8,100.0,1.0,43,5,latents 7d + level 7d,True
+c105,vae_lstm,vae_lstm/daily/106_daily_k3_z_dim8_lam100_beta1_seed44,daily,8,100.0,1.0,44,3,latents 7d + level 7d,True
+c106,vae_lstm,vae_lstm/daily/106_daily_k3_z_dim8_lam100_beta1_seed44,daily,8,100.0,1.0,44,4,latents 7d + level 7d,True
+c107,vae_lstm,vae_lstm/daily/106_daily_k3_z_dim8_lam100_beta1_seed44,daily,8,100.0,1.0,44,5,latents 7d + level 7d,True
+c108,vae_lstm,vae_lstm/daily/109_daily_k3_z_dim16_lam0_beta0.25_seed42,daily,16,0.0,0.25,42,3,latents 7d + level 7d,True
+c109,vae_lstm,vae_lstm/daily/109_daily_k3_z_dim16_lam0_beta0.25_seed42,daily,16,0.0,0.25,42,4,latents 7d + level 7d,True
+c110,vae_lstm,vae_lstm/daily/109_daily_k3_z_dim16_lam0_beta0.25_seed42,daily,16,0.0,0.25,42,5,latents 7d + level 7d,True
+c111,vae_lstm,vae_lstm/daily/112_daily_k3_z_dim16_lam0_beta0.25_seed43,daily,16,0.0,0.25,43,3,latents 7d + level 7d,True
+c112,vae_lstm,vae_lstm/daily/112_daily_k3_z_dim16_lam0_beta0.25_seed43,daily,16,0.0,0.25,43,4,latents 7d + level 7d,True
+c113,vae_lstm,vae_lstm/daily/112_daily_k3_z_dim16_lam0_beta0.25_seed43,daily,16,0.0,0.25,43,5,latents 7d + level 7d,True
+c114,vae_lstm,vae_lstm/daily/115_daily_k3_z_dim16_lam0_beta0.25_seed44,daily,16,0.0,0.25,44,3,latents 7d + level 7d,True
+c115,vae_lstm,vae_lstm/daily/115_daily_k3_z_dim16_lam0_beta0.25_seed44,daily,16,0.0,0.25,44,4,latents 7d + level 7d,True
+c116,vae_lstm,vae_lstm/daily/115_daily_k3_z_dim16_lam0_beta0.25_seed44,daily,16,0.0,0.25,44,5,latents 7d + level 7d,True
+c117,vae_lstm,vae_lstm/daily/118_daily_k3_z_dim16_lam0_beta0.5_seed42,daily,16,0.0,0.5,42,3,latents 7d + level 7d,True
+c118,vae_lstm,vae_lstm/daily/118_daily_k3_z_dim16_lam0_beta0.5_seed42,daily,16,0.0,0.5,42,4,latents 7d + level 7d,True
+c119,vae_lstm,vae_lstm/daily/118_daily_k3_z_dim16_lam0_beta0.5_seed42,daily,16,0.0,0.5,42,5,latents 7d + level 7d,True
+c120,vae_lstm,vae_lstm/daily/121_daily_k3_z_dim16_lam0_beta0.5_seed43,daily,16,0.0,0.5,43,3,latents 7d + level 7d,True
+c121,vae_lstm,vae_lstm/daily/121_daily_k3_z_dim16_lam0_beta0.5_seed43,daily,16,0.0,0.5,43,4,latents 7d + level 7d,True
+c122,vae_lstm,vae_lstm/daily/121_daily_k3_z_dim16_lam0_beta0.5_seed43,daily,16,0.0,0.5,43,5,latents 7d + level 7d,True
+c123,vae_lstm,vae_lstm/daily/124_daily_k3_z_dim16_lam0_beta0.5_seed44,daily,16,0.0,0.5,44,3,latents 7d + level 7d,True
+c124,vae_lstm,vae_lstm/daily/124_daily_k3_z_dim16_lam0_beta0.5_seed44,daily,16,0.0,0.5,44,4,latents 7d + level 7d,True
+c125,vae_lstm,vae_lstm/daily/124_daily_k3_z_dim16_lam0_beta0.5_seed44,daily,16,0.0,0.5,44,5,latents 7d + level 7d,True
+c126,vae_lstm,vae_lstm/daily/127_daily_k3_z_dim16_lam0_beta1_seed42,daily,16,0.0,1.0,42,3,latents 7d + level 7d,True
+c127,vae_lstm,vae_lstm/daily/127_daily_k3_z_dim16_lam0_beta1_seed42,daily,16,0.0,1.0,42,4,latents 7d + level 7d,True
+c128,vae_lstm,vae_lstm/daily/127_daily_k3_z_dim16_lam0_beta1_seed42,daily,16,0.0,1.0,42,5,latents 7d + level 7d,True
+c129,vae_lstm,vae_lstm/daily/130_daily_k3_z_dim16_lam0_beta1_seed43,daily,16,0.0,1.0,43,3,latents 7d + level 7d,True
+c130,vae_lstm,vae_lstm/daily/130_daily_k3_z_dim16_lam0_beta1_seed43,daily,16,0.0,1.0,43,4,latents 7d + level 7d,True
+c131,vae_lstm,vae_lstm/daily/130_daily_k3_z_dim16_lam0_beta1_seed43,daily,16,0.0,1.0,43,5,latents 7d + level 7d,True
+c132,vae_lstm,vae_lstm/daily/133_daily_k3_z_dim16_lam0_beta1_seed44,daily,16,0.0,1.0,44,3,latents 7d + level 7d,True
+c133,vae_lstm,vae_lstm/daily/133_daily_k3_z_dim16_lam0_beta1_seed44,daily,16,0.0,1.0,44,4,latents 7d + level 7d,True
+c134,vae_lstm,vae_lstm/daily/133_daily_k3_z_dim16_lam0_beta1_seed44,daily,16,0.0,1.0,44,5,latents 7d + level 7d,True
+c135,vae_lstm,vae_lstm/daily/136_daily_k3_z_dim16_lam100_beta0.25_seed42,daily,16,100.0,0.25,42,3,latents 7d + level 7d,True
+c136,vae_lstm,vae_lstm/daily/136_daily_k3_z_dim16_lam100_beta0.25_seed42,daily,16,100.0,0.25,42,4,latents 7d + level 7d,True
+c137,vae_lstm,vae_lstm/daily/136_daily_k3_z_dim16_lam100_beta0.25_seed42,daily,16,100.0,0.25,42,5,latents 7d + level 7d,True
+c138,vae_lstm,vae_lstm/daily/139_daily_k3_z_dim16_lam100_beta0.25_seed43,daily,16,100.0,0.25,43,3,latents 7d + level 7d,True
+c139,vae_lstm,vae_lstm/daily/139_daily_k3_z_dim16_lam100_beta0.25_seed43,daily,16,100.0,0.25,43,4,latents 7d + level 7d,True
+c140,vae_lstm,vae_lstm/daily/139_daily_k3_z_dim16_lam100_beta0.25_seed43,daily,16,100.0,0.25,43,5,latents 7d + level 7d,True
+c141,vae_lstm,vae_lstm/daily/142_daily_k3_z_dim16_lam100_beta0.25_seed44,daily,16,100.0,0.25,44,3,latents 7d + level 7d,True
+c142,vae_lstm,vae_lstm/daily/142_daily_k3_z_dim16_lam100_beta0.25_seed44,daily,16,100.0,0.25,44,4,latents 7d + level 7d,True
+c143,vae_lstm,vae_lstm/daily/142_daily_k3_z_dim16_lam100_beta0.25_seed44,daily,16,100.0,0.25,44,5,latents 7d + level 7d,True
+c144,vae_lstm,vae_lstm/daily/145_daily_k3_z_dim16_lam100_beta0.5_seed42,daily,16,100.0,0.5,42,3,latents 7d + level 7d,True
+c145,vae_lstm,vae_lstm/daily/145_daily_k3_z_dim16_lam100_beta0.5_seed42,daily,16,100.0,0.5,42,4,latents 7d + level 7d,True
+c146,vae_lstm,vae_lstm/daily/145_daily_k3_z_dim16_lam100_beta0.5_seed42,daily,16,100.0,0.5,42,5,latents 7d + level 7d,True
+c147,vae_lstm,vae_lstm/daily/148_daily_k3_z_dim16_lam100_beta0.5_seed43,daily,16,100.0,0.5,43,3,latents 7d + level 7d,True
+c148,vae_lstm,vae_lstm/daily/148_daily_k3_z_dim16_lam100_beta0.5_seed43,daily,16,100.0,0.5,43,4,latents 7d + level 7d,True
+c149,vae_lstm,vae_lstm/daily/148_daily_k3_z_dim16_lam100_beta0.5_seed43,daily,16,100.0,0.5,43,5,latents 7d + level 7d,True
+c150,vae_lstm,vae_lstm/daily/151_daily_k3_z_dim16_lam100_beta0.5_seed44,daily,16,100.0,0.5,44,3,latents 7d + level 7d,True
+c151,vae_lstm,vae_lstm/daily/151_daily_k3_z_dim16_lam100_beta0.5_seed44,daily,16,100.0,0.5,44,4,latents 7d + level 7d,True
+c152,vae_lstm,vae_lstm/daily/151_daily_k3_z_dim16_lam100_beta0.5_seed44,daily,16,100.0,0.5,44,5,latents 7d + level 7d,True
+c153,vae_lstm,vae_lstm/daily/154_daily_k3_z_dim16_lam100_beta1_seed42,daily,16,100.0,1.0,42,3,latents 7d + level 7d,True
+c154,vae_lstm,vae_lstm/daily/154_daily_k3_z_dim16_lam100_beta1_seed42,daily,16,100.0,1.0,42,4,latents 7d + level 7d,True
+c155,vae_lstm,vae_lstm/daily/154_daily_k3_z_dim16_lam100_beta1_seed42,daily,16,100.0,1.0,42,5,latents 7d + level 7d,True
+c156,vae_lstm,vae_lstm/daily/157_daily_k3_z_dim16_lam100_beta1_seed43,daily,16,100.0,1.0,43,3,latents 7d + level 7d,True
+c157,vae_lstm,vae_lstm/daily/157_daily_k3_z_dim16_lam100_beta1_seed43,daily,16,100.0,1.0,43,4,latents 7d + level 7d,True
+c158,vae_lstm,vae_lstm/daily/157_daily_k3_z_dim16_lam100_beta1_seed43,daily,16,100.0,1.0,43,5,latents 7d + level 7d,True
+c159,vae_lstm,vae_lstm/daily/160_daily_k3_z_dim16_lam100_beta1_seed44,daily,16,100.0,1.0,44,3,latents 7d + level 7d,True
+c160,vae_lstm,vae_lstm/daily/160_daily_k3_z_dim16_lam100_beta1_seed44,daily,16,100.0,1.0,44,4,latents 7d + level 7d,True
+c161,vae_lstm,vae_lstm/daily/160_daily_k3_z_dim16_lam100_beta1_seed44,daily,16,100.0,1.0,44,5,latents 7d + level 7d,True
+c162,vae_lstm,vae_lstm/weekly/001_weekly_k3_lam100_beta1_seed42,weekly,16,100.0,1.0,42,3,latents + level 7d,True
+c163,vae_lstm,vae_lstm/weekly/001_weekly_k3_lam100_beta1_seed42,weekly,16,100.0,1.0,42,4,latents + level 7d,True
+c164,vae_lstm,vae_lstm/weekly/001_weekly_k3_lam100_beta1_seed42,weekly,16,100.0,1.0,42,5,latents + level 7d,True
+c165,vae_lstm,vae_lstm/weekly/004_weekly_k3_lam100_beta1_seed43,weekly,16,100.0,1.0,43,3,latents + level 7d,True
+c166,vae_lstm,vae_lstm/weekly/004_weekly_k3_lam100_beta1_seed43,weekly,16,100.0,1.0,43,4,latents + level 7d,True
+c167,vae_lstm,vae_lstm/weekly/004_weekly_k3_lam100_beta1_seed43,weekly,16,100.0,1.0,43,5,latents + level 7d,True
+c168,vae_lstm,vae_lstm/weekly/007_weekly_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,3,latents + level 7d,True
+c169,vae_lstm,vae_lstm/weekly/007_weekly_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,4,latents + level 7d,True
+c170,vae_lstm,vae_lstm/weekly/007_weekly_k3_lam100_beta1_seed44,weekly,16,100.0,1.0,44,5,latents + level 7d,True
+c171,vae_lstm,vae_lstm/weekly/010_weekly_k3_lam100_beta7_seed42,weekly,16,100.0,7.0,42,3,latents + level 7d,True
+c172,vae_lstm,vae_lstm/weekly/010_weekly_k3_lam100_beta7_seed42,weekly,16,100.0,7.0,42,4,latents + level 7d,True
+c173,vae_lstm,vae_lstm/weekly/010_weekly_k3_lam100_beta7_seed42,weekly,16,100.0,7.0,42,5,latents + level 7d,True
+c174,vae_lstm,vae_lstm/weekly/013_weekly_k3_lam100_beta7_seed43,weekly,16,100.0,7.0,43,3,latents + level 7d,True
+c175,vae_lstm,vae_lstm/weekly/013_weekly_k3_lam100_beta7_seed43,weekly,16,100.0,7.0,43,4,latents + level 7d,True
+c176,vae_lstm,vae_lstm/weekly/013_weekly_k3_lam100_beta7_seed43,weekly,16,100.0,7.0,43,5,latents + level 7d,True
+c177,vae_lstm,vae_lstm/weekly/016_weekly_k3_lam100_beta7_seed44,weekly,16,100.0,7.0,44,3,latents + level 7d,True
+c178,vae_lstm,vae_lstm/weekly/016_weekly_k3_lam100_beta7_seed44,weekly,16,100.0,7.0,44,4,latents + level 7d,True
+c179,vae_lstm,vae_lstm/weekly/016_weekly_k3_lam100_beta7_seed44,weekly,16,100.0,7.0,44,5,latents + level 7d,True
+c180,vae_lstm,vae_lstm/weekly/019_weekly_k3_lam700_beta1_seed42,weekly,16,700.0,1.0,42,3,latents + level 7d,True
+c181,vae_lstm,vae_lstm/weekly/019_weekly_k3_lam700_beta1_seed42,weekly,16,700.0,1.0,42,4,latents + level 7d,True
+c182,vae_lstm,vae_lstm/weekly/019_weekly_k3_lam700_beta1_seed42,weekly,16,700.0,1.0,42,5,latents + level 7d,True
+c183,vae_lstm,vae_lstm/weekly/022_weekly_k3_lam700_beta1_seed43,weekly,16,700.0,1.0,43,3,latents + level 7d,True
+c184,vae_lstm,vae_lstm/weekly/022_weekly_k3_lam700_beta1_seed43,weekly,16,700.0,1.0,43,4,latents + level 7d,True
+c185,vae_lstm,vae_lstm/weekly/022_weekly_k3_lam700_beta1_seed43,weekly,16,700.0,1.0,43,5,latents + level 7d,True
+c186,vae_lstm,vae_lstm/weekly/025_weekly_k3_lam700_beta1_seed44,weekly,16,700.0,1.0,44,3,latents + level 7d,True
+c187,vae_lstm,vae_lstm/weekly/025_weekly_k3_lam700_beta1_seed44,weekly,16,700.0,1.0,44,4,latents + level 7d,True
+c188,vae_lstm,vae_lstm/weekly/025_weekly_k3_lam700_beta1_seed44,weekly,16,700.0,1.0,44,5,latents + level 7d,True
+c189,vae_lstm,vae_lstm/weekly/028_weekly_k3_lam700_beta7_seed42,weekly,16,700.0,7.0,42,3,latents + level 7d,True
+c190,vae_lstm,vae_lstm/weekly/028_weekly_k3_lam700_beta7_seed42,weekly,16,700.0,7.0,42,4,latents + level 7d,True
+c191,vae_lstm,vae_lstm/weekly/028_weekly_k3_lam700_beta7_seed42,weekly,16,700.0,7.0,42,5,latents + level 7d,True
+c192,vae_lstm,vae_lstm/weekly/031_weekly_k3_lam700_beta7_seed43,weekly,16,700.0,7.0,43,3,latents + level 7d,True
+c193,vae_lstm,vae_lstm/weekly/031_weekly_k3_lam700_beta7_seed43,weekly,16,700.0,7.0,43,4,latents + level 7d,True
+c194,vae_lstm,vae_lstm/weekly/031_weekly_k3_lam700_beta7_seed43,weekly,16,700.0,7.0,43,5,latents + level 7d,True
+c195,vae_lstm,vae_lstm/weekly/034_weekly_k3_lam700_beta7_seed44,weekly,16,700.0,7.0,44,3,latents + level 7d,True
+c196,vae_lstm,vae_lstm/weekly/034_weekly_k3_lam700_beta7_seed44,weekly,16,700.0,7.0,44,4,latents + level 7d,True
+c197,vae_lstm,vae_lstm/weekly/034_weekly_k3_lam700_beta7_seed44,weekly,16,700.0,7.0,44,5,latents + level 7d,True

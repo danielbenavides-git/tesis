@@ -1,0 +1,7 @@
+{
+  "run_id": "vae_lstm/daily/133_daily_k3_z_dim16_lam0_beta1_seed44",
+  "k": 3,
+  "silhouette": 0.22278647099440085,
+  "davies_bouldin": 1.456009358801193,
+  "calinski_harabasz": 3914.6973372257294
+}

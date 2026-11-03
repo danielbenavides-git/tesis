@@ -1,9 +1,9 @@
 """
 Metrics of every regime assignment of the k-means runs with k = 3, 4 and 5. The definitions are in src/metrics.py.
 
-Reads regimes.csv and config.json of every run in `runs`, and the regimes that notebook 06 saves for the inputs only it
-has (smoothed latents): latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each
-column is). Each assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
+Reads regimes.csv and config.json of every run in `runs`, and the regimes that latent_smoothing.ipynb saves for the
+smoothed inputs: latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each column is). Each
+assignment is measured with both views of an expensive day (daily price and backward 7-day mean);
 `matched` marks the view that fits the input: daily for unsmoothed inputs, 7d for smoothed ones (the `smoothed`
 column of inputs.csv; for the weekly models, `latents + level 7d` is smoothed). Each one is also measured on every
 period of src.metrics.periods (all days and the train, val and test days of src.data.date_split).
@@ -11,19 +11,20 @@ period of src.metrics.periods (all days and the train, val and test days of src.
 Runs of every set in `scalogram_sets` are read. Every assignment is measured on the same days: the dates that all those
 sets have (the weekly set has no scalogram for the first 6 days, so all models and baselines start on 2000-01-07).
 
-The script stops if a trained model of `runs` is missing from notebook 06, so no table mixes complete and missing inputs.
+The script stops if a trained model of `runs` is missing from latent_smoothing.ipynb, so no table mixes complete and
+missing inputs.
 
 Outputs (in metrics/):
     data_reference.csv    no model: expensive days and prices of each episode, per k and view
-    regime_metrics.csv    one row per assignment, view and period (read by notebook 07, which shows the top
-                          configurations)
+    regime_metrics.csv    one row per assignment, view and period (read by the top models notebook, which shows the
+                          top configurations)
     regime_profiles.csv   one row per assignment and regime: days, share, real price, reservoir, ONI, El Nino share
 
-and, in every VAE-LSTM run folder, tables/baseline_comparison.txt: the run as notebook 03 clustered it, the
-notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view,
-in one table per period in comparison_periods.
+and, in every VAE-LSTM run folder, tables/baseline_comparison.txt: the raw input (the run as the VAE-LSTM notebook
+clustered it), the smoothed input of the same model and k (latent_smoothing.ipynb), and the daily and 7-day baselines
+with the same k, each in its matched view, in one table per period in comparison_periods.
 
-Usage (run notebook 06 first):
+Usage (run latent_smoothing.ipynb first):
     python scripts/06_regime_metrics.py
 """
 import json
@@ -42,8 +43,7 @@ from src.metrics import (comparison_table, data_reference, days_from_context, pe
 
 k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
-runs = ["level_only/baseline", "vae_lstm/hyperparameters", "vae_lstm/lam_beta_grid", "vae_lstm/dimensions",
-        "vae_lstm/weekly"]
+runs = ["level_only/baseline", "vae_lstm/daily", "vae_lstm/weekly"]
 smoothing_dir = exp.EXPERIMENTS_DIR / "vae_lstm/latent_smoothing"
 out_dir = root / "metrics"
 comparison_periods = ["all", "val", "test"]
@@ -101,20 +101,21 @@ if no_regimes:
     sys.exit("These runs have no regimes.csv (unfinished run?), finish or remove them first:\n  " + "\n  ".join(no_regimes))
 
 if not (smoothing_dir / "inputs.csv").exists():
-    sys.exit(f"{(smoothing_dir / 'inputs.csv').relative_to(root)} not found: run notebook 06 first")
+    sys.exit(f"{(smoothing_dir / 'inputs.csv').relative_to(root)} not found: run latent_smoothing.ipynb first")
 try:
     inputs = pd.read_csv(smoothing_dir / "inputs.csv")
-except pd.errors.EmptyDataError:  # notebook 06 found no trained model
+except pd.errors.EmptyDataError:  # latent_smoothing.ipynb found no trained model
     inputs = pd.DataFrame(columns=["column", "run_id", "k"])
 missing = sorted(trained - set(inputs["run_id"]))
 if missing:
-    sys.exit("Notebook 06 has not read these trained models, run it again first:\n  " + "\n  ".join(missing))
+    sys.exit("latent_smoothing.ipynb has not read these trained models, run it again first:\n  " + "\n  ".join(missing))
 smoothed_regimes = (pd.read_csv(smoothing_dir / "regimes.csv", parse_dates=["date"]).set_index("date")
                     if len(inputs) else None)
 for _, row in inputs.iterrows():
     identity = row.drop("column").to_dict()
     if identity["k"] in k_values:
-        regimes = on_common_dates(smoothed_regimes[row["column"]], f"{row['column']} of notebook 06 ({row['run_id']})")
+        regimes = on_common_dates(smoothed_regimes[row["column"]],
+                                  f"{row['column']} of latent_smoothing.ipynb ({row['run_id']})")
         assignments.append((identity, regimes))
 
 rows, profiles = [], []
@@ -139,8 +140,8 @@ def run_comparison(run_id, config):
     k = config["n_regimes"]
     matched = results[results["matched"] & (results["k"] == k)]
     as_run = matched["features"] == "latents + level"
-    parts = [("Run (notebook 03)", matched[as_run & (matched["run_id"] == run_id)]),
-             ("Notebook 06", matched[~as_run & (matched["run_id"] == config["trained_in"])]),
+    parts = [("Raw input", matched[as_run & (matched["run_id"] == run_id)]),
+             ("Smoothed input", matched[~as_run & (matched["run_id"] == config["trained_in"])]),
              ("Daily baseline", matched[matched["features"] == "level"]),
              ("7-day baseline", matched[matched["features"] == "level 7d"])]
     rows = pd.concat([part.assign(row=name) for name, part in parts], ignore_index=True)
