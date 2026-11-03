@@ -12,7 +12,7 @@ def set_seed(seed=42):
 
 def active_dims(history, threshold=0.75):
     """Latent dims whose KL on the training days at the last epoch is >= threshold (nats). The KL of each dim is logged
-    by TemporalVAE.compute_loss as kl_dim0, kl_dim1, ...; a dim below the threshold carries almost no information."""
+    by VAELSTM.compute_loss as kl_dim0, kl_dim1, ...; a dim below the threshold carries almost no information."""
     keys = sorted((k for k in history[-1] if k.startswith("train_kl_dim")), key=lambda k: int(k[len("train_kl_dim"):]))
     kl = [history[-1][k] for k in keys]
     return int(sum(v >= threshold for v in kl)), [round(v, 2) for v in kl]

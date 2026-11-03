@@ -13,7 +13,7 @@ regimes.csv has one row per day with these columns:
     captured    1 if nino = 1 and top_regime = 1
 
 Usage:
-    python scripts/inspect_regimes.py experiments/temporal_vae/kmeans/vae_model/003_real_price_log_kmeans_k4
+    python scripts/inspect_regimes.py experiments/vae_lstm/weekly/001_weekly_k3_lam100_beta1_seed42
     python scripts/inspect_regimes.py path/to/regimes.csv --missed
 """
 

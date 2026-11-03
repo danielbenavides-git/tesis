@@ -14,15 +14,24 @@ EXPERIMENTS_DIR = ROOT / "experiments"
 REGISTRY_COLUMNS = ["run_id", "study", "model", "k", "z_dim", "lam", "beta", "seed", "epochs", "trained_in", "git_commit"]
 
 
+set_labels = {"real_price_log": "daily", "real_price_log_weekly": "weekly"}
+
+
+def set_label(scalogram_set):
+    """Short name of a scalogram set in run folder names; a set not in set_labels keeps its full name."""
+    return set_labels.get(scalogram_set, scalogram_set)
+
+
 def create_run(model, study, scalogram_set, k, tag="", root=EXPERIMENTS_DIR):
-    """New folder experiments/<model>/kmeans/<study>/NNN_<scalogram_set>_kmeans_k<k>[_<tag>]/.
+    """New folder experiments/<model>/<study>/NNN_<set_label>_k<k>[_<tag>]/, where set_label is the short name of
+    scalogram_set (set_labels: daily or weekly). All runs use k-means.
     Its tables/, figures/ and artifacts/ (weights and latents, not in git) are created when something is saved
     in them, so no empty folder is left (a run without a model has no artifacts/).
     NNN is consecutive within each study folder and never reused. tag is an optional label for the folder name."""
-    study_dir = Path(root) / model / "kmeans" / study
+    study_dir = Path(root) / model / study
     study_dir.mkdir(parents=True, exist_ok=True)
     numbers = [int(p.name[:3]) for p in study_dir.iterdir() if p.is_dir() and p.name[:3].isdigit()]
-    name = f"{max(numbers, default=0) + 1:03d}_{scalogram_set}_kmeans_k{k}" + (f"_{tag}" if tag else "")
+    name = f"{max(numbers, default=0) + 1:03d}_{set_label(scalogram_set)}_k{k}" + (f"_{tag}" if tag else "")
     run_dir = study_dir / name
     run_dir.mkdir()
     return run_dir
@@ -35,7 +44,7 @@ def _subdir(run_dir, name):
 
 
 def run_id(run_dir):
-    """Path of the run inside experiments/, e.g. conv_vae/kmeans/k_sweep/001_real_price_log_kmeans_k2."""
+    """Path of the run inside experiments/, e.g. vae_lstm/weekly/001_weekly_k3_lam100_beta1_seed42."""
     run_dir = Path(run_dir).resolve()
     try:
         return run_dir.relative_to(EXPERIMENTS_DIR.resolve()).as_posix()

@@ -19,7 +19,7 @@ Outputs (in metrics/):
                           configurations)
     regime_profiles.csv   one row per assignment and regime: days, share, real price, reservoir, ONI, El Nino share
 
-and, in every Temporal VAE run folder, tables/baseline_comparison.txt: the run as notebook 03 clustered it, the
+and, in every VAE-LSTM run folder, tables/baseline_comparison.txt: the run as notebook 03 clustered it, the
 notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view,
 in one table per period in comparison_periods.
 
@@ -42,9 +42,9 @@ from src.metrics import (comparison_table, data_reference, days_from_context, pe
 
 k_values = [3, 4, 5]
 scalogram_sets = ["real_price_log", "real_price_log_weekly"]  # the first one gives the daily context
-runs = ["level_only/kmeans/baseline", "temporal_vae/kmeans/hyperparameters", "temporal_vae/kmeans/lam_beta_grid",
-        "temporal_vae/kmeans/dimensions", "temporal_vae/kmeans/weekly"]
-smoothing_dir = exp.EXPERIMENTS_DIR / "temporal_vae/kmeans/latent_smoothing"
+runs = ["level_only/baseline", "vae_lstm/hyperparameters", "vae_lstm/lam_beta_grid", "vae_lstm/dimensions",
+        "vae_lstm/weekly"]
+smoothing_dir = exp.EXPERIMENTS_DIR / "vae_lstm/latent_smoothing"
 out_dir = root / "metrics"
 comparison_periods = ["all", "val", "test"]
 
@@ -135,7 +135,7 @@ pd.concat(profiles, ignore_index=True).round(3).to_csv(out_dir / "regime_profile
 
 
 def run_comparison(run_id, config):
-    """tables/baseline_comparison.txt of one Temporal VAE run (see the module docstring)."""
+    """tables/baseline_comparison.txt of one VAE-LSTM run (see the module docstring)."""
     k = config["n_regimes"]
     matched = results[results["matched"] & (results["k"] == k)]
     as_run = matched["features"] == "latents + level"

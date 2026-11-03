@@ -20,7 +20,7 @@ def kl_per_dim(mu, log_var):
     return (-0.5 * (1 + log_var - mu.pow(2) - log_var.exp())).mean(dim=0)
 
 
-class TemporalVAE(nn.Module):
+class VAELSTM(nn.Module):
     """ConvVAE with a causal recurrent layer over consecutive days.
 
     Each day is encoded by the CNN. A one-direction LSTM (or GRU) reads the day features in order.

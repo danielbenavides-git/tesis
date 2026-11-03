@@ -1,0 +1,7 @@
+{
+  "run_id": "level_only/baseline/001_daily_k3",
+  "k": 3,
+  "silhouette": 0.3786978311262297,
+  "davies_bouldin": 0.8290091417439897,
+  "calinski_harabasz": 7052.516069974814
+}

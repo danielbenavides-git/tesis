@@ -1,0 +1,35 @@
+{
+  "model": "vae_lstm",
+  "study": "weekly",
+  "scalogram_set": "real_price_log_weekly",
+  "k_values": [
+    3,
+    4,
+    5
+  ],
+  "z_dim": 16,
+  "filters": [
+    128,
+    64,
+    32
+  ],
+  "proj_dim": 128,
+  "rnn_type": "lstm",
+  "rnn_hidden": 64,
+  "seq_len": 30,
+  "stride": 14,
+  "kl_warmup_epochs": 5,
+  "optimizer": "Adam",
+  "lr": 0.001,
+  "batch_size": 16,
+  "epochs": 30,
+  "val_start": "2014-10-01",
+  "test_start": "2021-01-01",
+  "lam": 100.0,
+  "beta": 1.0,
+  "seed": 43,
+  "tag": "lam100_beta1_seed43",
+  "n_regimes": 5,
+  "trained_in": "vae_lstm/weekly/004_weekly_k3_lam100_beta1_seed43",
+  "n_params": 1802881
+}

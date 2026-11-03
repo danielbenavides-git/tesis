@@ -23,7 +23,7 @@ regime_columns = ["date", "split", "regime", "real_price", "oni", "nino", "episo
 def existing_runs(model, trained_in):
     """{k: run folder} of earlier runs that clustered the latents of trained_in."""
     found = {}
-    for path in sorted((exp.EXPERIMENTS_DIR / model / "kmeans").glob("*/*/config.json")):
+    for path in sorted((exp.EXPERIMENTS_DIR / model).glob("*/*/config.json")):
         c = json.loads(path.read_text())
         if c.get("trained_in") == trained_in:
             found.setdefault(c["n_regimes"], path.parent)
@@ -31,7 +31,7 @@ def existing_runs(model, trained_in):
 
 
 def prepare_runs(config, load_from=None, device="cpu"):
-    """One run folder per k in config["k_values"], with its config saved, in experiments/<model>/kmeans/<study>/.
+    """One run folder per k in config["k_values"], with its config saved, in experiments/<model>/<study>/.
     With load_from (a run_id), the model, history and latents of that run are reused and training is skipped, and a k
     already clustered with that model reuses its folder. Returns (config, run_dirs, run_configs, trained); trained is
     None when the model has to be trained. trained_in is empty for runs without a model (the price baseline)."""
