@@ -17,31 +17,32 @@ data/
     scalograms/real_price_log/          Log real price scalograms, one day (24 hours) each
     scalograms/real_price_log_weekly/   Log real price scalograms, day t and the 6 days before it (168 hours) each
 scripts/            Data pipeline, run in order (01 download, 02 process, 03 external data and deflation, 04 scalograms,
-                    05 El Nino price statistics), 06_regime_metrics.py (all metrics), inspect_regimes.py (one run)
+                    05 El Nino price statistics), 06_regime_metrics.py (all metrics)
 src/                Code imported by the notebooks and scripts
-  data.py           Scalogram loading, chronological split, sequence dataset, context variables
+  data.py           Scalogram loading, split by dates (val_start, test_start), sequence dataset, context variables
   training.py       Training loop with KL warm-up, active latent dims from the KL of each dim
   clustering.py     Price columns, k-means, regime ordering, run lengths, regime profile, separation metrics
   experiments.py    Run folders, saved config/history/tables, registry, loading a trained run, PrettyTable builders
-  runs.py           Steps shared by notebooks 03 and 05: one run folder per k, clustering, regimes.csv, figures
-  metrics.py        Every metric of a regime assignment (persistence, El Nino, expensive days), the per-run comparison table and the ranking used by notebook 07
+  runs.py           Steps shared by the VAE-LSTM notebooks and level_baseline.ipynb: one run folder per k, clustering,
+                    regimes.csv, figures
+  metrics.py        Every metric of a regime assignment (persistence, El Nino, expensive days), the per-run comparison table and the ranking used by top_models.ipynb
   plots.py          Loss curves, reconstructions, t-SNE and regime timeline charts
   models/
     conv_vae.py     Convolutional encoder, decoder and VAE losses
     vae_lstm.py     VAE-LSTM: CNN per day and a causal LSTM over consecutive days
 notebooks/
   01_eda.ipynb
-  03_vae_lstm.ipynb             Trains the VAE-LSTM and saves its regimes (no analysis)
-  03_vae_lstm_weekly.ipynb      Copy of notebook 03 that reads the weekly scalograms (study weekly)
-  05_level_baseline.ipynb       Baseline: clustering on the daily price only (no CWT, no VAE)
-  06_latent_smoothing.ipynb     Smoothed (7-day) latents of the trained models, saves their regimes
-  07_top_models.ipynb           Top configurations of one study next to the baselines (reads metrics/)
+  02_vae_lstm.ipynb             VAE-LSTM notebook: trains on the daily scalograms and saves its regimes (no analysis)
+  03_vae_lstm_weekly.ipynb      VAE-LSTM notebook: copy of notebook 02 that reads the weekly scalograms
+  level_baseline.ipynb          Baseline: clustering on the daily price only (no CWT, no VAE)
+  latent_smoothing.ipynb        Smoothed (7-day) inputs of the trained models, saves their regimes
+  top_models.ipynb              Top configurations of one study next to the baselines (reads metrics/)
 experiments/
   registry.csv                   One row per run: what was run (study, k, z_dim, lam, beta, seed, epochs, trained_in, commit)
-  level_only/baseline/          Daily and 7-day price baselines (notebook 05)
-  vae_lstm/<study>/             VAE-LSTM runs (notebook 03): hyperparameters, lam_beta_grid, dimensions;
-                                 weekly (notebook 03_vae_lstm_weekly)
-  vae_lstm/latent_smoothing/    regimes.csv and inputs.csv of notebook 06
+  level_only/baseline/          Daily and 7-day price baselines (level_baseline.ipynb)
+  vae_lstm/daily/               VAE-LSTM runs on the daily scalograms (02_vae_lstm.ipynb)
+  vae_lstm/weekly/              VAE-LSTM runs on the weekly scalograms (03_vae_lstm_weekly.ipynb)
+  vae_lstm/latent_smoothing/    regimes.csv and inputs.csv of latent_smoothing.ipynb
 metrics/            Output of scripts/06_regime_metrics.py
 archive/            Runs and files no longer used (not in git, except archive/README.md)
 figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
@@ -62,11 +63,11 @@ The weekly set has one scalogram per day, from day t and the 6 days before it, a
 
 Each day's mean is removed from the hourly log real price before the CWT, so the image shows only the intraday shape. Magnitudes are scaled to [0, 1] with the global minimum and the 99.5th percentile, clipping values above it. The daily mean and standard deviation of the log real price are saved in `scalogram_metadata.csv` (`log_price_mean`, `log_price_std`) and appended to the latent vector before clustering, z-scored with training-day statistics.
 
-Days are split chronologically (60% train, 20% validation, 20% test). K-means is fitted on training days only and then assigns every day. Regimes are numbered by ascending mean real price, so the highest number is the most expensive regime. Experiments use k = 3, 4 and 5.
+Days are split by fixed dates (`val_start` and `test_start` in `src/data.py`): train before 2014-10-01, validation from 2014-10-01 to 2020-12-31 and test from 2021-01-01. The whole 2015-2016 El Nino episode (from October 2014) is in validation and the 2023-2024 episode is in test. K-means is fitted on training days only and then assigns every day. Regimes are numbered by ascending mean real price, so the highest number is the most expensive regime. Experiments use k = 3, 4 and 5.
 
 ## Experiments
 
-Notebooks 03 and 05 only produce regimes; they do not analyze them. Notebook 03 is set in its configuration cell: `k_values`, `study`, `tag`, `load_from`, `active_threshold`, the `grid` of `lam`, `beta` and `seed` (one training per combination) and the fixed hyperparameters in `config`. Each trained model is clustered for each k, and each k creates `experiments/<model>/<study>/NNN_<set>_k<k>[_<tag>]/` (`<set>` is `daily` or `weekly`, all runs use k-means):
+The VAE-LSTM notebooks and `level_baseline.ipynb` only produce regimes; they do not analyze them. Each VAE-LSTM notebook is set in its configuration cell: `k_values`, `study`, `tag`, `load_from`, `active_threshold`, the `grid` (one training per combination; any key of `config` can be in it, for example `z_dim`, `lam`, `beta` and `seed`, and its values replace those of `config`) and the fixed hyperparameters in `config`. Each trained model is clustered for each k, and each k creates `experiments/<model>/<study>/NNN_<set>_k<k>[_<tag>]/` (`<set>` is `daily` or `weekly`, all runs use k-means):
 
 ```
 config.json, history.json, regimes.csv, metrics.json
@@ -75,30 +76,30 @@ figures/    loss_curves, reconstructions, tsne_regimes, regime_timeline
 artifacts/  model.pt, latents.npy (not in git, only in runs with a model)
 ```
 
-- `regimes.csv` has one row per day: `date`, `split` (train, val, test), `regime`, `real_price` (the price used to number the regimes), `oni`, `nino` (1 if the ONI of the month is >= 0.5), `episode` (2015-2016, 2023-2024 or empty), `top_regime` (1 if the regime is the most expensive one) and `captured` (1 if an El Nino day fell in the most expensive regime). `python scripts/inspect_regimes.py <run folder>` prints the days, price and El Nino days of each regime (`--missed` lists the episode days outside the most expensive regime).
+- `regimes.csv` has one row per day: `date`, `split` (train, val, test), `regime`, `real_price` (the price used to number the regimes), `oni`, `nino` (1 if the ONI of the month is >= 0.5), `episode` (2015-2016, 2023-2024 or empty), `top_regime` (1 if the regime is the most expensive one) and `captured` (1 if an El Nino day fell in the most expensive regime).
 - `metrics.json` has only the separation metrics (silhouette, Davies-Bouldin, Calinski-Harabasz), which need the clustering features. Every other metric is computed by `scripts/06_regime_metrics.py`.
 - `trained_in` in `config.json` names the run where the model was trained; runs with the same `trained_in` share the same model and latents. It is empty in the baseline.
 - A latent dim is active when its KL on the training days at the last epoch is at least `active_threshold` (0.75 nats).
 - `load_from` takes the `run_id` of an earlier run and skips training: the notebook clusters its saved latents again.
-- Notebook 03 shows the loss curves of every trained model and, for the models with seed 42, the reconstructions of eight test days, the t-SNE for k = 3, 4 and 5, the regime timeline of each k and the regime strips.
+- The VAE-LSTM notebooks show the loss curves of every trained model and, for the models with seed 42, the reconstructions of eight test days, the t-SNE for k = 3, 4 and 5, the regime timeline of each k and the regime strips.
 
 Each run writes its row in `experiments/registry.csv`, with the git commit (`-dirty` if `src/` or `scripts/` had uncommitted changes). Commit code changes before a run so the commit identifies the code that produced it.
 
 ## Baseline
 
-Notebook 05 clusters the days with only the daily mean and standard deviation of the log real price. `level_window = 1` uses each day's own values (daily baseline) and `level_window = 7` replaces both by their backward 7-day mean, the day and the 6 days before it (7-day baseline, `tag = "7d"`). Runs go to `experiments/level_only/baseline/`.
+`level_baseline.ipynb` clusters the days with only the daily mean and standard deviation of the log real price. `level_window = 1` uses each day's own values (daily baseline) and `level_window = 7` replaces both by their backward 7-day mean, the day and the 6 days before it (7-day baseline, `tag = "7d"`). Runs go to `experiments/level_only/baseline/`.
 
-## Smoothed latents
+## Smoothed inputs
 
-Notebook 06 reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters one more input per model and k. Daily models get the latents and the price both replaced by their backward 7-day mean (`latents 7d + level 7d`). Weekly models get the latents as they are with the price replaced by its backward 7-day mean (`latents + level 7d`). The weekly latents are not averaged again because the weekly scalogram already covers the day and the 6 days before it; with the 7-day price, this input differs from the 7-day baseline only in the scalogram. It saves the regimes in `experiments/vae_lstm/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
+`latent_smoothing.ipynb` reads the latents of every trained model of the studies and scalogram sets in its configuration (each model with the days, split and price of its own set) and clusters one more input per model and k. Daily models get the latents and the price both replaced by their backward 7-day mean (`latents 7d + level 7d`). Weekly models get the latents as they are with the price replaced by its backward 7-day mean (`latents + level 7d`). The weekly latents are not averaged again because the weekly scalogram already covers the day and the 6 days before it; with the 7-day price, this input differs from the 7-day baseline only in the scalogram. It saves the regimes in `experiments/vae_lstm/latent_smoothing/regimes.csv` (one column per input) and what each column is in `inputs.csv`.
 
 ## Metrics
 
-`python scripts/06_regime_metrics.py` (after notebook 06) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv` (expensive days and prices of each episode, no model), `regime_metrics.csv` (one row per assignment and view, read by notebook 07) and `regime_profiles.csv` (price, reservoir, ONI and El Nino share of each regime of every assignment). A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the series for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. It also writes `tables/baseline_comparison.txt` in every VAE-LSTM run folder: the run as notebook 03 clustered it, the notebook 06 inputs of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view, with switches per year, top regime days, El Nino capture and lift of each episode, and precision, recall and F1 of the expensive days. It stops if a trained model has not been read by notebook 06 or a run has no `regimes.csv`. Every assignment, daily or weekly, is measured on the dates that all scalogram sets have, so all models and baselines start on 2000-01-07 (the weekly set has no scalogram for the first 6 days).
+`python scripts/06_regime_metrics.py` (after `latent_smoothing.ipynb`) computes every metric from the saved regimes, with the definitions in `src/metrics.py`, and writes `metrics/`: `data_reference.csv` (expensive days and prices of each episode, no model), `regime_metrics.csv` (one row per assignment, view and period, read by `top_models.ipynb`) and `regime_profiles.csv` (price, reservoir, ONI and El Nino share of each regime of every assignment). Every metric is computed for all days and for each period (train, val and test). A day is expensive when its real price is above the 66.7, 75 or 80 percentile of the days of the same period for k = 3, 4 and 5; smoothed inputs are compared with the backward 7-day mean of the price. It also writes `tables/baseline_comparison.txt` in every VAE-LSTM run folder: the raw input (the run as the VAE-LSTM notebook clustered it), the smoothed input of the same model and k, and the daily and 7-day baselines with the same k, each in its matched view, in one table for all days, one for val and one for test, with switches per year, top regime days, El Nino capture and lift of each episode, and precision, recall and F1 of the expensive days. It stops if a trained model has not been read by `latent_smoothing.ipynb` or a run has no `regimes.csv`. Every assignment, daily or weekly, is measured on the dates that all scalogram sets have, so all models and baselines start on 2000-01-07 (the weekly set has no scalogram for the first 6 days).
 
 ## Top models
 
-Notebook 07 reads `metrics/regime_metrics.csv` and, for the `study` in its configuration and each k, shows the daily and 7-day baselines and the `top` configurations (mean +- std over seeds): it leaves out the configurations that switch regime more than twice as often as the 7-day baseline and orders the rest by the F1 of the expensive days. The El Nino capture and lift are shown but not used to order.
+`top_models.ipynb` reads `metrics/regime_metrics.csv` and, for the `study` in its configuration and each k, shows the daily and 7-day baselines and the `top` configurations (mean +- std over seeds). It chooses with the validation days only: it leaves out the configurations that switch regime more than twice as often as the 7-day baseline and orders the rest by the F1 of the expensive days. Then it shows the same configurations, in the same order, with the test days, which are not used to choose. The El Nino capture and lift are shown but not used to order.
 
 ## Archive
 

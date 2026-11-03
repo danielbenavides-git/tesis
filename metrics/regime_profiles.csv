@@ -234,6 +234,11 @@ regime,days,share_pct,mean_real_price,mean_reservoir,mean_oni,el_nino_pct,model,
 1,2946,30.362,202.597,0.683,-0.115,19.009,vae_lstm,daily,vae_lstm/daily/053_daily_k4_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,4,latents + level,False
 2,1383,14.253,238.652,0.733,-0.245,13.087,vae_lstm,daily,vae_lstm/daily/053_daily_k4_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,4,latents + level,False
 3,3369,34.721,535.347,0.617,0.377,43.752,vae_lstm,daily,vae_lstm/daily/053_daily_k4_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,4,latents + level,False
+0,1670,17.211,160.434,0.749,-0.287,8.922,vae_lstm,daily,vae_lstm/daily/054_daily_k5_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,5,latents + level,False
+1,2774,28.589,188.033,0.689,-0.118,18.457,vae_lstm,daily,vae_lstm/daily/054_daily_k5_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,5,latents + level,False
+2,1069,11.017,221.836,0.745,-0.279,11.693,vae_lstm,daily,vae_lstm/daily/054_daily_k5_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,5,latents + level,False
+3,1726,17.788,376.43,0.635,0.05,28.795,vae_lstm,daily,vae_lstm/daily/054_daily_k5_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,5,latents + level,False
+4,2464,25.394,564.714,0.619,0.423,45.495,vae_lstm,daily,vae_lstm/daily/054_daily_k5_z_dim4_lam100_beta1_seed44,4,100.0,1.0,44,5,latents + level,False
 0,1748,18.015,266.101,0.718,-0.203,14.588,vae_lstm,daily,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,8,0.0,0.25,42,3,latents + level,False
 1,3862,39.802,289.609,0.677,-0.047,23.33,vae_lstm,daily,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,8,0.0,0.25,42,3,latents + level,False
 2,4093,42.183,362.627,0.662,0.137,30.491,vae_lstm,daily,vae_lstm/daily/055_daily_k3_z_dim8_lam0_beta0.25_seed42,8,0.0,0.25,42,3,latents + level,False
@@ -373,6 +378,11 @@ regime,days,share_pct,mean_real_price,mean_reservoir,mean_oni,el_nino_pct,model,
 1,1675,17.263,263.777,0.717,-0.203,14.806,vae_lstm,daily,vae_lstm/daily/089_daily_k4_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,4,latents + level,False
 2,2137,22.024,328.411,0.663,0.143,28.825,vae_lstm,daily,vae_lstm/daily/089_daily_k4_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,4,latents + level,False
 3,3511,36.185,436.88,0.635,0.192,36.457,vae_lstm,daily,vae_lstm/daily/089_daily_k4_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,4,latents + level,False
+0,2027,20.89,178.742,0.705,-0.244,13.567,vae_lstm,daily,vae_lstm/daily/090_daily_k5_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,5,latents + level,False
+1,1799,18.541,194.259,0.721,-0.329,8.06,vae_lstm,daily,vae_lstm/daily/090_daily_k5_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,5,latents + level,False
+2,868,8.946,279.657,0.723,-0.157,18.203,vae_lstm,daily,vae_lstm/daily/090_daily_k5_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,5,latents + level,False
+3,2125,21.9,325.533,0.663,0.143,28.847,vae_lstm,daily,vae_lstm/daily/090_daily_k5_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,5,latents + level,False
+4,2884,29.723,492.914,0.63,0.327,42.06,vae_lstm,daily,vae_lstm/daily/090_daily_k5_z_dim8_lam100_beta0.25_seed44,8,100.0,0.25,44,5,latents + level,False
 0,2163,22.292,229.436,0.729,-0.25,11.327,vae_lstm,daily,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,8,100.0,0.5,42,3,latents + level,False
 1,4172,42.997,325.416,0.665,0.087,29.027,vae_lstm,daily,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,8,100.0,0.5,42,3,latents + level,False
 2,3368,34.711,360.433,0.661,0.06,28.147,vae_lstm,daily,vae_lstm/daily/091_daily_k3_z_dim8_lam100_beta0.5_seed42,8,100.0,0.5,42,3,latents + level,False

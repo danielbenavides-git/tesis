@@ -1,5 +1,5 @@
-"""Steps shared by notebooks 03 and 05 after the features are ready: one run folder per k, clustering, figures,
-the two tables, regimes.csv, metrics.json and the registry row. Every other metric is computed later by
+"""Steps shared by the VAE-LSTM notebooks and level_baseline.ipynb after the features are ready: one run folder per
+k, clustering, figures, the two tables, regimes.csv, metrics.json and the registry row. Every other metric is computed later by
 scripts/06_regime_metrics.py from regimes.csv."""
 import json
 

@@ -1,22 +1,23 @@
 """Size-aware metrics of the most expensive regime, compared with the real prices and the El Nino days.
 
-A day is expensive when its real price is above a percentile of the days of the same period (all days, or the train,
-val or test days of src.data.date_split): 66.7 for k = 3, 75 for k = 4 and 80 for k = 5. Prices after 2014 are much
-higher than before, so a threshold of the training days would make most val and test days expensive. The daily view uses each day's price; the 7d view uses the backward 7-day mean of the price (the day and
-the 6 days before it), so a smoothed model is compared with smoothed prices. A day is El Nino when the ONI of its
-month is >= 0.5, and the two episodes are the El Nino days in 2014-2016 (named 2015-2016) and in 2023-2024 (as in
-runs.regime_table).
-Every metric is computed on one period: all days, or the train, val or test days, each with its own threshold.
-Switches per year are counted inside the period. The metrics of an episode with no days
-in the period are empty.
 Every metric of a regime assignment is computed here, from regimes.csv of each run and from the regimes saved by
-notebook 06; the runs only save their separation metrics (silhouette, Davies-Bouldin, Calinski-Harabasz).
+latent_smoothing.ipynb; the runs only save their separation metrics (silhouette, Davies-Bouldin, Calinski-Harabasz).
 
-Ranking (agreed 2026-10-29, on one period since 2026-11-02): criterion A orders configurations by
-expensive_f1_pct, the F1 between top_expensive_precision_pct and expensive_recall_pct. Criterion C first keeps the configurations whose switches per
-year are at most persistence_factor times those of the 7-day baseline with the same k and period, then orders them by
-A. Models are chosen with the val period and reported with the test period.
-The baselines are shown as reference and are not ranked.
+Every metric is computed on one period: all days, or the train, val or test days of src.data.date_split. Switches per
+year are counted inside the period. The metrics of an episode with no days in the period are empty.
+
+A day is expensive when its real price is above a percentile of the days of the same period: 66.7 for k = 3, 75 for
+k = 4 and 80 for k = 5. Prices after 2014 are much higher than before, so a threshold of the training days would make
+most val and test days expensive. The daily view uses each day's price; the 7d view uses the backward 7-day mean of
+the price (the day and the 6 days before it), so a smoothed input is compared with smoothed prices. A day is El Nino
+when the ONI of its month is >= 0.5, and the two episodes are the El Nino days in 2014-2016 (named 2015-2016) and in
+2023-2024 (as in runs.regime_table).
+
+Ranking (agreed 2026-10-29, on one period since 2026-11-02): criterion A orders configurations by expensive_f1_pct,
+the F1 between top_expensive_precision_pct and expensive_recall_pct. Criterion C first keeps the configurations whose
+switches per year are at most persistence_factor times those of the 7-day baseline with the same k and period, then
+orders them by A. Models are chosen with the val period and reported with the test period. The baselines are shown as
+reference and are not ranked.
 """
 import numpy as np
 import pandas as pd
