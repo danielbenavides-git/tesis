@@ -1,0 +1,7 @@
+{
+  "run_id": "level_only/calweek/002_calweek_k4",
+  "k": 4,
+  "silhouette": 0.29234193678894704,
+  "davies_bouldin": 0.9536649707912958,
+  "calinski_harabasz": 779.667291223961
+}

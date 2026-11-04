@@ -63,8 +63,17 @@ class ScalogramSequenceDataset(Dataset):
         return self.images[start:start + self.seq_len], start
 
 
+def is_weekly(metadata):
+    """True for a set with one scalogram per calendar week (the column unit = week, written by
+    scripts/04_generate_scalograms.py --window calweek)."""
+    return "unit" in metadata.columns and (metadata["unit"] == "week").all()
+
+
 def load_context(data_dir, metadata):
-    """Daily frame aligned with the scalograms: real price, reservoir level, ONI and ENSO phase."""
+    """Frame aligned with the scalograms: real price, reservoir level, ONI and ENSO phase. One row per day, or one row
+    per calendar week when is_weekly(metadata). A week's row has date = its Monday, the mean real price and reservoir
+    level of its 7 days, and the ONI of the month of its Thursday (the month that holds at least 4 of its 7 days, as in
+    ISO weeks). These columns are used only to number the regimes and to measure them, never as model inputs."""
     data_dir = Path(data_dir)
     days = pd.DataFrame({"date": metadata["start_datetime"].dt.normalize()})
 
@@ -72,10 +81,14 @@ def load_context(data_dir, metadata):
     reservoir = pd.read_csv(data_dir / "XM/volumen_util_pct.csv", parse_dates=["date"])
     oni = pd.read_csv(data_dir / "NOAA/oni.csv", parse_dates=["date"])
 
-    days = days.merge(price[["date", "precio_real_cop_kwh"]], on="date", how="left")
-    days = days.merge(reservoir, on="date", how="left")
+    daily = price[["date", "precio_real_cop_kwh"]].merge(reservoir, on="date", how="left")
+    if is_weekly(metadata):
+        daily["date"] = daily["date"] - pd.to_timedelta(daily["date"].dt.dayofweek, unit="D")  # Monday of its week
+        daily = daily.groupby("date", as_index=False).mean()
+    days = days.merge(daily, on="date", how="left")
 
-    days["month"] = days["date"].dt.to_period("M")
+    month_day = days["date"] + pd.Timedelta(days=3) if is_weekly(metadata) else days["date"]
+    days["month"] = month_day.dt.to_period("M")
     oni["month"] = oni["date"].dt.to_period("M")
     days = days.merge(oni[["month", "oni"]], on="month", how="left").drop(columns="month")
     days["enso_phase"] = np.where(days["oni"] >= 0.5, "El Nino", np.where(days["oni"] <= -0.5, "La Nina", "Neutral"))

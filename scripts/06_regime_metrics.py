@@ -1,5 +1,7 @@
 """
 Metrics of every regime assignment of the k-means runs with k = 3, 4 and 5. The definitions are in src/metrics.py.
+The calendar-week test (scalogram set real_price_log_calweek) is measured by week in scripts/07_calweek_metrics.py,
+not here.
 
 Reads regimes.csv and config.json of every run in `runs`, and the regimes that latent_smoothing.ipynb saves for the
 smoothed inputs: latent_smoothing/regimes.csv (one column per input) and inputs.csv (what each column is). Each

@@ -2,9 +2,12 @@
 Generate CWT scalograms from the hourly real spot price series.
 
 Wavelet and scales follow Benavides & Luna (2024):
-- Window: 24 hours (--window day) or 168 hours (--window week). There is one scalogram per day in both: the
-  weekly window of day t covers day t and the 6 days before it, so it never uses later days. The window
-  moves 24 hours from one scalogram to the next, and the first 6 days have no weekly scalogram.
+- Window: 24 hours (--window day), 168 hours (--window week) or one calendar week (--window calweek).
+  With day and week there is one scalogram per day: the weekly window of day t covers day t and the 6 days
+  before it, so it never uses later days. The window moves 24 hours from one scalogram to the next, and the
+  first 6 days have no weekly scalogram. With calweek there is one scalogram per calendar week, Monday 00:00
+  to Sunday 23:00 (168 hours), and consecutive scalograms do not overlap. The days before the first Monday
+  and after the last Sunday are left out (1386 weeks, from 2000-01-03 to 2026-07-26).
 - Wavelet: Complex Morlet (cmor1.5-1.0)
 - Scales: 1 to 128
 - Output: magnitude of CWT coefficients, scaled to [0, 1] with the p99.5 value (values above it clipped)
@@ -15,22 +18,26 @@ between the two sets. The window's mean is subtracted before the CWT (Torrence &
 Compo, 1998), so the scalogram shows only the shape of the price inside the
 window. Without this step the zero-padding edge effect grows with the window's
 level and dominates the large scales. With --window day this is each day's mean.
-With --window week it is one mean for the 7 days, so the changes from one day to
-the next inside the week stay in the image. The level of day t (mean and std of
-the transformed series on that day) is saved in the metadata instead:
-log_price_mean/log_price_std for --price log and price_mean/price_std for
---price linear.
+With --window week and calweek it is one mean for the 7 days, so the changes from
+one day to the next inside the week stay in the image. The level is saved in the
+metadata instead: log_price_mean/log_price_std for --price log and
+price_mean/price_std for --price linear. With day and week it is the level of day t
+(mean and std of the transformed series on that day); with calweek it is the level
+of the whole week (mean and std over its 168 hours).
 
-The metadata has one row per scalogram. start_datetime and end_datetime are the
-first and last hour of the day the scalogram belongs to (day t), so the dates and
-the level columns mean the same in both windows. The weekly metadata also has
-window_start_datetime, the first hour of the window (day t - 6).
+The metadata has one row per scalogram. With day and week, start_datetime and
+end_datetime are the first and last hour of the day the scalogram belongs to (day t),
+so the dates and the level columns mean the same in both windows; the weekly metadata
+also has window_start_datetime, the first hour of the window (day t - 6). With
+calweek, start_datetime is Monday 00:00 and end_datetime is Sunday 23:00 of the week,
+and the column unit = week tells src.data.load_context to build one row per week.
 
 Outputs:
     --price log                    data/processed/scalograms/real_price_log/
     --price log --window week      data/processed/scalograms/real_price_log_weekly/
     --price linear                 data/processed/scalograms/real_price/
     --price linear --window week   data/processed/scalograms/real_price_weekly/
+    --price log --window calweek   data/processed/scalograms/real_price_log_calweek/
 
 Known limitation: CWT coefficients at scales above about W / (2 * sqrt(2)) fall
 outside the cone of influence (Torrence & Compo, 1998) and do not carry reliable
@@ -41,6 +48,7 @@ Usage:
     python scripts/04_generate_scalograms.py --price linear
     python scripts/04_generate_scalograms.py --price log --save-png 50
     python scripts/04_generate_scalograms.py --price log --window week --save-png 50
+    python scripts/04_generate_scalograms.py --price log --window calweek --save-png 50
 """
 
 import argparse
@@ -70,7 +78,8 @@ PRICE_SETS = {"log": "real_price_log", "linear": "real_price"}
 # Parameters
 # ---------------------------------------------------------------------------
 
-window_hours = {"day": 24, "week": 168}  # hours per scalogram for each --window
+window_hours = {"day": 24, "week": 168, "calweek": 168}  # hours per scalogram for each --window
+set_suffix = {"day": "", "week": "_weekly", "calweek": "_calweek"}  # suffix of the set folder for each --window
 STRIDE = 24           # hours between consecutive scalograms (one per day)
 WAVELET = "cmor1.5-1.0"
 SCALES = np.arange(1, 129)  # 128 scales, matching Benavides & Luna Figure 5
@@ -161,6 +170,40 @@ def create_windows(series: np.ndarray, datetimes: np.ndarray, level_prefix: str,
     return windows, metadata
 
 
+def create_calendar_weeks(series: np.ndarray, datetimes: np.ndarray,
+                          level_prefix: str) -> tuple[np.ndarray, pd.DataFrame]:
+    """Cut the series into calendar weeks, Monday 00:00 to Sunday 23:00 (168 hours),
+    one window per week with no overlap, and subtract each week's mean. The days
+    before the first Monday and after the last Sunday are left out. Returns the
+    demeaned windows and a metadata DataFrame with one row per week: start_datetime
+    (Monday 00:00), end_datetime (Sunday 23:00), the level of the whole week (mean
+    and std of the transformed series over its 168 hours) and unit = week."""
+
+    n_days = len(series) // STRIDE
+    hours = pd.DatetimeIndex(datetimes[:n_days * STRIDE])
+    first = int(np.flatnonzero(hours[::STRIDE].dayofweek == 0)[0])  # first Monday
+    n_weeks = (n_days - first) // 7
+    start, end = first * STRIDE, (first + 7 * n_weeks) * STRIDE
+
+    weeks = series[start:end].reshape(n_weeks, 7 * STRIDE)
+    dt_weeks = hours[start:end].to_numpy().reshape(n_weeks, 7 * STRIDE)
+    windows = weeks - weeks.mean(axis=1, keepdims=True)
+
+    metadata = pd.DataFrame({
+        "window_id": range(n_weeks),
+        "start_datetime": dt_weeks[:, 0],
+        "end_datetime": dt_weeks[:, -1],
+        f"{level_prefix}_mean": weeks.mean(axis=1),
+        f"{level_prefix}_std": weeks.std(axis=1),
+        "unit": "week",
+    })
+
+    log.info(f"  {n_weeks:,} calendar weeks of 168h (Monday to Sunday, no overlap), week mean removed")
+    log.info(f"  From {metadata.start_datetime.iloc[0]} to {metadata.end_datetime.iloc[-1]}; "
+             f"{n_days - 7 * n_weeks} days outside full weeks left out")
+    return windows, metadata
+
+
 # ---------------------------------------------------------------------------
 # Step 4: Apply CWT to each window
 # ---------------------------------------------------------------------------
@@ -221,6 +264,7 @@ def save_outputs(
     metadata: pd.DataFrame,
     pre_cwt_params: dict,
     post_cwt_params: dict,
+    stride: int = STRIDE,
 ):
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -240,7 +284,7 @@ def save_outputs(
         "wavelet": WAVELET,
         "scales": SCALES.tolist(),
         "window_hours": scalograms.shape[2],
-        "stride_hours": STRIDE,
+        "stride_hours": stride,
         "sampling_period_hours": SAMPLING_PERIOD,
     }
     with open(norm_path, "w") as f:
@@ -265,7 +309,9 @@ def save_sample_pngs(fig_dir: Path, scalograms: np.ndarray, metadata: pd.DataFra
         row = metadata.iloc[idx]
         start = pd.Timestamp(row.start_datetime).strftime("%Y-%m-%d")
         title = f"Wavelet Scalogram - {start}"
-        if "window_start_datetime" in metadata.columns:
+        if "unit" in metadata.columns:
+            title = f"Wavelet Scalogram - week {start} to {pd.Timestamp(row.end_datetime):%Y-%m-%d}"
+        elif "window_start_datetime" in metadata.columns:
             title = f"Wavelet Scalogram - {pd.Timestamp(row.window_start_datetime):%Y-%m-%d} to {start}"
 
         fig, ax = plt.subplots(figsize=(6 if window == 24 else 10, 4))
@@ -318,7 +364,8 @@ def main():
     )
     parser.add_argument(
         "--window", choices=sorted(window_hours), default="day",
-        help="day: 24 hours (default); week: 168 hours, day t and the 6 days before it -> <set>_weekly/"
+        help="day: 24 hours (default); week: 168 hours, day t and the 6 days before it -> <set>_weekly/; "
+             "calweek: one calendar week (Monday to Sunday), no overlap -> <set>_calweek/"
     )
     parser.add_argument(
         "--save-png", type=int, default=0, metavar="N",
@@ -326,14 +373,14 @@ def main():
     )
     args = parser.parse_args()
     window = window_hours[args.window]
-    set_name = PRICE_SETS[args.price] + ("_weekly" if args.window == "week" else "")
+    set_name = PRICE_SETS[args.price] + set_suffix[args.window]
     out_dir = SCALO_ROOT / set_name
 
     log.info("=" * 60)
     log.info(f"CWT Scalogram Generation ({set_name})")
     log.info(f"  Wavelet: {WAVELET}")
     log.info(f"  Scales: {SCALES[0]} to {SCALES[-1]} ({len(SCALES)} scales)")
-    log.info(f"  Window: {window}h, Stride: {STRIDE}h")
+    log.info(f"  Window: {window}h, Stride: {7 * STRIDE if args.window == 'calweek' else STRIDE}h")
     log.info("=" * 60)
 
     # Step 1
@@ -343,12 +390,17 @@ def main():
     # Step 2
     log.info("\n[2] Pre-CWT transform")
     series, pre_cwt_params, level_prefix = transform_price(df.precio_real_cop_kwh.values, args.price)
-    if args.window == "week":
+    if args.window in ("week", "calweek"):
         pre_cwt_params.update({"daily_demean": False, "window_demean": True})
+    if args.window == "calweek":
+        pre_cwt_params["calendar_weeks"] = True
 
     # Step 3
     log.info("\n[3] Windowing and demeaning")
-    windows, metadata = create_windows(series, df.datetime.values, level_prefix, window)
+    if args.window == "calweek":
+        windows, metadata = create_calendar_weeks(series, df.datetime.values, level_prefix)
+    else:
+        windows, metadata = create_windows(series, df.datetime.values, level_prefix, window)
 
     # Step 4
     log.info("\n[4] Computing CWT")
@@ -364,7 +416,8 @@ def main():
 
     # Step 7
     log.info("\n[7] Saving outputs")
-    save_outputs(out_dir, scalograms, metadata, pre_cwt_params, post_cwt_params)
+    save_outputs(out_dir, scalograms, metadata, pre_cwt_params, post_cwt_params,
+                 stride=7 * STRIDE if args.window == "calweek" else STRIDE)
 
     if args.save_png > 0:
         log.info(f"\n[8] Saving {args.save_png} sample PNGs")

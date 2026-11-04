@@ -1,6 +1,6 @@
 """Steps shared by the VAE-LSTM notebooks and level_baseline.ipynb after the features are ready: one run folder per
 k, clustering, figures, the two tables, regimes.csv, metrics.json and the registry row. Every other metric is computed later by
-scripts/06_regime_metrics.py from regimes.csv."""
+scripts/06_regime_metrics.py (scripts/07_calweek_metrics.py for calendar weeks) from regimes.csv."""
 import json
 
 import altair as alt
@@ -13,38 +13,40 @@ from src.plots import regime_timeline, tsne_chart
 
 # Keys taken from the current notebook when load_from reuses an earlier run. Everything else comes from the loaded run,
 # so the config always describes the model that produced the latents.
-RUN_KEYS = ("study", "k_values", "tag")
+RUN_KEYS = ("study", "k_values", "tag", "clustering_input")
 # El Nino episodes used to judge the most expensive regime: El Nino days (ONI >= 0.5) in these years.
 # El Nino days (ONI >= 0.5) in these years; the 2015-2016 episode starts in October 2014
 nino_episodes = {"2015-2016": [2014, 2015, 2016], "2023-2024": [2023, 2024]}
 regime_columns = ["date", "split", "regime", "real_price", "oni", "nino", "episode", "top_regime", "captured"]
 
 
-def existing_runs(model, trained_in):
-    """{k: run folder} of earlier runs that clustered the latents of trained_in."""
+def existing_runs(model, trained_in, study=None):
+    """{k: run folder} of earlier runs that clustered the latents of trained_in (in study, if given)."""
     found = {}
     for path in sorted((exp.EXPERIMENTS_DIR / model).glob("*/*/config.json")):
         c = json.loads(path.read_text())
-        if c.get("trained_in") == trained_in:
+        if c.get("trained_in") == trained_in and (study is None or c.get("study") == study):
             found.setdefault(c["n_regimes"], path.parent)
     return found
 
 
-def prepare_runs(config, load_from=None, device="cpu"):
+def prepare_runs(config, load_from=None, device="cpu", trained_in=None):
     """One run folder per k in config["k_values"], with its config saved, in experiments/<model>/<study>/.
     With load_from (a run_id), the model, history and latents of that run are reused and training is skipped, and a k
-    already clustered with that model reuses its folder. Returns (config, run_dirs, run_configs, trained); trained is
-    None when the model has to be trained. trained_in is empty for runs without a model (the price baseline)."""
+    already clustered with that model (in the same study) reuses its folder. Returns (config, run_dirs, run_configs,
+    trained); trained is None when the model has to be trained. trained_in is empty for runs without a model (the price
+    baseline). Pass trained_in to cluster a model already trained in another study (04_vae_lstm_calweek.ipynb uses
+    it for the latents-only input): the new folders then point to that run instead of to themselves."""
     trained, reused = None, {}
     if load_from:
         trained = exp.load_trained(load_from, device)
         config = {**trained["config"], **{key: config[key] for key in RUN_KEYS if key in config}}
         trained_in = trained["config"].get("trained_in", load_from)
-        reused = existing_runs(config["model"], trained_in)
+        reused = existing_runs(config["model"], trained_in, config["study"])
     run_dirs = {k: reused.get(k) or exp.create_run(config["model"], config["study"], config["scalogram_set"], k,
                                                    config.get("tag", ""))
                 for k in config["k_values"]}
-    if not trained:
+    if not trained and trained_in is None:
         trained_in = exp.run_id(run_dirs[config["k_values"][0]]) if "z_dim" in config else ""
     run_configs = {}
     for k, run_dir in run_dirs.items():

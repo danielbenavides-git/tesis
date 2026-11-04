@@ -1,0 +1,18 @@
+{
+  "model": "level_only",
+  "study": "calweek",
+  "tag": "",
+  "scalogram_set": "real_price_log_calweek",
+  "k_values": [
+    3,
+    4,
+    5
+  ],
+  "features": "daily mean and std of the log real price",
+  "level_window": 1,
+  "val_start": "2014-10-01",
+  "test_start": "2021-01-01",
+  "seed": 42,
+  "n_regimes": 5,
+  "trained_in": ""
+}

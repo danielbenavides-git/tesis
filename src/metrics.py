@@ -18,6 +18,11 @@ the F1 between top_expensive_precision_pct and expensive_recall_pct. Criterion C
 switches per year are at most persistence_factor times those of the 7-day baseline with the same k and period, then
 orders them by A. Models are chosen with the val period and reported with the test period. The baselines are shown as
 reference and are not ranked.
+
+Calendar weeks (scripts/07_calweek_metrics.py): the same functions measure one row per week instead of one per day.
+The week view uses the mean real price of each week (src.data.load_context), a week is expensive when that price is
+above the percentile of the weeks of the same period, switches per year use units_per_year = days_per_week_year, and
+the persistence filter uses the weekly baseline (reference = "level").
 """
 import numpy as np
 import pandas as pd
@@ -28,7 +33,8 @@ from src.data import split_names
 from src.runs import nino_episodes
 
 thresholds = {3: 66.7, 4: 75.0, 5: 80.0}
-price_views = {"daily": 1, "7d": 7}
+price_views = {"daily": 1, "7d": 7, "week": 1}  # rows averaged backward; week: one row is already one week
+days_per_year, weeks_per_year = 365.25, 365.25 / 7
 periods = ["all", "train", "val", "test"]
 persistence_factor = 2.0
 
@@ -61,14 +67,15 @@ def expensive_days(days, k, view, period="all"):
     return price > threshold, threshold
 
 
-def data_reference(days, k_values):
-    """Level 1, no model. One row per (k, view, group); group is all days, one period or one episode."""
+def data_reference(days, k_values, views=("daily", "7d")):
+    """Level 1, no model. One row per (k, view, group); group is all days, one period or one episode. With weeks
+    (views=("week",)) every row of days is a week and the counts are weeks."""
     nino = days["nino"].to_numpy() == 1
     in_episode = days["episode"].to_numpy() != ""
     price = days["real_price"].to_numpy()
     rows = []
     for k in k_values:
-        for view in price_views:
+        for view in views:
             expensive_all = expensive_days(days, k, view)[0]
             groups = {"all": np.ones(len(days), bool),
                       **{period: days["period"].to_numpy() == period for period in periods[1:]},
@@ -87,10 +94,11 @@ def data_reference(days, k_values):
     return pd.DataFrame(rows).round(2)
 
 
-def regime_metrics(days, k, view, period="all"):
+def regime_metrics(days, k, view, period="all", units_per_year=days_per_year):
     """Level 2. days has date, real_price, nino, episode, period and regime (all days of the series); the most
     expensive regime is the highest number. Returns one dict with the metrics of that regime against
-    expensive_days(k, view), on the days of period."""
+    expensive_days(k, view), on the days of period. units_per_year is the number of rows in a year: days_per_year for
+    days, weeks_per_year for calendar weeks (then mean_run_days is in weeks)."""
     expensive, threshold = expensive_days(days, k, view, period)
     top_regime = days["regime"].max()
     keep = np.ones(len(days), bool) if period == "all" else days["period"].to_numpy() == period
@@ -111,7 +119,7 @@ def regime_metrics(days, k, view, period="all"):
         out[f"nino_recall_{key}_pct"] = recall
         out[f"nino_lift_{key}"] = recall / top_share
         out[f"expensive_recall_{key}_pct"] = 100 * top[ep & expensive].mean()
-        out[f"cheap_in_top_{key}_pct"] = 100 * top[ep & ~expensive].mean()
+        out[f"cheap_in_top_{key}_pct"] = 100 * top[ep & ~expensive].mean() if (ep & ~expensive).any() else np.nan
     precision = 100 * nino[top].mean()
     out["top_nino_precision_pct"] = precision
     out["top_nino_lift"] = precision / (100 * nino.mean()) if nino.any() else np.nan
@@ -120,7 +128,7 @@ def regime_metrics(days, k, view, period="all"):
     p, r = out["top_expensive_precision_pct"], out["expensive_recall_pct"]
     out["expensive_f1_pct"] = 2 * p * r / (p + r) if p + r > 0 else 0.0
     runs = run_lengths(days.sort_values("date")["regime"].to_numpy())
-    out["switches_per_year"] = (len(runs) - 1) / (len(days) / 365.25)
+    out["switches_per_year"] = (len(runs) - 1) / (len(days) / units_per_year)
     out["mean_run_days"] = float(runs.mean())
     return out
 
@@ -139,9 +147,11 @@ table_columns = {
 config_columns = ["model", "study", "z_dim", "lam", "beta", "features"]
 
 
-def ranking(rows, k, period="all"):
+def ranking(rows, k, period="all", reference="level 7d"):
     """One row per model configuration (matched view, mean and std over seeds, on period) with its rank by criterion A
-    and, if it passes the persistence filter, by criterion C. Baselines get no rank."""
+    and, if it passes the persistence filter, by criterion C. Baselines get no rank. reference is the features of the
+    baseline the filter compares with: "level 7d" (the 7-day baseline) or "level" (the weekly baseline of calendar
+    weeks)."""
     data = rows[(rows["k"] == k) & rows["matched"] & (rows["period"] == period)].fillna({c: "-" for c in config_columns})
     keys = config_columns + ["view"]
     columns = list(table_columns)
@@ -150,7 +160,7 @@ def ranking(rows, k, period="all"):
     stats["seeds"] = data.groupby(keys, sort=False).size()
     stats = stats.reset_index()
     baseline = stats["model"] == "level_only"
-    limit = persistence_factor * stats.loc[baseline & (stats["features"] == "level 7d"), "switches_per_year_mean"].iloc[0]
+    limit = persistence_factor * stats.loc[baseline & (stats["features"] == reference), "switches_per_year_mean"].iloc[0]
     stats["k"], stats["period"], stats["switches_limit"] = k, period, limit
     models = stats[~baseline].sort_values("expensive_f1_pct_mean", ascending=False)
     stats.loc[models.index, "rank_a"] = range(1, len(models) + 1)
@@ -171,11 +181,13 @@ comparison_columns = {
 }
 
 
-def comparison_table(rows, labels):
+def comparison_table(rows, labels, unit="days"):
     """One row per row of rows: the label columns (dict column -> header), then comparison_columns in that order.
     Precision, recall and F1 are those of the expensive days (expensive_days) in the most expensive regime. Rows from
-    ranking() hold the mean over seeds (column_mean) and its std (column_std, shown as +- with more than one seed)."""
-    t = PrettyTable([*labels.values(), *comparison_columns.values()])
+    ranking() hold the mean over seeds (column_mean) and its std (column_std, shown as +- with more than one seed).
+    unit names the rows in the headers: days, or weeks for calendar weeks."""
+    headers = [h.replace("days", unit) for h in comparison_columns.values()]
+    t = PrettyTable([*labels.values(), *headers])
     for _, r in rows.iterrows():
         cells = []
         for c in comparison_columns:

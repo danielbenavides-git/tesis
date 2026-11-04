@@ -5,6 +5,9 @@ level_only/baseline/003_daily_k5,baseline,level_only,5,,,,,,,50b3797-dirty
 level_only/baseline/004_daily_k3_7d,baseline,level_only,3,,,,,,,50b3797-dirty
 level_only/baseline/005_daily_k4_7d,baseline,level_only,4,,,,,,,50b3797-dirty
 level_only/baseline/006_daily_k5_7d,baseline,level_only,5,,,,,,,50b3797-dirty
+level_only/calweek/001_calweek_k3,calweek,level_only,3,,,,,,,70225fd-dirty
+level_only/calweek/002_calweek_k4,calweek,level_only,4,,,,,,,70225fd-dirty
+level_only/calweek/003_calweek_k5,calweek,level_only,5,,,,,,,70225fd-dirty
 vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,daily,vae_lstm,3,4,0.0,0.25,42,30,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,34bf75c
 vae_lstm/daily/002_daily_k4_z_dim4_lam0_beta0.25_seed42,daily,vae_lstm,4,4,0.0,0.25,42,30,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,34bf75c
 vae_lstm/daily/003_daily_k5_z_dim4_lam0_beta0.25_seed42,daily,vae_lstm,5,4,0.0,0.25,42,30,vae_lstm/daily/001_daily_k3_z_dim4_lam0_beta0.25_seed42,34bf75c

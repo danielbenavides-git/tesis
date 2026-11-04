@@ -16,10 +16,14 @@ data/
   processed/        Cleaned series (XM/, NOAA/) and scalograms
     scalograms/real_price_log/          Log real price scalograms, one day (24 hours) each
     scalograms/real_price_log_weekly/   Log real price scalograms, day t and the 6 days before it (168 hours) each
+    scalograms/real_price_log_calweek/  Log real price scalograms, one calendar week (Monday to Sunday, 168 hours)
+                                        each, no overlap between weeks (1386 weeks)
 scripts/            Data pipeline, run in order (01 download, 02 process, 03 external data and deflation, 04 scalograms,
-                    05 El Nino price statistics), 06_regime_metrics.py (all metrics)
+                    05 El Nino price statistics), 06_regime_metrics.py (all metrics of the daily and weekly
+                    studies), 07_calweek_metrics.py (metrics of the calendar-week test, by week)
 src/                Code imported by the notebooks and scripts
   data.py           Scalogram loading, split by dates (val_start, test_start), sequence dataset, context variables
+                    (one row per day, or per calendar week for the calweek set)
   training.py       Training loop with KL warm-up, active latent dims from the KL of each dim
   clustering.py     Price columns, k-means, regime ordering, run lengths, regime profile, separation metrics
   experiments.py    Run folders, saved config/history/tables, registry, loading a trained run, PrettyTable builders
@@ -34,7 +38,8 @@ notebooks/
   01_eda.ipynb
   02_vae_lstm.ipynb             VAE-LSTM notebook: trains on the daily scalograms and saves its regimes (no analysis)
   03_vae_lstm_weekly.ipynb      VAE-LSTM notebook: copy of notebook 02 that reads the weekly scalograms
-  level_baseline.ipynb          Baseline: clustering on the daily price only (no CWT, no VAE)
+  04_vae_lstm_calweek.ipynb     VAE-LSTM notebook: calendar weeks, 4-week (monthly) reading, two clustering inputs
+  level_baseline.ipynb          Baseline: clustering on the price only (no CWT, no VAE), by day or by calendar week
   latent_smoothing.ipynb        Smoothed (7-day) inputs of the trained models, saves their regimes
   top_models.ipynb              Top configurations of one study next to the baselines (reads metrics/)
 experiments/
@@ -43,7 +48,11 @@ experiments/
   vae_lstm/daily/               VAE-LSTM runs on the daily scalograms (02_vae_lstm.ipynb)
   vae_lstm/weekly/              VAE-LSTM runs on the weekly scalograms (03_vae_lstm_weekly.ipynb)
   vae_lstm/latent_smoothing/    regimes.csv and inputs.csv of latent_smoothing.ipynb
+  level_only/calweek/           Weekly price baseline of the calendar-week test (level_baseline.ipynb)
+  vae_lstm/calweek/             Calendar-week VAE-LSTM runs, latents + level of the week; hold the trained models
+  vae_lstm/calweek_latents_only/  The same models clustered on the latents only (04_vae_lstm_calweek.ipynb)
 metrics/            Output of scripts/06_regime_metrics.py
+  calweek/          Output of scripts/07_calweek_metrics.py (calendar-week test, one row per week)
 archive/            Runs and files no longer used (not in git, except archive/README.md)
 figures/            EDA figures (eda/) and sample scalograms (scalograms/<set>/)
 ```
@@ -55,6 +64,7 @@ pip install -r requirements.txt
 python scripts/03_process_external_data.py          # ONI and real (deflated) prices
 python scripts/04_generate_scalograms.py --price log  # -> scalograms/real_price_log/
 python scripts/04_generate_scalograms.py --price log --window week  # -> scalograms/real_price_log_weekly/
+python scripts/04_generate_scalograms.py --price log --window calweek  # -> scalograms/real_price_log_calweek/
 ```
 
 The scalograms (`scalograms.npy`, about 114 MB daily and 796 MB weekly) are not in git. Regenerate them with the commands above; the metadata and normalization parameters are tracked.
@@ -100,6 +110,19 @@ Each run writes its row in `experiments/registry.csv`, with the git commit (`-di
 ## Top models
 
 `top_models.ipynb` reads `metrics/regime_metrics.csv` and, for the `study` in its configuration and each k, shows the daily and 7-day baselines and the `top` configurations (mean +- std over seeds). It chooses with the validation days only: it leaves out the configurations that switch regime more than twice as often as the 7-day baseline and orders the rest by the F1 of the expensive days. Then it shows the same configurations, in the same order, with the test days, which are not used to choose. The El Nino capture and lift are shown but not used to order.
+
+## Calendar-week test
+
+The last test of the thesis asks whether whole weeks, without overlap, separate the regimes better than the daily and weekly-by-day scalograms. Every piece is separate from the rest, so nothing above changes:
+
+1. `python scripts/04_generate_scalograms.py --price log --window calweek` writes `data/processed/scalograms/real_price_log_calweek/`: one 128 x 168 scalogram per calendar week, Monday 00:00 to Sunday 23:00, with the week's mean removed (1386 weeks from 2000-01-03 to 2026-07-26; the 2 days before the first Monday and the 5 after the last Sunday are left out). Its metadata has the mean and standard deviation of the log price of the whole week and `unit = week`.
+2. With `unit = week`, `src.data.load_context` gives one row per week, dated by its Monday: the mean real price and reservoir level of its 7 days, and the ONI of the month of its Thursday. These columns number and measure the regimes; they are never inputs of the VAE-LSTM. A week belongs to the period of its Monday: 770 train, 326 validation and 290 test weeks.
+3. `level_baseline.ipynb` with `scalogram_set = "real_price_log_calweek"`, `study = "calweek"`, `level_window = 1` and `tag = ""` gives the weekly baseline (mean and standard deviation of the week) in `experiments/level_only/calweek/`.
+4. `04_vae_lstm_calweek.ipynb` trains the VAE-LSTM on the weekly images only (the LSTM reads 4 weeks, `seq_len = 4`, `stride = 1`; lambda = 700, beta = 1 and 7, 3 seeds) and clusters each model twice: `latents + level` in `experiments/vae_lstm/calweek/` (the vector plus the mean and standard deviation of the week, which hold the trained model) and `latents` in `experiments/vae_lstm/calweek_latents_only/` (the vector alone; `trained_in` points to the `calweek` run with k = 3). `clustering_input` in `config.json` says which.
+5. `python scripts/07_calweek_metrics.py` measures every calendar-week run by week and writes `metrics/calweek/` and `tables/baseline_comparison.txt` in every VAE-LSTM run (the run, the same model with the other input and the weekly baseline). A week is expensive when its mean real price is above the 66.7, 75 or 80 percentile of the weeks of the same period, and switches per year use 52.18 weeks per year.
+6. `top_models.ipynb` with `metrics_file = "metrics/calweek/regime_metrics.csv"`, `reference = "level"` and `study = "calweek"` or `"calweek_latents_only"` shows the top configurations next to the weekly baseline.
+
+These numbers are measured by week, so they are not comparable with the daily tables of `metrics/regime_metrics.csv`.
 
 ## Archive
 

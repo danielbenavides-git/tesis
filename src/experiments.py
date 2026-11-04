@@ -14,7 +14,7 @@ EXPERIMENTS_DIR = ROOT / "experiments"
 REGISTRY_COLUMNS = ["run_id", "study", "model", "k", "z_dim", "lam", "beta", "seed", "epochs", "trained_in", "git_commit"]
 
 
-set_labels = {"real_price_log": "daily", "real_price_log_weekly": "weekly"}
+set_labels = {"real_price_log": "daily", "real_price_log_weekly": "weekly", "real_price_log_calweek": "calweek"}
 
 
 def set_label(scalogram_set):
@@ -24,7 +24,7 @@ def set_label(scalogram_set):
 
 def create_run(model, study, scalogram_set, k, tag="", root=EXPERIMENTS_DIR):
     """New folder experiments/<model>/<study>/NNN_<set_label>_k<k>[_<tag>]/, where set_label is the short name of
-    scalogram_set (set_labels: daily or weekly). All runs use k-means.
+    scalogram_set (set_labels: daily, weekly or calweek). All runs use k-means.
     Its tables/, figures/ and artifacts/ (weights and latents, not in git) are created when something is saved
     in them, so no empty folder is left (a run without a model has no artifacts/).
     NNN is consecutive within each study folder and never reused. tag is an optional label for the folder name."""
