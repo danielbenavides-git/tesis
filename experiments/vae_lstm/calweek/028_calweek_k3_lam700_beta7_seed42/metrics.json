@@ -1,0 +1,7 @@
+{
+  "run_id": "vae_lstm/calweek/028_calweek_k3_lam700_beta7_seed42",
+  "k": 3,
+  "silhouette": 0.2777411692857782,
+  "davies_bouldin": 1.3148536925275327,
+  "calinski_harabasz": 922.3798875391437
+}

@@ -1,0 +1,7 @@
+{
+  "run_id": "vae_lstm/calweek_latents_only/015_calweek_k5_lam100_beta7_seed43",
+  "k": 5,
+  "silhouette": 0.13377178118856972,
+  "davies_bouldin": 1.9283554920198749,
+  "calinski_harabasz": 321.14820435890067
+}
