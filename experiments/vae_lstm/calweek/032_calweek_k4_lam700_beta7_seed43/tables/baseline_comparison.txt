@@ -1,0 +1,34 @@
+vae_lstm/calweek/032_calweek_k4_lam700_beta7_seed43
+k = 4, 1386 calendar weeks from 2000-01-03 to 2026-07-20; a week belongs to the period of its Monday: train before 2014-10-01, val from 2014-10-01, test from 2021-01-01
+Expensive week: mean real price of the week above percentile 75.0 of the weeks of the same period
+El Nino week: ONI of the month of its Thursday >= 0.5
+Capture: share of the El Nino weeks of the episode in the most expensive regime; lift: capture / top regime weeks % (1 = chance)
+Precision, recall and F1 of the expensive weeks in the most expensive regime
+Switches per year are counted inside each period, with 52.18 weeks per year; - = the episode has no weeks in the period
+
+Period: all (1386 weeks), expensive above 350.7 COP/kWh
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+|            Row             |     Features    | Switches / yr | Top regime weeks % | Capture 15-16 % | Lift 15-16 | Capture 23-24 % | Lift 23-24 | Precision % | Recall % | F1 % |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+| This run (latents + level) | latents + level |      17.9     |        41.4        |       60.9      |    1.47    |       37.5      |    0.91    |     35.7    |   59.1   | 44.5 |
+|  Same model, other input   |     latents     |      19.5     |        19.6        |       27.6      |    1.41    |       27.1      |    1.38    |     28.3    |   22.2   | 24.9 |
+|      Weekly baseline       |      level      |      15.0     |        35.5        |       93.1      |    2.62    |       87.5      |    2.46    |     66.7    |   94.5   | 78.2 |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+
+Period: val (326 weeks), expensive above 408.1 COP/kWh
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+|            Row             |     Features    | Switches / yr | Top regime weeks % | Capture 15-16 % | Lift 15-16 | Capture 23-24 % | Lift 23-24 | Precision % | Recall % | F1 % |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+| This run (latents + level) | latents + level |      20.6     |        53.4        |       60.5      |    1.13    |        -        |     -      |     32.2    |   68.3   | 43.8 |
+|  Same model, other input   |     latents     |      23.0     |        19.6        |       27.9      |    1.42    |        -        |     -      |     29.7    |   23.2   | 26.0 |
+|      Weekly baseline       |      level      |      14.2     |        51.8        |       93.0      |    1.79    |        -        |     -      |     47.9    |   98.8   | 64.5 |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+
+Period: test (290 weeks), expensive above 621.2 COP/kWh
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+|            Row             |     Features    | Switches / yr | Top regime weeks % | Capture 15-16 % | Lift 15-16 | Capture 23-24 % | Lift 23-24 | Precision % | Recall % | F1 % |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
+| This run (latents + level) | latents + level |      20.7     |        36.2        |        -        |     -      |       37.5      |    1.04    |     34.3    |   49.3   | 40.4 |
+|  Same model, other input   |     latents     |      22.7     |        23.1        |        -        |     -      |       27.1      |    1.17    |     25.4    |   23.3   | 24.3 |
+|      Weekly baseline       |      level      |      17.3     |        49.7        |        -        |     -      |       87.5      |    1.76    |     47.9    |   94.5   | 63.6 |
++----------------------------+-----------------+---------------+--------------------+-----------------+------------+-----------------+------------+-------------+----------+------+
